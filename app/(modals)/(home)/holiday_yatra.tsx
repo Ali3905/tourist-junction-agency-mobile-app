@@ -12,9 +12,11 @@ const { width, height } = Dimensions.get('window');
 
 const holiday_yatra = () => {
 
-  const [isLoading, setIsLoading] = useState(false);
   const [tours, setTours] = useState([])
+
+  const [isLoading, setIsLoading] = useState(false);
   const { apiCaller, setRefresh, refresh } = useGlobalContext();
+  const [searchQuery, setSearchQuery] = useState("");
 
   const fetchTours = async () => {
     setIsLoading(true)
@@ -29,7 +31,7 @@ const holiday_yatra = () => {
     }
   }
 
-  const handleDelete = async (tourId : string) => {
+  const handleDelete = async (tourId: string) => {
     if (tourId) {
       try {
         await apiCaller.delete(`/api/tour?tourId=${tourId}`);
@@ -42,6 +44,17 @@ const holiday_yatra = () => {
       }
     }
   };
+
+
+  const filterTours = (query: string) => {
+    return tours.filter((tour) =>
+      Object.values(tour).some((value) =>
+        String(value).toLowerCase().includes(query.toLowerCase())
+      )
+    );
+  };
+
+  
 
 
   useEffect(() => {
@@ -63,6 +76,8 @@ const holiday_yatra = () => {
               style={styles.searchInput}
               placeholder="Search..."
               placeholderTextColor={Colors.secondary}
+              value={searchQuery}
+              onChangeText={setSearchQuery}
             />
           </View>
 
@@ -74,7 +89,7 @@ const holiday_yatra = () => {
             isLoading ? (
               <ActivityIndicator size="large" color={Colors.darkBlue} />
             ) :
-              tours.map((tour) => {
+              filterTours(searchQuery).map((tour) => {
                 return <TourCard tour={tour} handleDelete={handleDelete} />
               })
           }
@@ -89,12 +104,12 @@ const holiday_yatra = () => {
 
 export default holiday_yatra;
 
-const TourCard = ({ tour, handleDelete } : any) => {
-  
+const TourCard = ({ tour, handleDelete }: any) => {
+
   const [isDeleteModalVisible, setIsDeleteModalVisible] = useState<boolean>(false)
   const { setEditData } = useGlobalContext();
 
-  
+
   const handleCloseModal = () => {
     setIsDeleteModalVisible(false)
   }
@@ -102,7 +117,7 @@ const TourCard = ({ tour, handleDelete } : any) => {
   const handleOpenModal = () => {
     setIsDeleteModalVisible(true)
   }
-  
+
   return (
     <>
       <View style={styles.card}>
@@ -127,7 +142,7 @@ const TourCard = ({ tour, handleDelete } : any) => {
         <Text style={styles.cardText}>Location: <Text style={{ color: "black" }}>{tour?.location}</Text></Text>
       </View>
 
-      <ConfirmationModal actionBtnText='Delete' closeModal={handleCloseModal} handler={()=> { handleDelete(tour._id); setIsDeleteModalVisible(false) } } isVisible={isDeleteModalVisible} message='Are you sure you want to delete holiday yatra' />
+      <ConfirmationModal actionBtnText='Delete' closeModal={handleCloseModal} handler={() => { handleDelete(tour._id); setIsDeleteModalVisible(false) }} isVisible={isDeleteModalVisible} message='Are you sure you want to delete holiday yatra' />
     </>
   )
 }

@@ -149,7 +149,7 @@ export default function HomeScreen() {
             <Text style={styles.iconText} numberOfLines={2} ellipsizeMode="tail">Empty Vehicles</Text>
           </TouchableOpacity>
           <TouchableOpacity onPress={() => router.push('holiday_yatra')} style={styles.gridItem}>
-            <Image source={require('@/assets/images/empty-vehicle-icon.png')} style={styles.iconEmpty} />
+            <Image source={require('@/assets/images/holiday_yatra.png')} style={styles.iconEmpty} />
             <Text style={styles.iconText} numberOfLines={2} ellipsizeMode="tail">Holiday Yatra</Text>
           </TouchableOpacity>
         </View>

@@ -72,6 +72,7 @@ const DailyRouteVehicles: React.FC = () => {
   const [selectedSecondaryDriver, setSelectedSecondaryDriver] = useState<string>("");
   const [selectedCleaner, setSelectedCleaner] = useState<string>("");
   const [instruction, setInstruction] = useState("")
+  
   const [searchQuery, setSearchQuery] = useState("");
   const { apiCaller, setEditData, refresh } = useGlobalContext();
   const [inputHeight, setInputHeight] = useState(50);
@@ -187,16 +188,6 @@ const DailyRouteVehicles: React.FC = () => {
       )
     );
   };
-  const images = [
-    require('@/assets/images/carousel1.png'),
-    require('@/assets/images/carousel1.png'),
-    require('@/assets/images/carousel1.png'),
-    require('@/assets/images/carousel1.png'),
-  ];
-
-
-  const phoneNumbers = ['7249005806', '7249005807', '7249005808', '7249005808']; // Example list of numbers
-
 
 
   return (
