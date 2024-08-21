@@ -12,6 +12,7 @@ import {
     ActivityIndicator,
     Linking,
     Platform,
+    Alert,
 } from "react-native";
 import { BlurView } from 'expo-blur';
 import { Colors } from "@/constants/Colors";
@@ -60,9 +61,12 @@ const TechnicianSupport: React.FC = () => {
     const [showDeleteModal, setShowDeleteModal] = useState(false);
     const [idToDelete, setIdToDelete] = useState<null | string>(null);
     const [searchQuery, setSearchQuery] = useState('');
+
     const [vehicleFilter, setVehicleFilter] = useState('');
     const [stateFilter, setStateFilter] = useState('');
     const [cityFilter, setCityFilter] = useState('');
+    const [technicianTypeFilter, setTechnicianTypeFilter] = useState('');
+
     const { apiCaller, setEditData, refresh } = useGlobalContext();
     const [currentPage, setCurrentPage] = useState(1);
     const [hasMore, setHasMore] = useState(true);
@@ -80,11 +84,16 @@ const TechnicianSupport: React.FC = () => {
             let url = `/api/technician?page=${page}`;
             if (cityFilter) url += `&city=${cityFilter}`;
             if (vehicleFilter) url += `&vehicleType=${vehicleFilter}`;
+            if (technicianTypeFilter) url += `&technicianType=${technicianTypeFilter}`;
             if (searchQuery) url += `&search=${searchQuery}`;
+
+            console.log({url});
+            console.log({technicianTypeFilter});
+            
 
             const response = await apiCaller.get(url);
             const newTechnicians = response.data.data;
-            
+
             if (isLoadMore) {
                 setTechnicians(prev => [...prev, ...newTechnicians]);
             } else {
@@ -95,6 +104,7 @@ const TechnicianSupport: React.FC = () => {
             setCurrentPage(page);
         } catch (err) {
             console.log(err);
+            Alert.alert("Error","There are no technician with these filters at the moment")
         } finally {
             setLoading(false);
         }
@@ -102,7 +112,7 @@ const TechnicianSupport: React.FC = () => {
 
     useEffect(() => {
         fetchTechnicians(1);
-    }, [refresh, cityFilter, vehicleFilter, searchQuery]);
+    }, [refresh, cityFilter, vehicleFilter, searchQuery, technicianTypeFilter]);
 
     const handleDelete = async () => {
         await apiCaller.delete(`/api/technician?technicianId=${idToDelete}`);
@@ -114,11 +124,11 @@ const TechnicianSupport: React.FC = () => {
         Linking.openURL(`tel:${number}`);
         console.log('Phone number dialed: ', number);
         if (timeoutId) {
-          clearTimeout(timeoutId);
+            clearTimeout(timeoutId);
         }
         const id = setTimeout(() => {
-          console.log('Showing modal');
-          setModalVisible(true);
+            console.log('Showing modal');
+            setModalVisible(true);
         }, 100);
         setTimeoutId(id);
     };
@@ -148,7 +158,7 @@ const TechnicianSupport: React.FC = () => {
                     size={20}
                 />
             </View>
-            
+
             <View style={[styles.cardHeader, { marginBottom: 2, marginTop: 5 }]}>
                 <TouchableOpacity onPress={() => handlePress(item.mobileNumber)}>
                     <MaterialIcons name="phone-in-talk" size={24} color={Colors.darkBlue} />
@@ -163,7 +173,7 @@ const TechnicianSupport: React.FC = () => {
             <Text style={styles.cardText}>City: <Text style={{ color: "black" }}>{item.city}</Text></Text>
             <Text style={styles.cardText}>State: <Text style={{ color: "black" }}>{item.state}</Text></Text>
             <Text style={styles.cardText}>Vehicle Type: <Text style={{ color: "black" }}> {item.vehicleType}</Text></Text>
-            
+
             <Modal
                 visible={modalVisible}
                 transparent={true}
@@ -184,7 +194,7 @@ const TechnicianSupport: React.FC = () => {
                 </View>
             </Modal>
         </View>
-    ); 
+    );
 
     const handleLoadMore = () => {
         if (!loading && hasMore) {
@@ -258,6 +268,20 @@ const TechnicianSupport: React.FC = () => {
                         <Picker.Item label="TRUCK" value="TRUCK" />
                         <Picker.Item label="TAMPO" value="TAMPO" />
                     </Picker>
+                    <Picker
+                        selectedValue={technicianTypeFilter}
+                        onValueChange={(itemValue) => setTechnicianTypeFilter(itemValue)}
+                        style={styles.vehiclePicker}
+                    >
+                        <Picker.Item label="Select Technician Type" value="" />
+                        <Picker.Item label="MECHANIC" value="MECHANIC" />
+                        <Picker.Item label="ELECTRICIAN" value="ELECTRICIAN" />
+                        <Picker.Item label="SPARE PART SHOP" value="SPAREPARTSHOP" />
+                        <Picker.Item label="SPRING WORK" value="SPRINGWORK" />
+                        <Picker.Item label="BATTERY SERVICES" value="BATTERYSERVICES" />
+                        <Picker.Item label="VEHICLE BODY REPAIR" value="VEHICLEBODYREPAIR" />
+                        <Picker.Item label="CRANE SERVICE" value="CRANESERVICES" />
+                    </Picker>
                 </View>
 
                 <View style={styles.locationFilterContainer}>
@@ -330,7 +354,7 @@ const styles = StyleSheet.create({
     },
     ratingContainer: {
         marginBottom: 20,
-      },
+    },
     searchContainer: {
         flexDirection: "row",
         alignItems: "center",
@@ -346,23 +370,27 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center',
         backgroundColor: 'rgba(0, 0, 0, 0.5)', // Semi-transparent background
-      },
-      modalContent: {
+        marginHorizontal: 5,
+        marginVertical: 'auto'
+    },
+    modalContent: {
         backgroundColor: 'white',
         padding: 20,
         borderRadius: 10,
         width: '80%',
         alignItems: 'center',
-      },
-      closeButton: {
+        elevation: 5,
+        maxHeight: 400,
+    },
+    closeButton: {
         marginTop: 10,
         padding: 10,
         backgroundColor: '#ddd',
         borderRadius: 5,
-      },
-      closeButtonText: {
+    },
+    closeButtonText: {
         color: 'black',
-      },
+    },
     searchInput: {
         flex: 1,
         marginLeft: 10,
@@ -372,14 +400,16 @@ const styles = StyleSheet.create({
         marginBottom: 1,
     },
     vehicleFilterContainer: {
-        marginBottom: -5,
+        flexDirection: 'row',
+        justifyContent: 'space-between',
     },
     locationFilterContainer: {
         flexDirection: 'row',
         justifyContent: 'space-between',
     },
     vehiclePicker: {
-        width: '100%',
+        flex: 1,
+        marginHorizontal: 5,
     },
     locationPicker: {
         flex: 1,
@@ -426,25 +456,25 @@ const styles = StyleSheet.create({
         fontWeight: "500",
         fontSize: 13,
     },
-    modalContainer: {
-        justifyContent: "center",
-        alignItems: "center",
-        marginHorizontal: 5,
-        marginVertical: 'auto'
-    },
+    // modalContainer: {
+    //     justifyContent: "center",
+    //     alignItems: "center",
+    //     marginHorizontal: 5,
+    //     marginVertical: 'auto'
+    // },
     modalOverlay: {
         flex: 1,
         justifyContent: "center",
         alignItems: "center",
     },
-    modalContent: {
-        backgroundColor: "#fff",
-        padding: 20,
-        borderRadius: 10,
-        alignItems: "center",
-        elevation: 5,
-        maxHeight: 400,
-    },
+    // modalContent: {
+    //     backgroundColor: "#fff",
+    //     padding: 20,
+    //     borderRadius: 10,
+    //     alignItems: "center",
+    //     elevation: 5,
+    //     maxHeight: 400,
+    // },
     modalText: {
         marginBottom: 20,
         fontSize: 18,

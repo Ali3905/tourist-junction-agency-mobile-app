@@ -19,7 +19,7 @@ import { Picker } from "@react-native-picker/picker";
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { router } from "expo-router";
 
-const add_empty_vehicle = () => {
+const edit_empty_vehicle = () => {
 
     const [vehicleNumber, setVehicleNumber] = useState("");
 
@@ -38,7 +38,7 @@ const add_empty_vehicle = () => {
 
     const [loading, setLoading] = useState(false);
     const [vehicleNumbers, setVehicleNumbers] = useState<{ id: string, number: string }[]>([]);
-    const { apiCaller, setRefresh } = useGlobalContext();
+    const { apiCaller, setRefresh, editData } = useGlobalContext();
     const [departureDate, setDepartureDate] = useState<Date | undefined>(undefined);
     const [showDepartureDatePicker, setShowDepartureDatePicker] = useState<boolean>(false);
     const [showReturnDatePicker, setShowReturnDatePicker] = useState<boolean>(false);
@@ -60,9 +60,6 @@ const add_empty_vehicle = () => {
         }
     };
 
-    useEffect(() => {
-        fetchVehicles();
-    }, []);
 
     const onChangeDepartureTime = (event: any, selectedTime?: Date) => {
         setShowDepartureTimePicker(false);
@@ -104,26 +101,11 @@ const add_empty_vehicle = () => {
             return;
         }
 
-        const newBooking = {
-            vehicleNo: vehicleNumber,
-
-            mobileNumber,
-
-            departurePlace,
-            destinationPlace,
-            departureTime: departureTime,
-            departureDate: departureDate,
-            moreInformation: instructions,
-            photos,
-
-
-        };
-
         const formData = new FormData()
         formData.append("vehicleNo", vehicleNumber)
         formData.append("mobileNumber", mobileNumber)
         formData.append("departurePlace", departurePlace)
-        formData.append("departureDate", departureDate?.toISOString())
+        formData.append("departureDate", departureDate.toISOString())
         formData.append("departureTime", departureTime?.toISOString())
         formData.append("destinationPlace", destinationPlace)
         formData.append("moreInformation", instructions)
@@ -139,16 +121,16 @@ const add_empty_vehicle = () => {
 
         setLoading(true);
         try {
-            await apiCaller.post('/api/emptyVehicle', formData, { headers: { 'Content-Type': 'multipart/form-data' } });
+            await apiCaller.patch(`/api/emptyVehicle?emptyVehicleId=${editData._id}`, formData, { headers: { 'Content-Type': 'multipart/form-data' } });
             setLoading(false);
             setRefresh(prev => !prev)
             resetForm();
-            Alert.alert("Success", "Empty Vehicle added successfully!");
+            Alert.alert("Success", "Empty Vehicle edited successfully!");
             router.back()
         } catch (error) {
             console.log(error);
             setLoading(false);
-            Alert.alert("Error", "Failed to add empty vehicle. Please try again.");
+            Alert.alert("Error", "Failed to edit empty vehicle. Please try again.");
         }
     };
 
@@ -176,6 +158,24 @@ const add_empty_vehicle = () => {
         setPhotos([]);
 
     };
+
+
+    useEffect(() => {
+        fetchVehicles();
+    }, []);
+
+    useEffect(() => {
+        if (editData) {
+            setVehicleNumber(editData.vehicle.number)
+            setDepartureDate(new Date(editData.departureDate))
+            setDeparturePlace(editData.departurePlace)
+            setDepartureTime(new Date(editData.departureTime))
+            setDestinationPlace(editData.destinationPlace)
+            setInstructions(editData.moreInformation)
+            setMobileNumber(editData.mobileNumber)
+            setPhotos(editData.photos)
+        }
+    }, [editData])
 
 
     return (
@@ -233,7 +233,7 @@ const add_empty_vehicle = () => {
                             style={styles.input}
                             onPress={() => setShowDepartureDatePicker(true)}
                         >
-                            <Text>{departureDate ? formatDate(departureDate) : "Select Date"}</Text>
+                            <Text>{departureDate ? formatDate(new Date(departureDate)) : "Select Date"}</Text>
                         </TouchableOpacity>
                         {showDepartureDatePicker && (
                             <DateTimePicker
@@ -250,7 +250,7 @@ const add_empty_vehicle = () => {
                             style={styles.input}
                             onPress={() => setShowDepartureTimePicker(true)}
                         >
-                            <Text>{departureTime ? departureTime.toLocaleTimeString() : "Select Time"}</Text>
+                            <Text>{departureTime ? new Date(departureTime).toLocaleTimeString() : "Select Time"}</Text>
                         </TouchableOpacity>
                         {showDepartureTimePicker && (
                             <DateTimePicker
@@ -279,7 +279,7 @@ const add_empty_vehicle = () => {
                     </TouchableOpacity>
                     <View style={styles.imagePreviewContainer}>
                         {photos.map((item, index) => (
-                            <Image key={index} source={{ uri: item.uri }} style={styles.previewImage} />
+                            <Image key={index} source={{ uri: item.uri || item }} style={styles.previewImage} />
                         ))}
                     </View>
 
@@ -393,4 +393,4 @@ const styles = StyleSheet.create({
     },
 });
 
-export default add_empty_vehicle
+export default edit_empty_vehicle

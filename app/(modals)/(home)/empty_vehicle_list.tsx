@@ -11,13 +11,14 @@ import {
     ActivityIndicator,
     TouchableOpacity,
     Modal,
+    Alert,
 } from "react-native";
-import PagerView from "react-native-pager-view";
-import { FontAwesome5 } from "@expo/vector-icons";
+import { FontAwesome5, MaterialIcons } from "@expo/vector-icons";
 import { Colors } from "@/constants/Colors";
 import { useGlobalContext } from "@/context/GlobalProvider";
-import { BlurView } from 'expo-blur';
 import { router } from "expo-router";
+import Carousel from "@/components/Carousel";
+import ConfirmationModal from "@/components/Modal";
 
 const { width: viewportWidth } = Dimensions.get("window");
 
@@ -30,7 +31,7 @@ interface Vehicle {
     departureTime: string;
     destinationPlace: string;
     mobileNumber: string;
-    moreInformation:string,
+    moreInformation: string,
     photos: string[];
     // isAC: boolean;
     // isForRent: boolean;
@@ -38,44 +39,28 @@ interface Vehicle {
     // type: string;
 }
 
-interface BlurOverlayProps {
-    visible: boolean;
-    onRequestClose: () => void;
+interface EmptyVehicleCardProps {
+    vehicle: Vehicle,
+    index: number,
+    handleDelete: (id: string) => Promise<void>
 }
 
-const BlurOverlay: React.FC<BlurOverlayProps> = ({ visible, onRequestClose }) => (
-    <Modal
-        animationType="fade"
-        transparent={true}
-        visible={visible}
-        onRequestClose={onRequestClose}
-    >
-        <TouchableOpacity activeOpacity={1} onPress={onRequestClose} style={styles.overlay}>
-            <BlurView intensity={90} tint="light" style={StyleSheet.absoluteFill} />
-        </TouchableOpacity>
-    </Modal>
-);
 
-const RentVehicleScreen: React.FC = () => {
-    const [activeSlide, setActiveSlide] = useState(0);
-    const [loading, setLoading] = useState(true);
-    const { apiCaller, token } = useGlobalContext();
+function formatDate(dateString: string): string {
+    const date = new Date(dateString);
+    const year = date.getUTCFullYear();
+    const month = date.getUTCMonth() + 1;
+    const day = date.getUTCDate();
+    return `${month}/${day}/${year}`;
+}
+
+
+const EmptyVehicleScreen: React.FC = () => {
     const [vehicles, setVehicles] = useState<Vehicle[]>([]);
+    const [loading, setLoading] = useState(true);
+    const { apiCaller, refresh } = useGlobalContext();
+
     const [searchQuery, setSearchQuery] = useState("");
-    const [showImageModal, setShowImageModal] = useState(false);
-    const [selectedImage, setSelectedImage] = useState<string | null>(null);
-
-    const renderPagerItem = (item: string, index: number) => {
-        return (
-            <TouchableOpacity activeOpacity={1} style={styles.carouselItem} key={index} onPress={() => handleViewImage(item)}>
-                <Image source={{ uri: item }} style={styles.carouselImage} />
-            </TouchableOpacity>
-        );
-    };
-
-    // const filterByType = (data: Vehicle[]): Vehicle[] => {
-    //     return data.filter(vehicle => vehicle.isForRent === true);
-    // };
 
     const fetchVehicles = async () => {
         try {
@@ -93,7 +78,7 @@ const RentVehicleScreen: React.FC = () => {
 
     useEffect(() => {
         fetchVehicles();
-    }, []);
+    }, [refresh]);
 
     const filterVehicles = (query: string) => {
         return vehicles.filter((vehicle) =>
@@ -107,11 +92,22 @@ const RentVehicleScreen: React.FC = () => {
         setSearchQuery(searchQuery);
     };
 
-    const handleViewImage = (imageUri: string) => {
-        setSelectedImage(imageUri);
-        setShowImageModal(true);
-    };
-
+    const handleDeleteEmptyVehicle = async (id: string) => {
+        if (!id) {
+            Alert.alert("Could not get the id to delete empty vehicle")
+            return
+        }
+        try {
+            setLoading(true);
+            await apiCaller.delete(`/api/emptyVehicle?emptyVehicleId=${id}`);
+            // console.log('API response:', response);
+            fetchVehicles()
+        } catch (err) {
+            console.log(err);
+        } finally {
+            setLoading(false);
+        }
+    }
     const filteredVehicles = searchQuery ? filterVehicles(searchQuery) : vehicles;
 
     return (
@@ -129,81 +125,93 @@ const RentVehicleScreen: React.FC = () => {
                         onChangeText={setSearchQuery}
                     />
                 </View>
-                <View>
-                  <Text onPress={() => router.push("add_empty_vehicle")}>Add Empty Vehicle</Text>
-                </View>
+                <TouchableOpacity onPress={() => router.push("add_empty_vehicle")} style={styles.addButton}>
+                    <Text style={styles.addButtonText}>Add Empty Vehicle</Text>
+                </TouchableOpacity>
 
                 {loading ? (
                     <ActivityIndicator size="large" color={Colors.darkBlue} style={{ marginTop: 20 }} />
                 ) : (
                     filteredVehicles.map((vehicle, index) => (
-                        <View key={index} style={styles.card}>
-                            <PagerView
-                                style={styles.pagerView}
-                                initialPage={0}
-                                onPageSelected={(e) => setActiveSlide(e.nativeEvent.position)}
-                                useNext
-                            >
-                                {vehicle.photos.map((photo, photoIndex) => renderPagerItem(photo, photoIndex))}
-                            </PagerView>
-                            <View style={styles.paginationContainer}>
-                                {vehicle.photos.map((_, photoIndex) => (
-                                    <View
-                                        key={photoIndex}
-                                        style={[
-                                            styles.dotStyle,
-                                            { opacity: photoIndex === activeSlide ? 1 : 0.4 },
-                                        ]}
-                                    />
-                                ))}
-                            </View>
-                            <View style={{ flexDirection: 'row', justifyContent: 'space-between', margin: 10 }}>
-                              <View>
-                                  <Text style={{ fontWeight: 'bold' }}>Departure</Text>
-                                  <Text>{vehicle.departurePlace}</Text>
-                              </View>
-                              <View>
-                                  <Text style={{ fontWeight: 'bold' }}>Destination</Text>
-                                  <Text>{vehicle.destinationPlace}</Text>
-                              </View>
-                          </View>
-                            <Text style={styles.cardText}>Departure Date: <Text style={{ color: "black" }}>{vehicle.departureDate}</Text></Text>
-                            <Text style={styles.cardText}>Departure Time: <Text style={{ color: "black" }}>{vehicle.departureTime}</Text></Text>
-                            {/* <Text style={styles.cardText}>Vehicle Type: <Text style={{ color: "black" }}>{vehicle.}</Text></Text> */}
-                            <Text style={styles.cardText}>Contact Number: <Text style={{ color: "black" }}>{vehicle.mobileNumber}</Text></Text>
-                            <Text style={styles.cardText}>More Info About Trip: <Text style={{ color: "black" }}>{vehicle.moreInformation}</Text></Text>
-                        </View>
+                        <EmptyVehicleCard vehicle={vehicle} index={index} handleDelete={handleDeleteEmptyVehicle} />
                     ))
                 )}
             </ScrollView>
 
-            <Modal
-                animationType="fade"
-                transparent={true}
-                visible={showImageModal}
-                onRequestClose={() => setShowImageModal(false)}
-            >
-                <BlurOverlay visible={showImageModal} onRequestClose={() => setShowImageModal(false)} />
-
-                <View style={styles.modalContainer}>
-                    {selectedImage &&
-                        <View style={styles.modalContent}>
-                            <Image source={{ uri: selectedImage }} style={styles.modalImage} />
-                            <TouchableOpacity style={styles.closeButton} onPress={() => setShowImageModal(false)}>
-                                <Text style={styles.closeButtonText}>Close</Text>
-                            </TouchableOpacity>
-                        </View>
-                    }
-                </View>
-            </Modal>
         </SafeAreaView>
     );
 };
 
+const EmptyVehicleCard = ({ vehicle, index, handleDelete }: EmptyVehicleCardProps) => {
+
+    const [isDeleteModalVisible, setIsDeleteModalVisible] = useState<boolean>(false)
+    const [selectedVehicle, setSelectedVehicle] = useState<Vehicle | null>(null)
+    const { setEditData } = useGlobalContext();
+
+    const closeModal = () => {
+        setIsDeleteModalVisible(false)
+    }
+
+    const handler = () => {
+        if (selectedVehicle) {
+            handleDelete(selectedVehicle._id)
+            setIsDeleteModalVisible(false)
+        }
+    }
+
+
+
+    return (
+        <>
+            <View key={index} style={styles.card}>
+                <View style={styles.cardHeader}>
+
+                    <TouchableOpacity onPress={() => { setEditData(vehicle); router.push("edit_empty_vehicle") }} style={styles.editButton}>
+                        <Text style={styles.editButtonText}>Edit Route</Text>
+                    </TouchableOpacity>
+
+                    <TouchableOpacity onPress={() => { setIsDeleteModalVisible(true); setSelectedVehicle(vehicle); }}>
+                        <MaterialIcons name="delete" size={24} color={Colors.darkBlue} />
+                    </TouchableOpacity>
+                </View>
+                <Carousel images={vehicle.photos} />
+                <View style={{ flexDirection: 'row', justifyContent: 'space-between', margin: 10 }}>
+                    <View style={{ alignItems: "center" }}>
+                        <Text style={{ fontWeight: 'bold' }}>Departure</Text>
+                        <Text>{vehicle.departurePlace}</Text>
+                    </View>
+                    <View style={{ alignItems: "center" }}>
+                        <Text style={{ fontWeight: 'bold' }}>Destination</Text>
+                        <Text>{vehicle.destinationPlace}</Text>
+                    </View>
+                </View>
+                <View style={styles.cardTextContainer}>
+                    <Text style={styles.cardText}>Departure Date: </Text>
+                    <Text style={{ color: "black" }}>{vehicle.departureDate ? formatDate(vehicle.departureDate) : "Time not added"}</Text>
+                </View>
+                <View style={styles.cardTextContainer}>
+                    <Text style={styles.cardText}>Departure Time: </Text>
+                    <Text style={{ color: "black" }}>{vehicle.departureTime ? new Date(vehicle.departureTime).toLocaleTimeString('en-US', { hour: 'numeric', minute: 'numeric', hour12: true }) : "Time not added"}</Text>
+                </View>
+                <View style={styles.cardTextContainer}>
+                    <Text style={styles.cardText}>Contact Number: </Text>
+                    <Text style={{ color: "black" }}>{vehicle.mobileNumber}</Text>
+                </View>
+                <View style={styles.cardTextContainer}>
+                    <Text style={styles.cardText}>More Info About Trip: </Text>
+                    <Text style={{ color: "black" }}>{vehicle.moreInformation}</Text>
+                </View>
+            </View>
+            <ConfirmationModal actionBtnText="Delete" closeModal={closeModal} isVisible={isDeleteModalVisible} message="Are you sure you want to delete empty vehicle" handler={handler} />
+        </>
+    )
+}
+
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        padding: 20,
+        paddingVertical: 20,
+        paddingHorizontal: 10,
         backgroundColor: "#ffffff",
     },
     searchContainer: {
@@ -221,9 +229,39 @@ const styles = StyleSheet.create({
         marginLeft: 10,
         color: Colors.secondary,
     },
+    addButton: {
+        backgroundColor: Colors.darkBlue,
+        borderRadius: 8,
+        padding: 8,
+        alignItems: "center",
+        marginBottom: 10,
+        width: 180
+    },
+    addButtonText: {
+        color: "#fff",
+        fontSize: 16,
+        fontWeight: "bold",
+    },
+    cardHeader: {
+        flexDirection: "row",
+        justifyContent: "flex-end",
+        marginBottom: 10,
+        alignItems: "center",
+        gap: 5,
+    },
+    editButton: {
+        backgroundColor: Colors.darkBlue,
+        borderRadius: 5,
+        padding: 5,
+    },
+    editButtonText: {
+        color: "#fff",
+        fontSize: 12,
+    },
     card: {
         backgroundColor: "#fff",
-        padding: 20,
+        paddingVertical: 20,
+        paddingHorizontal: 10,
         borderRadius: 5,
         elevation: 3,
         shadowColor: "#000",
@@ -232,8 +270,12 @@ const styles = StyleSheet.create({
         shadowRadius: 5,
         marginBottom: 20,
     },
-    cardText: {
+    cardTextContainer: {
         marginBottom: 10,
+        flexDirection: "row",
+    },
+    cardText: {
+
         color: Colors.secondary,
         fontWeight: "500",
         fontSize: 15,
@@ -300,4 +342,4 @@ const styles = StyleSheet.create({
     },
 });
 
-export default RentVehicleScreen;
+export default EmptyVehicleScreen;

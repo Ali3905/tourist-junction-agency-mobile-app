@@ -25,7 +25,7 @@ const Carousel = ({ images }) => {
         showsHorizontalScrollIndicator={false}
         keyExtractor={(_, index) => index.toString()}
         renderItem={({ item }) => (
-          <Image source={item} style={styles.image} />
+          <Image source={item.uri?{item}:{ uri: item }} style={styles.image} />
         )}
         onViewableItemsChanged={onViewRef.current}
         viewabilityConfig={viewConfigRef.current}
