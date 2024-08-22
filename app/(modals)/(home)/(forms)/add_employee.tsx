@@ -35,6 +35,8 @@ const AddEmployeeScreen: React.FC = () => {
     const [employerType, setEmployerType] = useState("");
     const [selfie, setSelfie] = useState<ImagePicker.ImagePickerAsset | null>(null);
     const [aadharImage, setAadharImage] = useState<ImagePicker.ImagePickerAsset | null>(null);
+    const [isPasswordVisible, setIsPasswordVisible] = useState<boolean>(false)
+
     const [loading, setLoading] = useState(false);
     const [cityList, setCityList] = useState<CityType[]>([]);
     const { apiCaller, setRefresh } = useGlobalContext(); // Ensure your global context provides an apiCaller
@@ -53,12 +55,12 @@ const AddEmployeeScreen: React.FC = () => {
             Alert.alert("Please fill all fields and provide both images.");
             return;
         }
-    
+
         if (mobile.length !== 10) {
             Alert.alert("Please enter a valid 10-digit phone number.");
             return;
         }
-    
+
         const formData = new FormData();
         formData.append('name', name);
         formData.append('mobileNumber', mobile);
@@ -66,7 +68,7 @@ const AddEmployeeScreen: React.FC = () => {
         formData.append('city', city);
         formData.append('state', state);
         formData.append('employeeType', employerType);
-    
+
         if (selfie) {
             formData.append('photo', {
                 uri: selfie,
@@ -74,7 +76,7 @@ const AddEmployeeScreen: React.FC = () => {
                 name: 'employee_selfie.jpg'
             } as any);
         }
-    
+
         if (aadharImage) {
             formData.append('aadharCard', {
                 uri: aadharImage,
@@ -82,13 +84,13 @@ const AddEmployeeScreen: React.FC = () => {
                 name: 'aadhar_card.jpg'
             } as any);
         }
-    
+
         console.log(formData);
-        
+
         setLoading(true);
         try {
-            await apiCaller.post('/api/employee', formData, { 
-                headers: { 'Content-Type': 'multipart/form-data' } 
+            await apiCaller.post('/api/employee', formData, {
+                headers: { 'Content-Type': 'multipart/form-data' }
             });
             setLoading(false);
             setRefresh(prev => !prev);
@@ -153,12 +155,15 @@ const AddEmployeeScreen: React.FC = () => {
                     </View>
                     <View style={styles.inputGroup}>
                         <Text style={styles.label}>Password</Text>
-                        <TextInput
-                            style={styles.input}
-                            value={password}
-                            onChangeText={(text) => setPassword(text)}
-                            secureTextEntry
-                        />
+                        <View style={{ ...styles.input, flexDirection: "row", alignItems: "center" }}>
+                            <TextInput
+                                style={{ flex: 1 }}
+                                value={password}
+                                onChangeText={(text) => setPassword(text)}
+                                secureTextEntry={isPasswordVisible ? false : true}
+                            />
+                            <TouchableOpacity onPress={() => setIsPasswordVisible(prev => !prev)} style={{ backgroundColor: Colors.darkBlue, padding: 4, borderRadius: 5 }} ><Text style={[{ color: "#fff" }]}>{isPasswordVisible ? "Hide" : "Show"}</Text></TouchableOpacity>
+                        </View>
                     </View>
                     <View style={styles.inputGroup}>
                         <Text style={styles.label}>State</Text>

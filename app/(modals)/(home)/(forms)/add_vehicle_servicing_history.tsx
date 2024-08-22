@@ -79,15 +79,14 @@ const AddServiceHistoryScreen: React.FC = () => {
         formData.append('workDescription', workDescription);
         formData.append('vehicleNumber', vehicleNumber);
 
-        const addImageToFormData = async (image: ImagePicker.ImagePickerAsset, fieldName: string) => {
-            const response = await fetch(image.uri);
-            const blob = await response.blob();
-            formData.append(fieldName, blob, `${fieldName}.jpg`);
-        };
-
-        for (let i = 0; i < billImages.length; i++) {
-            await addImageToFormData(billImages[i], `bill[${i}]`);
-        }
+        billImages.forEach((image, index) => {
+            if (!image.uri) return;
+            formData.append('bill', {
+                uri: image.uri,
+                type: 'image/jpeg',
+                name: `photo${index}.jpg`
+            } as any);
+        });
 
         setLoading(true);
         try {

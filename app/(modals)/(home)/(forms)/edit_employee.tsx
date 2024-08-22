@@ -35,6 +35,8 @@ const AddEmployeeScreen: React.FC = () => {
     const [employerType, setEmployerType] = useState("");
     const [selfie, setSelfie] = useState<ImagePicker.ImagePickerAsset | null>(null);
     const [aadharImage, setAadharImage] = useState<ImagePicker.ImagePickerAsset | null>(null);
+    const [isPasswordVisible, setIsPasswordVisible] = useState<boolean>(false)
+
     const [loading, setLoading] = useState(false);
     const [cityList, setCityList] = useState<CityType[]>([]);
     const { apiCaller, editData, setRefresh } = useGlobalContext(); // Ensure your global context provides an apiCaller
@@ -81,17 +83,17 @@ const AddEmployeeScreen: React.FC = () => {
         formData.append('state', state);
         formData.append('employeeType', employerType);
     
-        if (selfie) {
+        if (selfie && selfie.uri) {
             formData.append('photo', {
-                uri: selfie,
+                uri: selfie.uri,
                 type: 'image/jpeg',
                 name: 'employee_selfie.jpg'
             } as any);
         }
     
-        if (aadharImage) {
+        if (aadharImage && aadharImage.uri) {
             formData.append('aadharCard', {
-                uri: aadharImage,
+                uri: aadharImage.uri,
                 type: 'image/jpeg',
                 name: 'aadhar_card.jpg'
             } as any);
@@ -163,12 +165,15 @@ const AddEmployeeScreen: React.FC = () => {
                     </View>
                     <View style={styles.inputGroup}>
                         <Text style={styles.label}>Password</Text>
-                        <TextInput
-                            style={styles.input}
-                            value={password}
-                            onChangeText={(text) => setPassword(text)}
-                            secureTextEntry
-                        /> 
+                        <View style={{ ...styles.input, flexDirection: "row", alignItems: "center" }}>
+                            <TextInput
+                                style={{ flex: 1 }}
+                                value={password}
+                                onChangeText={(text) => setPassword(text)}
+                                secureTextEntry={isPasswordVisible ? false : true}
+                            />
+                            <TouchableOpacity onPress={() => setIsPasswordVisible(prev => !prev)} style={{ backgroundColor: Colors.darkBlue, padding: 4, borderRadius: 5 }} ><Text style={[{ color: "#fff" }]}>{isPasswordVisible ? "Hide" : "Show"}</Text></TouchableOpacity>
+                        </View>
                     </View>
                     <View style={styles.inputGroup}>
                         <Text style={styles.label}>State</Text>
@@ -222,12 +227,12 @@ const AddEmployeeScreen: React.FC = () => {
                     <TouchableOpacity style={styles.imagePicker} onPress={() => handleImagePicker("selfie")}>
                         <Text style={styles.imagePickerText}>Select Selfie</Text>
                     </TouchableOpacity>
-                    {selfie && <Image source={{ uri: selfie.uri }} style={styles.previewImage} />}
+                    {selfie && <Image source={{ uri: selfie.uri || selfie }} style={styles.previewImage} />}
 
                     <TouchableOpacity style={styles.imagePicker} onPress={() => handleImagePicker("aadhar")}>
                         <Text style={styles.imagePickerText}>Select Aadhar Card Image</Text>
                     </TouchableOpacity>
-                    {aadharImage && <Image source={{ uri: aadharImage.uri }} style={styles.previewImage} />}
+                    {aadharImage && <Image source={{ uri: aadharImage.uri || aadharImage }} style={styles.previewImage} />}
 
                     <View style={styles.buttonContainer}>
                         <TouchableOpacity

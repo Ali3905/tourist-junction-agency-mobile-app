@@ -75,7 +75,7 @@ const AddServiceHistoryScreen: React.FC = () => {
     };
 
     const handleAddServiceHistory = async () => {
-        if (!garageName || !garageNumber || !date || !workDescription || !vehicleId || billImages.length === 0) {
+        if (!garageName || !garageNumber || !date || !workDescription || !vehicleId) {
             Alert.alert("Please fill all fields and provide at least one bill image.");
             return;
         }
@@ -88,12 +88,14 @@ const AddServiceHistoryScreen: React.FC = () => {
         formData.append('vehicleId', vehicleId);
 
         billImages.forEach((image, index) => {
+            if (!image.uri) return;
             formData.append('bill', {
                 uri: image.uri,
                 type: 'image/jpeg',
-                name: `bill${index}.jpg`
+                name: `photo${index}.jpg`
             } as any);
         });
+
 
         setLoading(true);
         try {
@@ -198,7 +200,7 @@ const AddServiceHistoryScreen: React.FC = () => {
                         </TouchableOpacity>
                         {billImages.map((image, index) => (
                             <View key={index} style={styles.imageContainer}>
-                                <Image source={{ uri: image.uri }} style={styles.previewImage} />
+                                <Image source={{ uri: image.uri || image }} style={styles.previewImage} />
                                 <TouchableOpacity style={styles.removeButton} onPress={() => removeImage(index)}>
                                     <Text style={styles.removeButtonText}>Remove</Text>
                                 </TouchableOpacity>

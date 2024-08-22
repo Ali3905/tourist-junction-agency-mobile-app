@@ -30,7 +30,7 @@ const EditBusScreen: React.FC = () => {
   const [selectedAC, setSelectedAC] = useState<string | null>(null);
   const [selectedForRent, setSelectedForRent] = useState<boolean>(false);
   const [selectedForSell, setSelectedForSell] = useState<boolean>(false);
-  const [busImages, setBusImages] = useState<ImagePicker.ImagePickerAsset[]>([]);
+  const [busImages, setBusImages] = useState<ImagePicker.ImagePickerAsset[] | string[]>([]);
 
   const [isSeatPushBack, setIsSeatPushBack] = useState<string>("false")
   const [isLuggageSpace, setIsLuggageSpace] = useState<string>("false")
@@ -394,14 +394,23 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
     height: 40,
   },
-  featuresContainer: {
+  featuresOuterContainer: {
+    flexDirection: "column",
+    // justifyContent: "space-between",
+    alignItems: 'center',
+    backgroundColor: Colors.secondary,
+    paddingTop: 10,
+    borderRadius: 10,
+    marginBottom: 15,
+},
+featuresContainer: {
     flexDirection: "row",
     justifyContent: "space-between",
     backgroundColor: Colors.secondary,
     padding: 10,
     borderRadius: 10,
     marginBottom: 15,
-  },
+},
   radioButtonGroup: {
     flexDirection: "row",
     flexWrap: "wrap",

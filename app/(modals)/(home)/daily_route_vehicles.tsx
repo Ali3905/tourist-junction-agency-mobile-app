@@ -72,7 +72,7 @@ const DailyRouteVehicles: React.FC = () => {
   const [selectedSecondaryDriver, setSelectedSecondaryDriver] = useState<string>("");
   const [selectedCleaner, setSelectedCleaner] = useState<string>("");
   const [instruction, setInstruction] = useState("")
-  
+
   const [searchQuery, setSearchQuery] = useState("");
   const { apiCaller, setEditData, refresh } = useGlobalContext();
   const [inputHeight, setInputHeight] = useState(50);
@@ -184,7 +184,7 @@ const DailyRouteVehicles: React.FC = () => {
   const filterDailyRoutes = (query: string) => {
     return dailyRoutes.filter((route) =>
       Object.values(route).some((value) =>
-        String(value).toLowerCase().includes(query.toLowerCase())
+        String(value).toLowerCase().includes(query.toLowerCase()) || String(route.vehicle.number).toLowerCase().includes(query.toLowerCase())
       )
     );
   };
@@ -324,6 +324,9 @@ const DailyRouteVehicles: React.FC = () => {
               <View>
                 <Text style={{ flex: 1, fontWeight: 'bold', fontSize: 12, marginBottom: 4 }}>Phone Pe No: {route?.phonepeNumber} </Text>
               </View>
+              <View>
+                <Text style={{ flex: 1, fontWeight: 'bold', fontSize: 12, marginBottom: 4 }}>Discount: {route?.discount}% </Text>
+              </View>
               <Text style={{ flex: 1, fontWeight: 'bold', color: '#87CEEB' }}>Amenities:</Text>
               <View style={{
                 paddingTop: 1,
@@ -389,29 +392,9 @@ const DailyRouteVehicles: React.FC = () => {
                   <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginBottom: 20, paddingTop: 14 }}>
                     {/* Column for Courier Service and QR Code Button */}
                     <View style={{ alignItems: 'center' }}>
-                      {route?.doesProvideCorierService ? <Text
-                        style={{
-                          fontWeight: 'bold',
-                          fontSize: 12,
-                          marginBottom: 5,
-                          backgroundColor: '#e6f2ff', // Yellow background
-                          paddingVertical: 5,
-                          paddingHorizontal: 6,
-                          borderRadius: 5, // Optional: rounded corners
-                        }}
-                      >
+                      {route?.doesProvideCorierService ? <Text style={styles.facilityBtn}>
                         Courier Service
-                      </Text> : <Text
-                        style={{
-                          fontWeight: 'bold',
-                          fontSize: 12,
-                          marginBottom: 5,
-                          // backgroundColor: '#e6f2ff', // Yellow background
-                          paddingVertical: 5,
-                          paddingHorizontal: 6,
-                          borderRadius: 5, // Optional: rounded corners
-                        }}
-                      >
+                      </Text> : <Text style={[styles.facilityBtn, { backgroundColor: "transparent" }]}>
 
                       </Text>}
                       <CustomButton
@@ -422,29 +405,9 @@ const DailyRouteVehicles: React.FC = () => {
 
                     {/* Column for Train Ticket and Driver Button */}
                     <View style={{ alignItems: 'center' }}>
-                      {route?.doesBookTrainTickets ? <Text
-                        style={{
-                          fontWeight: 'bold',
-                          fontSize: 12,
-                          marginBottom: 5,
-                          backgroundColor: '#e6f2ff', // Yellow background
-                          paddingVertical: 5,
-                          paddingHorizontal: 6,
-                          borderRadius: 5, // Optional: rounded corners
-                        }}
-                      >
+                      {route?.doesBookTrainTickets ? <Text style={styles.facilityBtn}>
                         Train Ticket
-                      </Text> : <Text
-                        style={{
-                          fontWeight: 'bold',
-                          fontSize: 12,
-                          marginBottom: 5,
-                          // backgroundColor: '#e6f2ff', // Yellow background
-                          paddingVertical: 5,
-                          paddingHorizontal: 6,
-                          borderRadius: 5, // Optional: rounded corners
-                        }}
-                      >
+                      </Text> : <Text style={[styles.facilityBtn, { backgroundColor: "transparent" }]}>
 
                       </Text>}
                       <CustomButton
@@ -455,29 +418,9 @@ const DailyRouteVehicles: React.FC = () => {
 
                     {/* Column for Two Wheeler Courier and Chart Button */}
                     <View style={{ alignItems: 'center' }}>
-                      {route?.doesCarryTwoWheelers ? <Text
-                        style={{
-                          fontWeight: 'bold',
-                          fontSize: 12,
-                          marginBottom: 5,
-                          backgroundColor: '#e6f2ff', // Yellow background
-                          paddingVertical: 5,
-                          paddingHorizontal: 6,
-                          borderRadius: 5, // Optional: rounded corners
-                        }}
-                      >
+                      {route?.doesCarryTwoWheelers ? <Text style={styles.facilityBtn}>
                         Two Wheeler Courier
-                      </Text> : <Text
-                        style={{
-                          fontWeight: 'bold',
-                          fontSize: 12,
-                          marginBottom: 5,
-                          // backgroundColor: '#e6f2ff', // Yellow background
-                          paddingVertical: 5,
-                          paddingHorizontal: 6,
-                          borderRadius: 5, // Optional: rounded corners
-                        }}
-                      >
+                      </Text> : <Text  style={[styles.facilityBtn, { backgroundColor: "transparent" }]}>
 
                       </Text>}
                       <CustomButton
@@ -839,6 +782,15 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     fontSize: 8,
     fontWeight: '900'
+  },
+  facilityBtn: {
+    fontWeight: 'bold',
+    fontSize: 12,
+    marginBottom: 5,
+    backgroundColor: '#e6f2ff',
+    paddingVertical: 5,
+    paddingHorizontal: 6,
+    borderRadius: 5,
   },
   searchContainer: {
     flexDirection: "row",

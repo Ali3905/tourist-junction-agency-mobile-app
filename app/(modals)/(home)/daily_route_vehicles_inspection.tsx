@@ -64,7 +64,7 @@ const DailyRouteVehicles: React.FC = () => {
     try {
       setLoading(true);
       const response = await apiCaller.get('/api/dailyRoute');
-      const filteredRoutes = response.data.data.filter((route: DailyRoute) => route.status === "COMPLETED");
+      const filteredRoutes = response.data.data.filter((route: DailyRoute) => route.status === "FINALIZED");
       setDailyRoutes(filteredRoutes);
     } catch (err) {
       console.log(err);

@@ -119,14 +119,14 @@ const EmptyVehicleScreen: React.FC = () => {
                     </TouchableOpacity>
                     <TextInput
                         style={styles.searchInput}
-                        placeholder="Search..."
+                        placeholder="Search Destination City"
                         placeholderTextColor={Colors.secondary}
                         value={searchQuery}
                         onChangeText={setSearchQuery}
                     />
                 </View>
                 <TouchableOpacity onPress={() => router.push("add_empty_vehicle")} style={styles.addButton}>
-                    <Text style={styles.addButtonText}>Add Empty Vehicle</Text>
+                    <Text style={styles.addButtonText}>Create  Empty Vehicle Routes</Text>
                 </TouchableOpacity>
 
                 {loading ? (
@@ -235,7 +235,7 @@ const styles = StyleSheet.create({
         padding: 8,
         alignItems: "center",
         marginBottom: 10,
-        width: 180
+        width: 250
     },
     addButtonText: {
         color: "#fff",

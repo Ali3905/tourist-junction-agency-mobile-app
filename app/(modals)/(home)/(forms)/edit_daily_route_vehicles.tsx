@@ -441,23 +441,6 @@ const AddRouteScreen: React.FC = () => {
                             />
                         </View>
 
-                        <View style={styles.inputGroup}>
-                            <Text style={styles.label}>Add your PhonePe no here</Text>
-                            <TextInput
-                                style={styles.input}
-                                keyboardType="numeric"
-                                value={phonePeNumber?.toString() || ""}
-                                onChangeText={(text) => setPhonePeNumber(Number(text))}
-                            />
-                        </View>
-                        <View style={styles.inputGroup}>
-                            <Text style={styles.label}>Add your PhonePe name here</Text>
-                            <TextInput
-                                style={styles.input}
-                                value={phonePeName}
-                                onChangeText={(text) => setPhonePeName(text)}
-                            />
-                        </View>
                         <TouchableOpacity style={styles.imagePicker} onPress={() => handleImagePicker("QR")}>
                             <Text style={styles.imagePickerText}>Upload QR</Text>
                         </TouchableOpacity>

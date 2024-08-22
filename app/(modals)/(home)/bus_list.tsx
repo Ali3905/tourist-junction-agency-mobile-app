@@ -168,8 +168,64 @@ const BusListScreen: React.FC = () => {
                             <Text style={styles.cardText}>Chassis Brand: <Text style={{ color: "black" }}>{bus.chassisBrand}</Text></Text>
                             <Text style={styles.cardText}>Location: <Text style={{ color: "black" }}>{bus.location}</Text></Text>
                             <Text style={styles.cardText}>Contact Number: <Text style={{ color: "black" }}>{bus.contactNumber}</Text></Text>
-                            <Text style={styles.cardText}>{bus.isAC ? "AC /" : "NON AC /"} {bus.isForRent && " Rent /"} {bus.isForSell && " Sell"}</Text>
-                            <Text style={styles.cardText}>{bus.isLuggageSpace ? "Carry Luggage /" : ""} {bus.isSeatPushBack && " Seat Push Back /"} {bus.curtain && " Curtain and Seat Cover"}</Text>
+                            {/* <Text style={styles.cardText}>{bus.isAC ? "AC /" : "NON AC /"} {bus.isForRent && " Rent /"} {bus.isForSell && " Sell"}</Text>
+                            <Text style={styles.cardText}>{bus.isLuggageSpace ? "Carry Luggage /" : ""} {bus.isSeatPushBack && " Seat Push Back /"} {bus.curtain && " Curtain and Seat Cover"}</Text> */}
+                            <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginBottom: 20, paddingTop: 14 }}>
+                                {/* Column for Courier Service and QR Code Button */}
+                                <View style={{ alignItems: 'center' }}>
+                                    {bus?.isAC ? <Text style={styles.facilityBtn}>
+                                        AC
+                                    </Text> : <Text style={[styles.facilityBtn]}>
+                                        Non-AC
+                                    </Text>}
+                                </View>
+
+                                {/* Column for Train Ticket and Driver Button */}
+                                <View style={{ alignItems: 'center' }}>
+                                    {bus?.isForRent ? <Text style={styles.facilityBtn}>
+                                        For Rent
+                                    </Text> : <Text style={[styles.facilityBtn, { backgroundColor: "transparent" }]}>
+
+                                    </Text>}
+                                </View>
+
+                                {/* Column for Two Wheeler Courier and Chart Button */}
+                                <View style={{ alignItems: 'center' }}>
+                                    {bus?.isForSell ? <Text style={styles.facilityBtn}>
+                                        For Sell
+                                    </Text> : <Text style={[styles.facilityBtn, { backgroundColor: "transparent" }]}>
+
+                                    </Text>}
+                                </View>
+                            </View>
+                            <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginBottom: 20, paddingTop: 14 }}>
+                                {/* Column for Courier Service and QR Code Button */}
+                                <View style={{ alignItems: 'center' }}>
+                                    {bus?.curtain ? <Text style={styles.facilityBtn}>
+                                        Seat Cover
+                                    </Text> : <Text style={[styles.facilityBtn, { backgroundColor: "transparent" }]}>
+                            
+                                    </Text>}
+                                </View>
+
+                                {/* Column for Train Ticket and Driver Button */}
+                                <View style={{ alignItems: 'center' }}>
+                                    {bus?.isLuggageSpace ? <Text style={styles.facilityBtn}>
+                                        Luggage Space
+                                    </Text> : <Text style={[styles.facilityBtn, { backgroundColor: "transparent" }]}>
+
+                                    </Text>}
+                                </View>
+
+                                {/* Column for Two Wheeler Courier and Chart Button */}
+                                <View style={{ alignItems: 'center' }}>
+                                    {bus?.isSeatPushBack ? <Text style={styles.facilityBtn}>
+                                        Seat Push Back
+                                    </Text> : <Text style={[styles.facilityBtn, { backgroundColor: "transparent" }]}>
+
+                                    </Text>}
+                                </View>
+                            </View>
                             <Text style={{ flex: 1, fontWeight: 'bold', color: '#87CEEB' }}>Amenities:</Text>
                             <View style={{
                                 paddingTop: 1,
@@ -283,6 +339,15 @@ const styles = StyleSheet.create({
         flex: 1,
         marginLeft: 10,
         color: Colors.secondary,
+    },
+    facilityBtn: {
+        fontWeight: 'bold',
+        fontSize: 12,
+        marginBottom: 5,
+        backgroundColor: '#e6f2ff',
+        paddingVertical: 5,
+        paddingHorizontal: 6,
+        borderRadius: 5,
     },
     addButton: {
         backgroundColor: Colors.darkBlue,

@@ -11,6 +11,7 @@ import {
     TextInput,
     Image,
     ActivityIndicator,
+    Alert,
 } from "react-native";
 import { BlurView } from 'expo-blur';
 import { Colors } from "@/constants/Colors";
@@ -59,7 +60,7 @@ const ServiceHistoryScreen: React.FC = () => {
 
     const findVehicleByNumber = (id: string) => {
         return vehicleNumbers.find(vehicle => vehicle.id === id);
-      };
+    };
 
     const fetchVehiclesDocs = async () => {
         try {
@@ -78,7 +79,7 @@ const ServiceHistoryScreen: React.FC = () => {
         const month = date.getUTCMonth() + 1;
         const day = date.getUTCDate();
         return `${month}/${day}/${year}`;
-      }
+    }
 
     useEffect(() => {
         fetchVehiclesDocs();
@@ -91,9 +92,20 @@ const ServiceHistoryScreen: React.FC = () => {
     };
 
     const handleDelete = async () => {
-        await apiCaller.delete(`/api/vehicle?vehicleId=${idToDelete}`);
-        setShowDeleteModal(false);
-        fetchVehiclesDocs()
+        try {
+            if (idToDelete) {
+                await apiCaller.delete(`/api/service?serviceId=${idToDelete}`);
+                setShowDeleteModal(false);
+                fetchVehiclesDocs()
+            } else {
+                Alert.alert("Failed", "Could not get the id to delete vehicle service")
+            }
+        } catch (error) {
+            console.log(error);
+            Alert.alert("Failed", "Could not delete vehicle service")
+
+
+        }
     };
 
     const filterServiceHistory = (query: string) => {
@@ -110,27 +122,27 @@ const ServiceHistoryScreen: React.FC = () => {
 
     const filteredServiceHistory = searchQuery ? filterServiceHistory(searchQuery) : docs;
 
-   
-        const extractNumbers = (data: Vehicle[]): { id: string, number: string }[] => {
-            return data.map(vehicle => ({ id: vehicle._id, number: vehicle.number }));
-        };
+
+    const extractNumbers = (data: Vehicle[]): { id: string, number: string }[] => {
+        return data.map(vehicle => ({ id: vehicle._id, number: vehicle.number }));
+    };
 
 
-        const fetchVehicles = async () => {
-            try {
-                setLoading(true);
-                const response = await apiCaller.get('/api/vehicle');
-                setVehicleNumbers(extractNumbers(response.data.data.vehicles));
-            } catch (err) {
-                console.log(err);
-            } finally {
-                setLoading(false);
-            }
-        };
+    const fetchVehicles = async () => {
+        try {
+            setLoading(true);
+            const response = await apiCaller.get('/api/vehicle');
+            setVehicleNumbers(extractNumbers(response.data.data.vehicles));
+        } catch (err) {
+            console.log(err);
+        } finally {
+            setLoading(false);
+        }
+    };
 
-        useEffect(() => {
-            fetchVehicles();
-        }, []);
+    useEffect(() => {
+        fetchVehicles();
+    }, []);
 
 
     return (

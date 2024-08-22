@@ -341,7 +341,7 @@ interface DailyRoute {
   cleaner: Cleaner | null;
   departureTime: string;
   instructions: string;
-  status: "STARTED" | "COMPLETED";
+  status: "STARTED" | "COMPLETED" | "STARTED" | "FINALIZED";
   afterJourneyNote: string;
   beforeJourneyNote: string;
   beforeJourneyPhotos: string[];
@@ -359,6 +359,7 @@ interface DailyRoute {
   doesCarryTwoWheelers: boolean;
   QR: string;
   seatingArrangement: string;
+  discount: number
 }
 
 

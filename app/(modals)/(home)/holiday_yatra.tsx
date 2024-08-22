@@ -82,7 +82,7 @@ const holiday_yatra = () => {
           </View>
 
           <TouchableOpacity onPress={() => router.push("add_holiday_yatra")} style={styles.addButton}>
-            <Text style={styles.addButtonText}>Add Yatra</Text>
+            <Text style={styles.addButtonText}>Create Holidays and Yatra Packages</Text>
           </TouchableOpacity>
 
           {
@@ -131,7 +131,7 @@ const TourCard = ({ tour, handleDelete }: any) => {
             <Text style={styles.editButtonText}>Delete</Text>
           </TouchableOpacity>
         </View>
-        <Image source={{ uri: tour.photo }} height={200} />
+        <Image source={{ uri: tour.photo }} height={350} />
 
         <Text style={styles.cardText}>{tour?.agencyName}<Text style={{ color: "black" }}></Text></Text>
         <View style={{ padding: 1 }}>
@@ -204,16 +204,17 @@ const styles = StyleSheet.create({
     fontSize: 12,
   },
   image: {
-    width: '100%', // Full width of the container
-    height: height * 0.3, // Adjusted height to 30% of screen height
+    width: '100%',
+    height: height * 0.3,
   },
   addButton: {
     backgroundColor: Colors.darkBlue,
     borderRadius: 8,
     padding: 8,
+    paddingHorizontal: 4,
     alignItems: "center",
     marginBottom: 10,
-    width: 120
+    width: 280
   },
   addButtonText: {
     color: "#fff",

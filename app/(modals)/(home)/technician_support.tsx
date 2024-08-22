@@ -87,8 +87,8 @@ const TechnicianSupport: React.FC = () => {
             if (technicianTypeFilter) url += `&technicianType=${technicianTypeFilter}`;
             if (searchQuery) url += `&search=${searchQuery}`;
 
-            console.log({url});
-            console.log({technicianTypeFilter});
+            // console.log({url});
+            // console.log({technicianTypeFilter});
             
 
             const response = await apiCaller.get(url);
@@ -147,8 +147,8 @@ const TechnicianSupport: React.FC = () => {
     };
 
     const renderTechnicianItem = ({ item }: { item: Technician }) => (
-        <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-            <Text>Check Airbnb Ratings Below:</Text>
+        <View style={styles.card}>
+            {/* <Text>Check Airbnb Ratings Below:</Text>
             <View style={styles.ratingContainer}>
                 <AirbnbRating />
                 <AirbnbRating
@@ -157,7 +157,7 @@ const TechnicianSupport: React.FC = () => {
                     defaultRating={11}
                     size={20}
                 />
-            </View>
+            </View> */}
 
             <View style={[styles.cardHeader, { marginBottom: 2, marginTop: 5 }]}>
                 <TouchableOpacity onPress={() => handlePress(item.mobileNumber)}>
@@ -250,8 +250,8 @@ const TechnicianSupport: React.FC = () => {
                     style={styles.searchInput}
                     placeholder="Search technician, city"
                     placeholderTextColor={Colors.secondary}
-                    value={searchQuery}
-                    onChangeText={setSearchQuery}
+                    value={cityFilter}
+                    onChangeText={setCityFilter}
                 />
             </View>
 
@@ -284,7 +284,7 @@ const TechnicianSupport: React.FC = () => {
                     </Picker>
                 </View>
 
-                <View style={styles.locationFilterContainer}>
+                {/* <View style={styles.locationFilterContainer}>
                     <Picker
                         selectedValue={stateFilter}
                         style={styles.locationPicker}
@@ -307,7 +307,7 @@ const TechnicianSupport: React.FC = () => {
                             <Picker.Item key={city.name} label={city.name} value={city.name} />
                         ))}
                     </Picker>
-                </View>
+                </View> */}
             </View>
 
             <TouchableOpacity onPress={() => router.push("add_technician")} style={styles.addButton}>

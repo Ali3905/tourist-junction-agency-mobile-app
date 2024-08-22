@@ -138,7 +138,7 @@ const EmployeeListScreen: React.FC = () => {
                             <View style={styles.imageContainer}>
                                 <TouchableOpacity onPress={() => handleViewImage(employee.photo)} >
                                     <Image
-                                        source={{ uri: employee.photo }}
+                                        source={employee.photo ? { uri: employee.photo } : require("@/assets/images/avatar.jpg")}
                                         style={styles.driverImage}
                                     />
                                 </TouchableOpacity>
