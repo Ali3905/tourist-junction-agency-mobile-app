@@ -196,7 +196,7 @@ const DailyRouteVehicles: React.FC = () => {
         <FontAwesome5 name="search" size={18} color={Colors.secondary} />
         <TextInput
           style={styles.searchInput}
-          placeholder="Search..."
+          placeholder="Search vehicle no"
           placeholderTextColor={Colors.secondary}
           value={searchQuery}
           onChangeText={setSearchQuery}
@@ -762,7 +762,7 @@ const DailyRouteVehicles: React.FC = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 1,
+    padding: 15,
     backgroundColor: "#EAEAEA",
   },
   circle: {
@@ -827,7 +827,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#fff",
     padding: 4,
     borderRadius: 5,
-    marginBottom: 20,
+    marginBottom: 10,
     paddingHorizontal: 8,
     elevation: 3,
     shadowColor: "#000",

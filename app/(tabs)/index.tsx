@@ -146,11 +146,11 @@ export default function HomeScreen() {
           </TouchableOpacity>
           <TouchableOpacity onPress={() => router.push('empty_vehicle_list')} style={styles.gridItem}>
             <Image source={require('@/assets/images/empty-vehicle-icon.png')} style={styles.iconEmpty} />
-            <Text style={styles.iconText} numberOfLines={2} ellipsizeMode="tail">Empty Vehicles</Text>
+            <Text style={styles.iconText} numberOfLines={2} ellipsizeMode="tail">Create Empty Vehicle Route</Text>
           </TouchableOpacity>
           <TouchableOpacity onPress={() => router.push('holiday_yatra')} style={styles.gridItem}>
             <Image source={require('@/assets/images/holiday_yatra.png')} style={styles.iconEmpty} />
-            <Text style={styles.iconText} numberOfLines={2} ellipsizeMode="tail">Holiday Yatra</Text>
+            <Text style={styles.iconText} numberOfLines={2} ellipsizeMode="tail">Create Holiday's & Yatra</Text>
           </TouchableOpacity>
         </View>
 
@@ -312,8 +312,9 @@ const styles = StyleSheet.create({
     resizeMode: 'contain',
   },
   iconEmpty: {
-    width: 45,
-    height: 45,
+    width: 50,
+    height: 50,
+     resizeMode: 'contain'
   },
   iconText: {
     marginTop: 5,
