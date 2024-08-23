@@ -48,7 +48,7 @@ const styles = StyleSheet.create({
     height: 200,
   },
   button_container: {
-    width: 240,
+    width: 200,
     gap: 25,
     justifyContent: "center",
     alignItems: "center"
@@ -56,13 +56,13 @@ const styles = StyleSheet.create({
   button: {
     borderRadius: 30,
     borderWidth: 2,
-    paddingVertical: 10,
+    paddingVertical: 5,
     alignItems: "center",
     width: "100%",
     borderColor: Colors.primary,
   },
   buttonText: {
-    fontSize: 21,
+    fontSize: 15,
   },
   wave_image: {
     width: "110%",
