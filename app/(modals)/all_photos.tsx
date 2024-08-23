@@ -54,40 +54,30 @@ const GalleryGridScreen: React.FC = () => {
     };
 
     const shareImages = async () => {
-        if (!(await Sharing.isAvailableAsync())) {
-            alert("Sharing isn't available on your platform");
-            return;
-        }
-
-        const localFiles = await Promise.all(
-            selectedImages.map(async (imageUrl, index) => {
-                const fileName = `image_${index}.jpg`;
-                const filePath = `${FileSystem.cacheDirectory}${fileName}`;
-                await FileSystem.copyAsync({
-                    from: imageUrl,
-                    to: filePath
-                });
-                return filePath;
-            })
-        );
-
         try {
-            for (const file of localFiles) {
-                await Sharing.shareAsync(file, {
-                    dialogTitle: 'Share this image',
-                    mimeType: 'image/jpeg',
-                    UTI: 'public.jpeg',
-                });
+            const fileUris = await Promise.all(
+                selectedImages.map(async (imageUri) => {
+                    const fileUri = FileSystem.documentDirectory + imageUri.split('/').pop();
+                    await FileSystem.downloadAsync(imageUri, fileUri);
+                    return fileUri;
+                })
+            );
+
+            if (await Sharing.isAvailableAsync()) {
+                await Sharing.shareAsync(fileUris.join(','));
+            } else {
+                alert('Sharing is not available on this device');
             }
         } catch (error) {
             console.error('Error sharing images:', error);
         }
     };
 
+
     const renderItem = ({ item }: { item: string }) => (
         <TouchableOpacity
             style={styles.imageContainer}
-            onPress={() => toggleImageSelection(item)}
+            onPress={() => setSelectedImages([item])}
         >
             <Image
                 source={{ uri: item }}
@@ -109,7 +99,7 @@ const GalleryGridScreen: React.FC = () => {
                 numColumns={numColumns}
             />
             <Button
-                title={`Share (${selectedImages.length})`}
+                title={`Share`}
                 onPress={shareImages}
                 disabled={selectedImages.length === 0}
             />

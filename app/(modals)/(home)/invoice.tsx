@@ -91,7 +91,6 @@ const InvoiceScreen: React.FC = () => {
         <tr><th>Rate per KM</th><td>${invoiceData.perKmRateInINR}</td></tr>
         <tr><th>Advance Amount</th><td>${invoiceData.advanceAmountInINR}</td></tr>
         <tr><th>Remaining Amount</th><td>${invoiceData.remainingAmountInINR}</td></tr>
-        <tr><th>Advance Place</th><td>${invoiceData.advancePlace}</td></tr>
         <tr><th>Departure Place</th><td>${invoiceData.departurePlace}</td></tr>
         <tr><th>Destination Place</th><td>${invoiceData.destinationPlace}</td></tr>
         <tr><th>Departure Date</th><td>${formatDate(invoiceData.departureDate)}</td></tr>
@@ -236,10 +235,6 @@ const InvoiceScreen: React.FC = () => {
       <View style={styles.row}>
         <Text style={styles.label}>Remaining Amount:</Text>
         <Text style={styles.value}>{invoiceData.remainingAmountInINR}</Text>
-      </View>
-      <View style={styles.row}>
-        <Text style={styles.label}>Advance Place:</Text>
-        <Text style={styles.value}>{invoiceData.advancePlace}</Text>
       </View>
       <View style={styles.row}>
         <Text style={styles.label}>Departure Place:</Text>

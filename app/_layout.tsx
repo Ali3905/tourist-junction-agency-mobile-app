@@ -37,13 +37,13 @@ export default function RootLayout() {
         <Stack.Screen name="(modals)/premiumDone" options={{ headerShown: false }} />
         <Stack.Screen name="(modals)/resetPasswordDone" options={{ headerShown: false }} />
         <Stack.Screen name="(modals)/resetPassword" options={{ headerShown: false }} />
-        <Stack.Screen name="(modals)/editProfile" options={{ headerShown: false }} />
+        {/* <Stack.Screen name="(modals)/edit_profile" options={{ headerShown: false } }/> */}
 
         <Stack.Screen name="(modals)/(home)/drivers_list" options={{  headerShadowVisible:false, headerTitle:"Driver List", headerTitleAlign:"center" }} />
         <Stack.Screen name="(modals)/(home)/drivers_all" options={{  headerShadowVisible:false, headerTitle:"All Drivers List", headerTitleAlign:"center" }} />
         <Stack.Screen name="(modals)/(home)/cleaners_list" options={{ headerShadowVisible:false, headerTitle:"Cleaner List", headerTitleAlign:"center" }} />
         <Stack.Screen name="(modals)/(home)/employee_list" options={{ headerShadowVisible:false, headerTitle:"Employee List", headerTitleAlign:"center" }} />
-        {/* <Stack.Screen name="(modals)/(home)/(forms)/edit_profile" options={{ headerShown: false }} /> */}
+        <Stack.Screen name="(modals)/(home)/(forms)/edit_profile" options={{ headerShown: false }} />
         <Stack.Screen name="(modals)/(home)/all_vehicle_list" options={{ headerShadowVisible:false, headerTitle:"All Vehicle List", headerTitleAlign:"center" }} />
         <Stack.Screen name="(modals)/(home)/car_list" options={{ headerShadowVisible:false, headerTitle:"Car List", headerTitleAlign:"center" }} />
         <Stack.Screen name="(modals)/(home)/bus_list" options={{ headerShadowVisible:false, headerTitle:"Bus List", headerTitleAlign:"center" }} />

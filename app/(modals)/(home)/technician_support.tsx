@@ -122,7 +122,6 @@ const TechnicianSupport: React.FC = () => {
 
     const handlePress = (number: string) => {
         Linking.openURL(`tel:${number}`);
-        console.log('Phone number dialed: ', number);
         if (timeoutId) {
             clearTimeout(timeoutId);
         }

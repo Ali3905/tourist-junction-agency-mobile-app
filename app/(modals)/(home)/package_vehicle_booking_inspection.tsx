@@ -150,7 +150,7 @@ const PackageVehicleListScreen: React.FC = () => {
             <View key={pkg._id} style={styles.card}>
               <View style={styles.cardHeader}>
                 <TouchableOpacity onPress={() => handleShowDetails(pkg)} style={styles.detailsButton}>
-                  <Text style={styles.detailsButtonText}>Details</Text>
+                  <Text style={styles.detailsButtonText}>Trip History</Text>
                 </TouchableOpacity>
                 <TouchableOpacity onPress={() => { setInvoiceData(pkg); router.push("invoice") }} style={styles.editButton}>
                   <Text style={styles.editButtonText}>View Invoice</Text>

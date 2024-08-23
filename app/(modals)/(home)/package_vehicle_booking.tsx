@@ -143,16 +143,16 @@ const PackageVehicleListScreen: React.FC = () => {
   };
 
   const handleAddDriver = async () => {
-    if (!selectedPrimaryDriver || !selectedSecondaryDriver || !selectedCleaner || !instruction) {
-      Alert.alert("Please select all fields.");
+    if (!selectedPrimaryDriver) {
+      Alert.alert("Atleast select primary driver");
       return;
     }
 
     const newDriverData = {
-      primaryDriverId: selectedPrimaryDriver,
-      secondaryDriverId: selectedSecondaryDriver,
-      cleanerId: selectedCleaner,
-      instructions: instruction
+      primaryDriverId: selectedPrimaryDriver || null,
+      secondaryDriverId: selectedSecondaryDriver || null,
+      cleanerId: selectedCleaner || null,
+      instructions: instruction || ""
     };
 
     try {

@@ -39,7 +39,7 @@ const EditProfileScreen: React.FC = () => {
             setState(userData.state);
             setCity(userData.city);
             setWhatsappNumber(userData.whatsappNumber);
-            setUserImage(null);
+            // setUserImage(null);
         }
     }, [userData])
     
@@ -162,9 +162,9 @@ const EditProfileScreen: React.FC = () => {
                         />
                     </View>
 
-                    <TouchableOpacity style={styles.imagePicker} onPress={() => handleImagePicker()}>
+                    {/* <TouchableOpacity style={styles.imagePicker} onPress={() => handleImagePicker()}>
                         <Text style={styles.imagePickerText}>Select User Image</Text>
-                    </TouchableOpacity>
+                    </TouchableOpacity> */}
                     {userImage && <Image source={{ uri: userImage }} style={styles.previewImage} />}
 
                     <View style={styles.modalButtons}>

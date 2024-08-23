@@ -156,7 +156,7 @@ const SellVehicleScreen: React.FC = () => {
                             <Text style={styles.cardText}>Contact No: <Text style={{ color: "black" }}>{vehicle.contactNumber}</Text></Text>
                             <Text style={styles.cardText}>Location: <Text style={{ color: "black" }}>{vehicle.location}</Text></Text>
                             {vehicle.type === "BUS" && <>
-                                <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginBottom: 20, paddingTop: 14 }}>
+                                <View style={{ flexDirection: 'row', marginBottom: 20, paddingTop: 14, flexWrap: "wrap", gap: 5 }}>
                                     {/* Column for Courier Service and QR Code Button */}
                                     <View style={{ alignItems: 'center' }}>
                                         {vehicle?.isAC ? <Text style={styles.facilityBtn}>
@@ -170,9 +170,7 @@ const SellVehicleScreen: React.FC = () => {
                                     <View style={{ alignItems: 'center' }}>
                                         {vehicle?.isForRent ? <Text style={styles.facilityBtn}>
                                             For Rent
-                                        </Text> : <Text style={[styles.facilityBtn, { backgroundColor: "transparent" }]}>
-
-                                        </Text>}
+                                        </Text> : null}
                                     </View>
 
                                     {/* Column for Two Wheeler Courier and Chart Button */}
@@ -183,8 +181,8 @@ const SellVehicleScreen: React.FC = () => {
 
                                         </Text>}
                                     </View>
-                                </View>
-                                <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginBottom: 20, paddingTop: 14 }}>
+                                {/* </View>
+                                <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginBottom: 20, paddingTop: 14 }}> */}
                                     {/* Column for Courier Service and QR Code Button */}
                                     <View style={{ alignItems: 'center' }}>
                                         {vehicle?.curtain ? <Text style={styles.facilityBtn}>

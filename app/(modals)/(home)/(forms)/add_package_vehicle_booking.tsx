@@ -230,7 +230,7 @@ const PackageBookingForm: React.FC = () => {
                         />
                     </View>
                     <View style={styles.inputGroup}>
-                        <Text style={styles.label}>KM Starting</Text>
+                        <Text style={styles.label}>From..To</Text>
                         <TextInput
                             style={styles.input}
                             value={kmStarting}
@@ -348,7 +348,7 @@ const PackageBookingForm: React.FC = () => {
                         )}
                     </View>
                     <View style={styles.inputGroup}>
-                        <Text style={styles.label}>Toll</Text>
+                        <Text style={styles.label}>Toll/Other state tax (who will pay)</Text>
                         <TextInput
                             style={styles.input}
                             value={toll}
@@ -364,15 +364,7 @@ const PackageBookingForm: React.FC = () => {
                         />
                     </View>
                     <View style={styles.inputGroup}>
-                        <Text style={styles.label}>Add Note</Text>
-                        <TextInput
-                            style={styles.input}
-                            value={instructions}
-                            onChangeText={(text) => setInstructions(text)}
-                        />
-                    </View>
-                    <View style={styles.inputGroup}>
-                        <Text style={styles.label}>Entry Parking</Text>
+                        <Text style={styles.label}>Entry Parking (who will pay) </Text>
                         <TextInput
                             style={styles.input}
                             value={entryParking}
@@ -386,6 +378,15 @@ const PackageBookingForm: React.FC = () => {
                             style={styles.input}
                             value={pickUpPoint}
                             onChangeText={(text) => setPickUpPoint(text)}
+                        />
+                    </View>
+                    
+                    <View style={styles.inputGroup}>
+                        <Text style={styles.label}>Add Note</Text>
+                        <TextInput
+                            style={styles.input}
+                            value={instructions}
+                            onChangeText={(text) => setInstructions(text)}
                         />
                     </View>
 

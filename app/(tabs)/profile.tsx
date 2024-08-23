@@ -20,7 +20,7 @@ const ProfileScreen = () => {
     const [isLoading, setIsLoading] = useState(false);
 
     const handleEdit = () => {
-        router.push('/edit_profile');
+        router.push('/editProfile');
     };
 
     const handleLogout = async () => {
@@ -46,7 +46,7 @@ const ProfileScreen = () => {
                 <View style={styles.detailsContainer}>
                     <View style={styles.header}>
                         <Text style={styles.headerText}>Details</Text>
-                        <TouchableOpacity style={styles.editButton} onPress={handleEdit}>
+                        <TouchableOpacity style={styles.editButton} onPress={() => router.push('edit_profile')}>
                             <FontAwesome name="pencil" size={24} color="white" />
                             <Text style={styles.editText}>Edit</Text>
                         </TouchableOpacity>

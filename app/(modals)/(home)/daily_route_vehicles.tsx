@@ -246,7 +246,7 @@ const DailyRouteVehicles: React.FC = () => {
                   <Carousel images={route?.vehicle?.photos} />
                   <View style={styles.circle}>
                     <Text style={styles.circleText}>{route?.vehicle.isAC ? "AC" : "Non-AC"}</Text>
-                    <Text style={styles.circleText}>{route?.vehicle.isSleeper ? "Sleeper" : "Non-Sleeper"}</Text>
+                    <Text style={styles.circleText}>{route?.vehicle.isSleeper ? "Sleeper" : "Seater"}</Text>
                     <Text style={styles.circleText}>{route?.vehicle?.number.toUpperCase()}</Text>
                   </View>
                 </View>

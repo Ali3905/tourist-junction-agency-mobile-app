@@ -159,7 +159,7 @@ const DailyRouteVehicles: React.FC = () => {
             <View key={route._id} style={styles.card}>
               <View style={styles.cardHeader}>
                 <TouchableOpacity onPress={() => handleShowDetails(route)} style={styles.detailsButton}>
-                  <Text style={styles.detailsButtonText}>Details</Text>
+                  <Text style={styles.detailsButtonText}>Trip History</Text>
                 </TouchableOpacity>
                 <TouchableOpacity onPress={() => { setShowDeleteModal(true); setSelectedRoute(route); }}>
                   <MaterialIcons name="delete" size={24} color={Colors.darkBlue} />

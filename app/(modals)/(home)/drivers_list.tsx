@@ -11,6 +11,7 @@ import {
     SafeAreaView,
     ScrollView,
     ActivityIndicator,
+    Linking,
 } from "react-native";
 import { BlurView } from 'expo-blur';
 import { Colors } from "@/constants/Colors";
@@ -45,6 +46,7 @@ const DriverListScreen: React.FC = () => {
     const [idToDelete, setIdToDelete] = useState<null | string>(null);
     const [searchQuery, setSearchQuery] = useState("");
     const { apiCaller, setEditData, refresh } = useGlobalContext();
+    const [timeoutId, setTimeoutId] = useState<NodeJS.Timeout | null>(null);
 
     const fetchDrivers = async () => {
         try {
@@ -83,6 +85,18 @@ const DriverListScreen: React.FC = () => {
 
     const handleSearch = () => {
         setSearchQuery(searchQuery);
+    };
+
+    const handlePress = (number: string) => {
+        Linking.openURL(`tel:${number}`);
+        if (timeoutId) {
+            clearTimeout(timeoutId);
+        }
+        const id = setTimeout(() => {
+            console.log('Showing modal');
+            // setModalVisible(true);
+        }, 100);
+        setTimeoutId(id);
     };
 
     const filteredDrivers = searchQuery ? filterDrivers(searchQuery) : drivers;
@@ -131,9 +145,18 @@ const DriverListScreen: React.FC = () => {
                             <Text style={styles.cardText}>
                                 Name: <Text style={{ color: "black" }}>{driver.name}</Text>
                             </Text>
-                            <Text style={styles.cardText}>
+                            {/* <Text style={styles.cardText}>
                                 Mobile: <Text style={{ color: "black" }}>{driver.mobileNumber}</Text>
-                            </Text>
+                            </Text> */}
+                            <View style={[{ marginBottom: 2, marginTop: 5, flexDirection: "row" }]}>
+                                <Text style={{color: Colors.darkBlue}}>Mobile: </Text>
+                                <TouchableOpacity onPress={() => handlePress(driver.mobileNumber)}>
+                                    <MaterialIcons name="phone-in-talk" size={24} color={Colors.darkBlue} />
+                                </TouchableOpacity>
+                                {/* <TouchableOpacity onPress={() => handlePress(item.alternateNumber)}>
+                                    <MaterialIcons name="phone-in-talk" size={24} color={Colors.secondary} />
+                                </TouchableOpacity> */}
+                            </View>
                             <Text style={styles.cardText}>
                                 City: <Text style={{ color: "black" }}>{driver.city}</Text>
                             </Text>
