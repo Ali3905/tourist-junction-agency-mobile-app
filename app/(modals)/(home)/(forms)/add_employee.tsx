@@ -69,17 +69,17 @@ const AddEmployeeScreen: React.FC = () => {
         formData.append('state', state);
         formData.append('employeeType', employerType);
 
-        if (selfie) {
+        if (selfie && selfie.uri) {
             formData.append('photo', {
-                uri: selfie,
+                uri: selfie.uri,
                 type: 'image/jpeg',
                 name: 'employee_selfie.jpg'
             } as any);
         }
 
-        if (aadharImage) {
+        if (aadharImage && aadharImage.uri) {
             formData.append('aadharCard', {
-                uri: aadharImage,
+                uri: aadharImage.uri,
                 type: 'image/jpeg',
                 name: 'aadhar_card.jpg'
             } as any);
@@ -109,7 +109,7 @@ const AddEmployeeScreen: React.FC = () => {
             mediaTypes: ImagePicker.MediaTypeOptions.Images,
             allowsEditing: false,
             aspect: [1, 1],
-            quality: 1,
+            quality: .7,
         });
 
         if (!result.canceled) {

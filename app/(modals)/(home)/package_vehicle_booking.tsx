@@ -221,6 +221,10 @@ const PackageVehicleListScreen: React.FC = () => {
                 <TouchableOpacity style={styles.editButton} onPress={() => {
                   setSelectedPackage(pkg);
                   setShowAddDriverModal(true);
+                  setSelectedPrimaryDriver(pkg.primaryDriver?._id)
+                  setSelectedSecondaryDriver(pkg.secondaryDriver?._id)
+                  setSelectedCleaner(pkg.cleaner?._id)
+                  setInstruction(pkg.instructions)
                 }}>
                   <Text style={styles.editButtonText}>Add Driver</Text>
                 </TouchableOpacity>
@@ -303,11 +307,12 @@ const PackageVehicleListScreen: React.FC = () => {
                   selectedValue={selectedPrimaryDriver}
                   onValueChange={(itemValue) => setSelectedPrimaryDriver(itemValue)}
                   style={styles.picker}
+                  
                 >
                   <Picker.Item label="Select Primary Driver" value="" />
                   {drivers.filter(driver => driver._id !== selectedSecondaryDriver).map((driver) => (
                     <Picker.Item key={driver._id} label={driver.name} value={driver._id} />
-                  ))}
+                  ))} 
                 </Picker>
               </View>
               <View style={styles.inputGroup}>

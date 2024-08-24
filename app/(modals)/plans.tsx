@@ -24,7 +24,7 @@ const plans = [
   { name: "Annual Plan", price: 999, displayPrice: "₹ 999 / Yearly", planType: "YEARLY" },
 ];
 
-let razorpayKeyId = "rzp_test_wG7GhVLcZ7CSBf"
+let razorpayKeyId = "rzp_live_PwTsFyB8RxXoJf"
 
 const currency = "INR";
 

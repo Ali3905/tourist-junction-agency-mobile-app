@@ -273,6 +273,9 @@ interface Package {
     tax: string;
     services: any[];
   };
+  primaryDriver: Driver;
+  secondaryDriver: Driver;
+  cleaner: Cleaner;
   customerName: string;
   mobileNumber: string;
   alternateNumber: string;
