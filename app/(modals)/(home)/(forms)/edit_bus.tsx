@@ -28,6 +28,7 @@ const EditBusScreen: React.FC = () => {
   const [bodyType, setBodyType] = useState("");
   const [chassisBrand, setChassisBrand] = useState("");
   const [selectedAC, setSelectedAC] = useState<string | null>(null);
+  const [isSleeper, setIsSleeper] = useState<string>("false")
   const [selectedForRent, setSelectedForRent] = useState<boolean>(false);
   const [selectedForSell, setSelectedForSell] = useState<boolean>(false);
   const [busImages, setBusImages] = useState<ImagePicker.ImagePickerAsset[] | string[]>([]);
@@ -73,6 +74,7 @@ const EditBusScreen: React.FC = () => {
     formData.append('chassisBrand', chassisBrand);
     formData.append('contactNumber', contactNo);
     formData.append('isAC', selectedAC === "AC" ? 'true' : 'false');
+    formData.append("isSleeper", isSleeper || "false")
     formData.append('isForRent', selectedForRent ? 'true' : 'false');
     formData.append('isForSell', selectedForSell ? 'true' : 'false');
     formData.append('type', "BUS");
@@ -246,6 +248,18 @@ const EditBusScreen: React.FC = () => {
                 }
                 style={styles.radioButtonItem}
               />
+            </RadioButtonGroup>
+          </View>
+          
+          <View style={styles.featuresContainer}>
+            <RadioButtonGroup
+              containerStyle={styles.radioButtonGroup}
+              selected={isSleeper}
+              onSelected={(value: string) => setIsSleeper(value)}
+              radioBackground={Colors.darkBlue}
+            >
+              <RadioButtonItem value="true" label={<Text style={{ color: Colors.primary, fontWeight: "500" }}>Sleeper</Text>} style={styles.radioButtonItem} />
+              <RadioButtonItem value="false" label={<Text style={{ color: Colors.primary, fontWeight: "500" }}>Seater</Text>} style={styles.radioButtonItem} />
             </RadioButtonGroup>
           </View>
 
