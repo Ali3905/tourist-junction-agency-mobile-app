@@ -99,8 +99,9 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         backgroundColor: "#FAF9F6",
-        marginTop: StatusBar.currentHeight || 0,
+        // marginTop: StatusBar.currentHeight || 0,
         padding: 20,
+        paddingTop: 0
     },
     innerContainer: {
         alignItems: "center",

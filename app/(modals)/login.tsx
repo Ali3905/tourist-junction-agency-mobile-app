@@ -11,7 +11,8 @@ import {
     Alert,
     ActivityIndicator,
     Switch,
-    ScrollView
+    ScrollView,
+    Platform
 } from "react-native";
 import { router } from "expo-router";
 import { Colors } from "@/constants/Colors";
@@ -53,7 +54,7 @@ const LoginScreen = () => {
             <StatusBar barStyle="dark-content" />
             <Image style={styles.wave_image} source={require('@/assets/images/wave.png')} />
 
-            <View style={{ marginTop: 150 }} >
+            <View style={{ marginTop: 150, marginLeft: 50 }} >
                 <Text style={styles.welcomeText}>Welcome</Text>
                 <Text style={styles.welcomeText}>Back</Text>
             </View>
@@ -113,14 +114,16 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         backgroundColor: "#FAF9F6",
-        marginTop: StatusBar.currentHeight,
-        padding: 20,
+        // marginTop: StatusBar.currentHeight,
+        // padding: 20,
+        // paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0,
     },
     innerContainer: {
         justifyContent: "space-around",
         alignItems: "center",
         width: "100%",
         flex: 1,
+        padding: 20
     },
     welcomeText: {
         color: "#10354B",
@@ -133,6 +136,7 @@ const styles = StyleSheet.create({
     wave_image: {
         width: "110%",
         position: "absolute",
+        top: "-20px",
         height: 300,
     },
     input: {

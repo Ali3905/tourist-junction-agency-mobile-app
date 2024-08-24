@@ -81,7 +81,7 @@ const SignUpScreen = () => {
             
         } catch (error) {
             console.error(error);
-            Alert.alert("Sign Up Failed", "Please check your information and try again.");
+            Alert.alert("Sign Up Failed", "Please check your information and try again or try a different number");
         } finally {
             setIsLoading(false);
         }
