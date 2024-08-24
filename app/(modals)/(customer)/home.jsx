@@ -65,7 +65,7 @@ const home = () => {
                 </TouchableOpacity>
                 <TouchableOpacity  style={styles.gridItem}>
                     <Image source={require('@/assets/images/vehicle_management.png')} style={styles.icon} />
-                    <Text style={styles.iconText} numberOfLines={2} ellipsizeMode="tail">All Vehicle List</Text>
+                    <Text style={styles.iconText} numberOfLines={2} ellipsizeMode="tail">My Vehicle</Text>
                 </TouchableOpacity>
                 
 
