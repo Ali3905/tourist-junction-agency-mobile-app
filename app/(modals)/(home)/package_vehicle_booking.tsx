@@ -18,6 +18,7 @@ import { Colors } from "@/constants/Colors";
 import { useGlobalContext } from "@/context/GlobalProvider";
 import { BlurView } from "expo-blur";
 import { Picker } from '@react-native-picker/picker';
+import GoToPlans from "@/components/GoToPlans";
 
 function formatDate(dateString: string): string {
   const date = new Date(dateString);
@@ -60,7 +61,7 @@ const PackageVehicleListScreen: React.FC = () => {
   const [instruction, setInstruction] = useState("");
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedVehicleType, setSelectedVehicleType] = useState("");
-  const { apiCaller, setEditData, setInvoiceData, refresh } = useGlobalContext();
+  const { apiCaller, setEditData, setInvoiceData, refresh, userData } = useGlobalContext();
   const [inputHeight, setInputHeight] = useState(50);
 
   const fetchPackages = async () => {
@@ -168,6 +169,10 @@ const PackageVehicleListScreen: React.FC = () => {
       setLoading(false);
     }
   };
+
+  if (!userData?.isSubsciptionValid) {
+    return <GoToPlans />
+  }
 
   return (
     <SafeAreaView style={styles.container}>

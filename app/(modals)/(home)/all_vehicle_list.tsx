@@ -9,8 +9,17 @@ import {
 } from "react-native";
 import { Colors } from "@/constants/Colors";
 import { router } from "expo-router";
+import GoToPlans from "@/components/GoToPlans";
+import { useGlobalContext } from "@/context/GlobalProvider";
 
 const AllVehicleListScreen: React.FC = () => {
+
+    const { userData } = useGlobalContext()
+
+    if (!userData?.isSubsciptionValid) {
+        return <GoToPlans />
+      }
+
     return (
         <SafeAreaView style={styles.container}>
             <ScrollView style={styles.driversList}>

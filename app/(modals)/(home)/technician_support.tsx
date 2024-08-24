@@ -22,6 +22,7 @@ import { useGlobalContext } from "@/context/GlobalProvider";
 import { Picker } from '@react-native-picker/picker';
 import { State, City } from 'country-state-city';
 import { Rating, AirbnbRating } from 'react-native-ratings';
+import GoToPlans from "@/components/GoToPlans";
 
 interface BlurOverlayProps {
     visible: boolean;
@@ -67,7 +68,7 @@ const TechnicianSupport: React.FC = () => {
     const [cityFilter, setCityFilter] = useState('');
     const [technicianTypeFilter, setTechnicianTypeFilter] = useState('');
 
-    const { apiCaller, setEditData, refresh } = useGlobalContext();
+    const { apiCaller, setEditData, refresh, userData } = useGlobalContext();
     const [currentPage, setCurrentPage] = useState(1);
     const [hasMore, setHasMore] = useState(true);
     const [modalVisible, setModalVisible] = useState(false);
@@ -240,6 +241,10 @@ const TechnicianSupport: React.FC = () => {
             />
         );
     };
+
+    if (!userData?.isSubsciptionValid) {
+        return <GoToPlans />
+      }
 
     return (
         <SafeAreaView style={styles.container}>

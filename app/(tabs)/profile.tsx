@@ -14,6 +14,7 @@ import { Colors } from "@/constants/Colors";
 import { FontAwesome } from '@expo/vector-icons';
 import { useGlobalContext } from "@/context/GlobalProvider";
 import * as SecureStore from "expo-secure-store";
+import GoToPlans from "@/components/GoToPlans";
 
 const ProfileScreen = () => {
     const { userData, setToken, setIsLogged } = useGlobalContext();
@@ -57,12 +58,14 @@ const ProfileScreen = () => {
                         <Text style={styles.detailText}>{userData?.email}</Text>
                     </View>
                 </View>
-                <Text style={styles.galleryTitle}>Gallery</Text>
-                <View style={styles.divider} />
-                <TouchableOpacity onPress={() => router.push('all_photos')} style={styles.galleryContainer}>
-                    <FontAwesome name="photo" size={24} color={Colors.primary} />
-                    <Text style={styles.galleryText}>All Photos</Text>
-                </TouchableOpacity>
+                {userData?.isSubsciptionValid ? <>
+                    <Text style={styles.galleryTitle}>Gallery</Text>
+                    <View style={styles.divider} />
+                    <TouchableOpacity onPress={() => router.push('all_photos')} style={styles.galleryContainer}>
+                        <FontAwesome name="photo" size={24} color={Colors.primary} />
+                        <Text style={styles.galleryText}>All Photos</Text>
+                    </TouchableOpacity>
+                </> : null }
                 <View style={styles.divider} />
                 <TouchableOpacity style={styles.logoutButton} onPress={handleLogout} disabled={isLoading}>
                     {isLoading ? (

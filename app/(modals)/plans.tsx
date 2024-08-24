@@ -12,6 +12,7 @@ import {
 import { Colors } from "@/constants/Colors";
 import RazorpayCheckout from 'react-native-razorpay';
 import { useGlobalContext } from "@/context/GlobalProvider";
+import { router } from "expo-router";
 
 const keyFeatures = [
   "Priority Support & Technician Assistance",
@@ -29,7 +30,7 @@ const currency = "INR";
 
 const PlansScreen: React.FC = () => {
   const [selectedPlan, setSelectedPlan] = useState<typeof plans[0] | null>(null);
-  const { apiCaller } = useGlobalContext();
+  const { apiCaller, setRefresh, userData } = useGlobalContext();
 
   const handlePlanSelect = (plan: typeof plans[0]) => {
     setSelectedPlan(plan);
@@ -40,7 +41,7 @@ const PlansScreen: React.FC = () => {
       <Text style={styles.featureText}>• {item}</Text>
     </View>
   );
-  
+
   const renderPlan = ({ item }: { item: typeof plans[0] }) => (
     <TouchableOpacity
       style={[
@@ -75,9 +76,16 @@ const PlansScreen: React.FC = () => {
 
     try {
       // Call subscription API
-      const subscriptionResponse = await apiCaller.post('/api/subscription/', {
-        plan: selectedPlan.planType
-      });
+      let subscriptionResponse
+      if (userData && userData.subscription) {
+        subscriptionResponse = await apiCaller.patch(`/api/subscription/${userData.subscription}`, {
+          plan: selectedPlan.planType
+        });
+      } else {
+        subscriptionResponse = await apiCaller.post('/api/subscription/', {
+          plan: selectedPlan.planType
+        });
+      }
 
       // Call createOrder API
       const orderResponse = await apiCaller.post('/api/subscription/createOrder', {
@@ -116,6 +124,9 @@ const PlansScreen: React.FC = () => {
 
         if (verificationResponse.data.success) {
           Alert.alert("Success", "Payment successful and verified!");
+
+          router.replace("/")
+          setRefresh(prev => !prev)
         } else {
           Alert.alert("Error", "Payment verification failed.");
         }

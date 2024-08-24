@@ -17,6 +17,7 @@ import { Colors } from "@/constants/Colors";
 import { FontAwesome5, MaterialIcons } from "@expo/vector-icons";
 import { router } from "expo-router";
 import { useGlobalContext } from "@/context/GlobalProvider";
+import GoToPlans from "@/components/GoToPlans";
 
 interface BlurOverlayProps {
     visible: boolean;
@@ -57,7 +58,7 @@ const EmployeeListScreen: React.FC = () => {
     const [showImageModal, setShowImageModal] = useState(false);
     const [idToDelete, setIdToDelete] = useState<null | string>(null);
     const [searchQuery, setSearchQuery] = useState("");
-    const { apiCaller, setEditData, refresh } = useGlobalContext();
+    const { apiCaller, setEditData, refresh, userData } = useGlobalContext();
 
     const fetchEmployees = async () => {
 
@@ -108,6 +109,10 @@ const EmployeeListScreen: React.FC = () => {
     const toggleModal = () => {
         setModalVisible(!isModalVisible);
     };
+
+    if (!userData?.isSubsciptionValid) {
+        return <GoToPlans />
+      }
 
 
     return (

@@ -34,6 +34,7 @@ const AddBusScreen: React.FC = () => {
   const [busImages, setBusImages] = useState<ImagePicker.ImagePickerAsset[]>([]);
   const [isSeatPushBack, setIsSeatPushBack] = useState<string>("false")
   const [isLuggageSpace, setIsLuggageSpace] = useState<string>("false")
+  const [isSleeper, setIsSleeper] = useState<string>("false")
   const [curtain, setCurtain] = useState<string>("false")
   const [amenities, setAmenities] = useState<string[]>([])
   const [sellDescription, setSellDescription] = useState<string>("")
@@ -61,6 +62,7 @@ const AddBusScreen: React.FC = () => {
     formData.append('type', "BUS");
     formData.append("isLuggageSpace", isLuggageSpace || "false")
     formData.append("isSeatPushBack", isSeatPushBack || "false")
+    formData.append("isSleeper", isSleeper || "false")
     formData.append("curtain", curtain || "false")
     formData.append("sellDescription", sellDescription)
 
@@ -204,6 +206,18 @@ const AddBusScreen: React.FC = () => {
             >
               <RadioButtonItem value="AC" label={<Text style={{ color: Colors.primary, fontWeight: "500" }}>AC</Text>} style={styles.radioButtonItem} />
               <RadioButtonItem value="NonAC" label={<Text style={{ color: Colors.primary, fontWeight: "500" }}>Non-AC</Text>} style={styles.radioButtonItem} />
+            </RadioButtonGroup>
+          </View>
+
+          <View style={styles.featuresContainer}>
+            <RadioButtonGroup
+              containerStyle={styles.radioButtonGroup}
+              selected={isSleeper}
+              onSelected={(value: string) => setIsSleeper(value)}
+              radioBackground={Colors.darkBlue}
+            >
+              <RadioButtonItem value="true" label={<Text style={{ color: Colors.primary, fontWeight: "500" }}>Sleeper</Text>} style={styles.radioButtonItem} />
+              <RadioButtonItem value="false" label={<Text style={{ color: Colors.primary, fontWeight: "500" }}>Seater</Text>} style={styles.radioButtonItem} />
             </RadioButtonGroup>
           </View>
 

@@ -19,6 +19,7 @@ import { useGlobalContext } from "@/context/GlobalProvider";
 import { router } from "expo-router";
 import Carousel from "@/components/Carousel";
 import ConfirmationModal from "@/components/Modal";
+import GoToPlans from "@/components/GoToPlans";
 
 const { width: viewportWidth } = Dimensions.get("window");
 
@@ -58,7 +59,7 @@ function formatDate(dateString: string): string {
 const EmptyVehicleScreen: React.FC = () => {
     const [vehicles, setVehicles] = useState<Vehicle[]>([]);
     const [loading, setLoading] = useState(true);
-    const { apiCaller, refresh } = useGlobalContext();
+    const { apiCaller, refresh, userData } = useGlobalContext();
 
     const [searchQuery, setSearchQuery] = useState("");
 
@@ -109,6 +110,10 @@ const EmptyVehicleScreen: React.FC = () => {
         }
     }
     const filteredVehicles = searchQuery ? filterVehicles(searchQuery) : vehicles;
+
+    if (!userData?.isSubsciptionValid) {
+        return <GoToPlans />
+      }
 
     return (
         <SafeAreaView style={styles.container}>

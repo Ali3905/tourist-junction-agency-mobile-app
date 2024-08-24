@@ -18,6 +18,7 @@ import { Colors } from "@/constants/Colors";
 import { FontAwesome5, MaterialIcons } from "@expo/vector-icons";
 import { router } from "expo-router";
 import { useGlobalContext } from "@/context/GlobalProvider";
+import GoToPlans from "@/components/GoToPlans";
 
 interface BlurOverlayProps {
     visible: boolean;
@@ -45,7 +46,7 @@ const DriverListScreen: React.FC = () => {
     const [selectedImage, setSelectedImage] = useState<string | null>(null);
     const [idToDelete, setIdToDelete] = useState<null | string>(null);
     const [searchQuery, setSearchQuery] = useState("");
-    const { apiCaller, setEditData, refresh } = useGlobalContext();
+    const { apiCaller, setEditData, refresh, userData } = useGlobalContext();
     const [timeoutId, setTimeoutId] = useState<NodeJS.Timeout | null>(null);
 
     const fetchDrivers = async () => {
@@ -100,6 +101,10 @@ const DriverListScreen: React.FC = () => {
     };
 
     const filteredDrivers = searchQuery ? filterDrivers(searchQuery) : drivers;
+
+    if (!userData?.isSubsciptionValid) {
+        return <GoToPlans />
+      }
 
     return (
         <SafeAreaView style={styles.container}>

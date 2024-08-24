@@ -11,12 +11,14 @@ import {
     SafeAreaView,
     ScrollView,
     ActivityIndicator,
+    Linking,
 } from "react-native";
 import { BlurView } from 'expo-blur';
 import { Colors } from "@/constants/Colors";
 import { FontAwesome5, MaterialIcons } from "@expo/vector-icons";
 import { router } from "expo-router";
 import { useGlobalContext } from "@/context/GlobalProvider";
+import GoToPlans from "@/components/GoToPlans";
 
 interface BlurOverlayProps {
     visible: boolean;
@@ -44,7 +46,8 @@ const DriverListScreen: React.FC = () => {
     const [selectedImage, setSelectedImage] = useState<string | null>(null);
     const [idToDelete, setIdToDelete] = useState<null | string>(null);
     const [searchQuery, setSearchQuery] = useState("");
-    const { apiCaller, setEditData, refresh } = useGlobalContext();
+    const { apiCaller, setEditData, refresh, userData } = useGlobalContext();
+    const [timeoutId, setTimeoutId] = useState<NodeJS.Timeout | null>(null);
 
     // const fetchDrivers = async () => {
     //     try {
@@ -99,7 +102,23 @@ const DriverListScreen: React.FC = () => {
         setSearchQuery(searchQuery);
     };
 
+    const handlePress = (number: string) => {
+        Linking.openURL(`tel:${number}`);
+        if (timeoutId) {
+            clearTimeout(timeoutId);
+        }
+        const id = setTimeout(() => {
+            console.log('Showing modal');
+            // setModalVisible(true);
+        }, 100);
+        setTimeoutId(id);
+    };
+
     const filteredDrivers = searchQuery ? filterDrivers(searchQuery) : drivers;
+
+    if (!userData?.isSubsciptionValid) {
+        return <GoToPlans />
+      }
 
     return (
         <SafeAreaView style={styles.container}>
@@ -133,9 +152,12 @@ const DriverListScreen: React.FC = () => {
                             <Text style={styles.cardText}>
                                 Name: <Text style={{ color: "black" }}>{driver.name}</Text>
                             </Text>
-                            <Text style={styles.cardText}>
-                                Mobile: <Text style={{ color: "black" }}>{driver.mobileNumber}</Text>
-                            </Text>
+                            <View style={[{ marginBottom: 2, marginTop: 5, flexDirection: "row" }]}>
+                                <Text style={{color: Colors.darkBlue}}>Mobile: </Text>
+                                <TouchableOpacity onPress={() => handlePress(driver.mobileNumber)}>
+                                    <MaterialIcons name="phone-in-talk" size={24} color={Colors.darkBlue} />
+                                </TouchableOpacity>
+                            </View>
                             <Text style={styles.cardText}>
                                 City: <Text style={{ color: "black" }}>{driver.city}</Text>
                             </Text>

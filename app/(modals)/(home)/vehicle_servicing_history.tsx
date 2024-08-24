@@ -18,6 +18,7 @@ import { Colors } from "@/constants/Colors";
 import { FontAwesome5, MaterialIcons } from "@expo/vector-icons";
 import { router } from "expo-router";
 import { useGlobalContext } from "@/context/GlobalProvider";
+import GoToPlans from "@/components/GoToPlans";
 
 interface BlurOverlayProps {
     visible: boolean;
@@ -55,7 +56,7 @@ const ServiceHistoryScreen: React.FC = () => {
     const [showDeleteModal, setShowDeleteModal] = useState(false);
     const [idToDelete, setIdToDelete] = useState<null | string>(null)
     const [searchQuery, setSearchQuery] = useState("");
-    const { apiCaller, setEditData, refresh } = useGlobalContext();
+    const { apiCaller, setEditData, refresh, userData } = useGlobalContext();
     const [vehicleNumbers, setVehicleNumbers] = useState<{ id: string, number: string }[]>([]);
 
     const findVehicleByNumber = (id: string) => {
@@ -143,6 +144,10 @@ const ServiceHistoryScreen: React.FC = () => {
     useEffect(() => {
         fetchVehicles();
     }, []);
+
+    if (!userData?.isSubsciptionValid) {
+        return <GoToPlans />
+      }
 
 
     return (

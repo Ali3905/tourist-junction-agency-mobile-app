@@ -7,6 +7,7 @@ import { router } from 'expo-router';
 import PhoneNumbersList from '@/components/PhoneNumberList';
 import { useGlobalContext } from '@/context/GlobalProvider';
 import ConfirmationModal from '@/components/Modal';
+import GoToPlans from '@/components/GoToPlans';
 
 const { width, height } = Dimensions.get('window');
 
@@ -15,7 +16,7 @@ const holiday_yatra = () => {
   const [tours, setTours] = useState([])
 
   const [isLoading, setIsLoading] = useState(false);
-  const { apiCaller, setRefresh, refresh } = useGlobalContext();
+  const { apiCaller, setRefresh, refresh, userData } = useGlobalContext();
   const [searchQuery, setSearchQuery] = useState("");
 
   const fetchTours = async () => {
@@ -60,6 +61,10 @@ const holiday_yatra = () => {
   useEffect(() => {
     fetchTours()
   }, [refresh])
+
+  if (!userData?.isSubsciptionValid) {
+    return <GoToPlans />
+  }
 
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>

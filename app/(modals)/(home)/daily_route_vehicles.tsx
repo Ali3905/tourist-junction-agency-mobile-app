@@ -26,6 +26,7 @@ import { FontAwesome5, MaterialIcons } from "@expo/vector-icons";
 import PhoneNumbersList from "@/components/PhoneNumberList";
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
+import GoToPlans from "@/components/GoToPlans";
 
 
 interface BlurOverlayProps {
@@ -74,7 +75,7 @@ const DailyRouteVehicles: React.FC = () => {
   const [instruction, setInstruction] = useState("")
 
   const [searchQuery, setSearchQuery] = useState("");
-  const { apiCaller, setEditData, refresh } = useGlobalContext();
+  const { apiCaller, setEditData, refresh, userData } = useGlobalContext();
   const [inputHeight, setInputHeight] = useState(50);
   // const [modalVisible, setModalVisible] = useState(false);
 
@@ -188,6 +189,10 @@ const DailyRouteVehicles: React.FC = () => {
       )
     );
   };
+
+  if (!userData?.isSubsciptionValid) {
+    return <GoToPlans />
+  }
 
 
   return (

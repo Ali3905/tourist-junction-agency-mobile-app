@@ -93,7 +93,7 @@ const GlobalProvider: React.FC<GlobalProviderProps> = ({ children }) => {
     if (token) {
       fetchUser()
     }
-  }, [token])
+  }, [token, refresh])
 
   apiCaller.interceptors.response.use(
     (response) => response,

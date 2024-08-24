@@ -19,6 +19,7 @@ import { FontAwesome5, MaterialIcons } from "@expo/vector-icons";
 import { router } from "expo-router";
 import { useGlobalContext } from "@/context/GlobalProvider";
 import * as Sharing from 'expo-sharing';
+import GoToPlans from "@/components/GoToPlans";
 
 interface BlurOverlayProps {
     visible: boolean;
@@ -57,7 +58,7 @@ const VehicleListScreen: React.FC = () => {
     const [showImageModal, setShowImageModal] = useState(false);
     const [selectedImage, setSelectedImage] = useState<string | null>(null);
     const [searchQuery, setSearchQuery] = useState("");
-    const { apiCaller, setEditData, refresh } = useGlobalContext();
+    const { apiCaller, setEditData, refresh, userData } = useGlobalContext();
     const [isFullSize, setIsFullSize] = useState<boolean>(false);
 
     const fetchVehicles = async () => {
@@ -108,6 +109,10 @@ const VehicleListScreen: React.FC = () => {
         setSelectedImage(imageUri);
         setShowImageModal(true);
     };
+
+    if (!userData?.isSubsciptionValid) {
+        return <GoToPlans />
+      }
 
     return (
         <SafeAreaView style={styles.container}>

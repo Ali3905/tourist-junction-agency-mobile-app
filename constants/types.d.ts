@@ -382,6 +382,8 @@ interface User {
   cleaners: any[];
   vehicles: any[];
   dailyRoutes: string[];
+  isSubsciptionValid: boolean;
+  subscription: string;
   createdAt: string;
   updatedAt: string;
   __v: number;

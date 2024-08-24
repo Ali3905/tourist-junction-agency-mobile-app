@@ -20,11 +20,7 @@ const GalleryGridScreen: React.FC = () => {
     const { photos } = useGlobalContext();
 
     const toggleImageSelection = (image: string) => {
-        setSelectedImages(prev => 
-            prev.includes(image)
-                ? prev.filter(img => img !== image)
-                : [...prev, image]
-        );
+        setSelectedImages([image]);
     };
 
     const shareImages = async () => {
@@ -80,7 +76,7 @@ const GalleryGridScreen: React.FC = () => {
                 numColumns={numColumns}
             />
             <Button 
-                title={`Share (${selectedImages.length})`}
+                title={`Share`}
                 onPress={shareImages}
                 disabled={selectedImages.length === 0}
             />
