@@ -91,25 +91,25 @@ const PlansScreen: React.FC = () => {
       const orderResponse = await apiCaller.post('/api/subscription/createOrder', {
         amount: selectedPlan.price.toString(),
         currency: currency,
-        receipt: 'receipt#1'
+        receipt: `receipt#${userData?._id}`
       });
 
       const { id: orderId } = orderResponse.data.data;
 
       var options = {
         description: `${selectedPlan.name} Subscription`,
-        image: 'https://i.imgur.com/3g7nmJC.png',
+        image: require('@/assets/images/logo.png'),
         currency: currency,
         key: razorpayKeyId,
         amount: selectedPlan.price * 100,
         name: `${selectedPlan.name} Subscription`,
         order_id: orderId,
         prefill: {
-          email: 'xyz@gmail.com',
-          contact: '9999999999',
-          name: 'User 1'
+          email: userData?.email,
+          contact: userData?.mobileNumber,
+          name: userData?.companyName
         },
-        theme: { color: '#F37254' }
+        theme: { color: "#2AA4D5" }
       }
 
       const razorpayResult = await RazorpayCheckout.open(options);
