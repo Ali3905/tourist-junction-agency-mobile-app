@@ -46,10 +46,11 @@ export default function HomeScreen() {
   return (
     <GestureHandlerRootView style={styles.container}>
       <View style={styles.header}>
-        <TouchableOpacity onPress={logout} style={styles.logoutButton}>
-          <Text style={styles.logoutButtonText}>Logout</Text>
-        </TouchableOpacity>
-      </View>
+  <Text style={{fontSize:18, fontWeight:'bold'}}>Hi, Driver</Text>
+  <TouchableOpacity onPress={logout} style={styles.logoutButton}>
+    <Text style={styles.logoutButtonText}>Logout</Text>
+  </TouchableOpacity>
+</View>
       <ScrollView style={{ flex: 1 }} >
         <View style={styles.welcomeCard}>
           <Text style={styles.welcomeCardText}>Welcome to,</Text>
@@ -120,8 +121,10 @@ const styles = StyleSheet.create({
   },
   header: {
     flexDirection: 'row',
-    justifyContent: 'flex-end',
-    padding: 10,
+  justifyContent: 'space-between', // Ensures space between elements
+  alignItems: 'center', // Vertically centers the items within the header
+  padding: 10,
+    
   },
   logoutButton: {
     backgroundColor: Colors.secondary,
