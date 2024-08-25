@@ -15,6 +15,12 @@ const Carousel = ({ images }) => {
 
   const viewConfigRef = useRef({ viewAreaCoveragePercentThreshold: 50 });
 
+  const getItemLayout = (_, index) => ({
+    length: width,
+    offset: width * activeIndex,
+    index,
+  });
+
   return (
     <View style={styles.container}>
       <FlatList
@@ -22,13 +28,17 @@ const Carousel = ({ images }) => {
         data={images}
         horizontal
         pagingEnabled
-        showsHorizontalScrollIndicator={false}
+        showsHorizontalScrollIndicator={true}
         keyExtractor={(_, index) => index.toString()}
         renderItem={({ item }) => (
           <Image source={item.uri?{item}:{ uri: item }} style={styles.image} />
         )}
         onViewableItemsChanged={onViewRef.current}
         viewabilityConfig={viewConfigRef.current}
+        // getItemLayout={getItemLayout}
+        snapToAlignment="start"
+        decelerationRate="fast"
+
       />
       <View style={styles.dotContainer}>
         {images.map((_, index) => (
@@ -52,7 +62,8 @@ const styles = StyleSheet.create({
   },
   image: {
     width,
-    height: 200, // Adjust the height as needed
+    // height: 200, // Adjust the height as needed
+    aspectRatio: 16 / 9,
     resizeMode: 'cover',
   },
   dotContainer: {

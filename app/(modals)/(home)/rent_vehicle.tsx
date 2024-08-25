@@ -17,6 +17,7 @@ import { FontAwesome5 } from "@expo/vector-icons";
 import { Colors } from "@/constants/Colors";
 import { useGlobalContext } from "@/context/GlobalProvider";
 import { BlurView } from 'expo-blur';
+import { Picker } from "@react-native-picker/picker";
 
 const { width: viewportWidth } = Dimensions.get("window");
 
@@ -60,6 +61,7 @@ const RentVehicleScreen: React.FC = () => {
     const { apiCaller, token } = useGlobalContext();
     const [vehicles, setVehicles] = useState<Vehicle[]>([]);
     const [searchQuery, setSearchQuery] = useState("");
+    const [vehicleTypeFilter, setVehicleTypeFilter] = useState("")
     const [showImageModal, setShowImageModal] = useState(false);
     const [selectedImage, setSelectedImage] = useState<string | null>(null);
 
@@ -95,7 +97,7 @@ const RentVehicleScreen: React.FC = () => {
     const filterVehicles = (query: string) => {
         return vehicles.filter((vehicle) =>
             Object.values(vehicle).some((value) =>
-                String(value).toLowerCase().includes(query.toLowerCase())
+                String(value).toLowerCase().includes(query.toLowerCase()) && vehicleTypeFilter === "" ? true : vehicle.type === vehicleTypeFilter
             )
         );
     };
@@ -109,7 +111,7 @@ const RentVehicleScreen: React.FC = () => {
         setShowImageModal(true);
     };
 
-    const filteredVehicles = searchQuery ? filterVehicles(searchQuery) : vehicles;
+    const filteredVehicles = searchQuery || vehicleTypeFilter ? filterVehicles(searchQuery) : vehicles;
 
     return (
         <SafeAreaView style={styles.container}>
@@ -125,6 +127,19 @@ const RentVehicleScreen: React.FC = () => {
                         value={searchQuery}
                         onChangeText={setSearchQuery}
                     />
+                </View>
+                <View style={styles.vehicleFilterContainer}>
+                    <Picker
+                        selectedValue={vehicleTypeFilter}
+                        style={styles.vehiclePicker}
+                        onValueChange={item => setVehicleTypeFilter(item)}
+                    >
+                        <Picker.Item label="All Vehicle Types" value="" />
+                        <Picker.Item label="CAR" value="CAR" />
+                        <Picker.Item label="BUS" value="BUS" />
+                        <Picker.Item label="TRUCK" value="TRUCK" />
+                        <Picker.Item label="TAMPO" value="TAMPO" />
+                    </Picker>
                 </View>
 
                 {loading ? (
@@ -155,6 +170,93 @@ const RentVehicleScreen: React.FC = () => {
                             <Text style={styles.cardText}>Model: <Text style={{ color: "black" }}>{vehicle.model}</Text></Text>
                             <Text style={styles.cardText}>Contact No: <Text style={{ color: "black" }}>{vehicle.contactNumber}</Text></Text>
                             <Text style={styles.cardText}>Location: <Text style={{ color: "black" }}>{vehicle.location}</Text></Text>
+                            {vehicle.type === "BUS" && <>
+                                <View style={{ flexDirection: 'row', marginBottom: 20, paddingTop: 14, flexWrap: "wrap", gap: 5 }}>
+                                    <View style={{ alignItems: 'center' }}>
+                                        {vehicle?.isAC ? <Text style={styles.facilityBtn}>
+                                            AC
+                                        </Text> : <Text style={[styles.facilityBtn]}>
+                                            Non-AC
+                                        </Text>}
+                                    </View>
+
+                                    {/* <View style={{ alignItems: 'center' }}>
+                                        {vehicle?.isForRent ? <Text style={styles.facilityBtn}>
+                                            For Rent
+                                        </Text> : null}
+                                    </View> */}
+
+                                    {/* <View style={{ alignItems: 'center' }}>
+                                        {vehicle?.isForSell ? <Text style={styles.facilityBtn}>
+                                            For Sell
+                                        </Text> : <Text style={[styles.facilityBtn, { backgroundColor: "transparent" }]}>
+
+                                        </Text>}
+                                    </View> */}
+                                    {/* </View>
+                                <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginBottom: 20, paddingTop: 14 }}> */}
+                                    <View style={{ alignItems: 'center' }}>
+                                        {vehicle?.curtain ? <Text style={styles.facilityBtn}>
+                                            Seat Cover
+                                        </Text> : null}
+                                    </View>
+
+                                    {/* Column for Train Ticket and Driver Button */}
+                                    <View style={{ alignItems: 'center' }}>
+                                        {vehicle?.isLuggageSpace ? <Text style={styles.facilityBtn}>
+                                            Luggage Space
+                                        </Text> : null}
+                                    </View>
+
+                                    {/* Column for Two Wheeler Courier and Chart Button */}
+                                    <View style={{ alignItems: 'center' }}>
+                                        {vehicle?.isSeatPushBack ? <Text style={styles.facilityBtn}>
+                                            Seat Push Back
+                                        </Text> : null}
+                                    </View>
+
+                                </View>
+                                <Text style={{ flex: 1, fontWeight: 'bold', color: '#87CEEB' }}>Amenities:</Text>
+                                {vehicle.amenities.length < 1 ? <Text>No Description Amenities</Text> :
+                                    <View style={{
+                                        paddingTop: 1,
+                                        paddingBottom: 14,
+                                        flexDirection: 'row',
+
+                                    }}>
+
+                                        {vehicle?.amenities?.includes("wifi") && <Image
+                                            source={require('@/assets/images/wifi-icon.png')}
+                                            style={{ width: 30, height: 30, marginHorizontal: 5 }}
+                                        />}
+                                        {vehicle?.amenities?.includes("blanket") && <Image
+                                            source={require('@/assets/images/blanket.png')}
+                                            style={{ width: 30, height: 30, marginHorizontal: 5 }}
+                                        />}
+                                        {vehicle?.amenities?.includes("bottle") && <Image
+                                            source={require('@/assets/images/bottle.png')}
+                                            style={{ width: 30, height: 30, marginHorizontal: 5 }}
+                                        />}
+                                        {vehicle?.amenities?.includes("charger") && <Image
+                                            source={require('@/assets/images/charger.png')}
+                                            style={{ width: 30, height: 30, marginHorizontal: 5 }}
+                                        />}
+                                        {vehicle?.amenities?.includes("meal") && <Image
+                                            source={require('@/assets/images/meal.png')}
+                                            style={{ width: 30, height: 30, marginHorizontal: 5 }}
+                                        />}
+                                        {vehicle?.amenities?.includes("pillow") && <Image
+                                            source={require('@/assets/images/pillow.png')}
+                                            style={{ width: 30, height: 30, marginHorizontal: 5 }}
+                                        />}
+                                        {vehicle?.amenities?.includes("tv") && <Image
+                                            source={require('@/assets/images/tv.png')}
+                                            style={{ width: 30, height: 30, marginHorizontal: 5 }}
+                                        />}
+                                    </View>}
+                                <Text style={{ flex: 1, fontWeight: 'bold', color: '#87CEEB' }}>Sell Description:</Text>
+                                <Text>{vehicle?.sellDescription || "No Description"}</Text>
+                            </>}
                         </View>
                     ))
                 )}
@@ -204,6 +306,16 @@ const styles = StyleSheet.create({
         marginLeft: 10,
         color: Colors.secondary,
     },
+    vehicleFilterContainer: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        borderWidth: 1,
+        borderColor: Colors.secondary,
+    },
+    vehiclePicker: {
+        flex: 1,
+        marginHorizontal: 2,
+    },
     card: {
         backgroundColor: "#fff",
         padding: 20,
@@ -246,6 +358,15 @@ const styles = StyleSheet.create({
         borderRadius: 5,
         backgroundColor: Colors.darkBlue,
         marginHorizontal: 4,
+    },
+    facilityBtn: {
+        fontWeight: 'bold',
+        fontSize: 12,
+        marginBottom: 5,
+        backgroundColor: '#e6f2ff',
+        paddingVertical: 5,
+        paddingHorizontal: 6,
+        borderRadius: 5,
     },
     modalContainer: {
         flex: 1,

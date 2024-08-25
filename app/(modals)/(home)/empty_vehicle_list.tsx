@@ -12,6 +12,7 @@ import {
     TouchableOpacity,
     Modal,
     Alert,
+    Pressable,
 } from "react-native";
 import { FontAwesome5, MaterialIcons } from "@expo/vector-icons";
 import { Colors } from "@/constants/Colors";
@@ -20,6 +21,7 @@ import { router } from "expo-router";
 import Carousel from "@/components/Carousel";
 import ConfirmationModal from "@/components/Modal";
 import GoToPlans from "@/components/GoToPlans";
+import { Picker } from "@react-native-picker/picker";
 
 const { width: viewportWidth } = Dimensions.get("window");
 
@@ -61,6 +63,11 @@ const EmptyVehicleScreen: React.FC = () => {
     const [loading, setLoading] = useState(true);
     const { apiCaller, refresh, userData } = useGlobalContext();
 
+    const [vehicleTypeFilter, setVehicleTypeFilter] = useState("")
+    const [fromFilter, setFromFilter] = useState("")
+    const [toFilter, setToFilter] = useState("")
+    const [notificationVisible, setNotificationVisible] = useState(true);
+
     const [searchQuery, setSearchQuery] = useState("");
 
     const fetchVehicles = async () => {
@@ -81,10 +88,21 @@ const EmptyVehicleScreen: React.FC = () => {
         fetchVehicles();
     }, [refresh]);
 
+    useEffect(() => {
+        const timer = setTimeout(() => {
+            setNotificationVisible(false);
+        }, 10000);
+
+        return () => clearTimeout(timer);
+    }, []);
+
     const filterVehicles = (query: string) => {
         return vehicles.filter((vehicle) =>
             Object.values(vehicle).some((value) =>
-                String(value).toLowerCase().includes(query.toLowerCase())
+                String(value).toLowerCase().includes(query.toLowerCase()) &&
+                    vehicleTypeFilter ? vehicle.vehicle.type === vehicleTypeFilter : true &&
+                        fromFilter ? vehicle.departurePlace.toLowerCase().includes(fromFilter.toLowerCase()) : true &&
+                            toFilter ? vehicle.destinationPlace.toLowerCase().includes(toFilter.toLowerCase()) : true
             )
         );
     };
@@ -109,11 +127,11 @@ const EmptyVehicleScreen: React.FC = () => {
             setLoading(false);
         }
     }
-    const filteredVehicles = searchQuery ? filterVehicles(searchQuery) : vehicles;
+    const filteredVehicles = searchQuery || fromFilter || toFilter || vehicleTypeFilter ? filterVehicles(searchQuery) : vehicles;
 
     if (!userData?.isSubsciptionValid) {
         return <GoToPlans />
-      }
+    }
 
     return (
         <SafeAreaView style={styles.container}>
@@ -124,22 +142,73 @@ const EmptyVehicleScreen: React.FC = () => {
                     </TouchableOpacity>
                     <TextInput
                         style={styles.searchInput}
-                        placeholder="Search Destination City"
+                        placeholder="Search.."
                         placeholderTextColor={Colors.secondary}
                         value={searchQuery}
                         onChangeText={setSearchQuery}
                     />
                 </View>
+                <View style={styles.vehicleFilterContainer}>
+                    <Picker
+                        selectedValue={vehicleTypeFilter}
+                        style={styles.vehiclePicker}
+                        onValueChange={item => setVehicleTypeFilter(item)}
+                    >
+                        <Picker.Item label="All Vehicle Types" value="" />
+                        <Picker.Item label="CAR" value="CAR" />
+                        <Picker.Item label="BUS" value="BUS" />
+                        <Picker.Item label="TRUCK" value="TRUCK" />
+                        <Picker.Item label="TAMPO" value="TAMPO" />
+                    </Picker>
+                </View>
+                <View style={{ flexDirection: "row", marginTop: 5, gap: 5 }}>
+                    <View style={styles.searchContainer}>
+                        <TouchableOpacity onPress={handleSearch}>
+                            <FontAwesome5 name="search" size={18} color={Colors.secondary} />
+                        </TouchableOpacity>
+                        <TextInput
+                            style={styles.searchInput}
+                            placeholder="Search Departure City"
+                            placeholderTextColor={Colors.secondary}
+                            value={fromFilter}
+                            onChangeText={setFromFilter}
+                        />
+                    </View><View style={styles.searchContainer}>
+                        <TouchableOpacity onPress={handleSearch}>
+                            <FontAwesome5 name="search" size={18} color={Colors.secondary} />
+                        </TouchableOpacity>
+                        <TextInput
+                            style={styles.searchInput}
+                            placeholder="Search Destination City"
+                            placeholderTextColor={Colors.secondary}
+                            value={toFilter}
+                            onChangeText={setToFilter}
+                        />
+                    </View>
+                </View>
                 <TouchableOpacity onPress={() => router.push("add_empty_vehicle")} style={styles.addButton}>
                     <Text style={styles.addButtonText}>Create  Empty Vehicle Routes</Text>
                 </TouchableOpacity>
 
+                {notificationVisible && (
+                    <View style={styles.notificationContainer}>
+
+                        <Pressable onPress={() => setNotificationVisible(false)}>
+                            <FontAwesome5 name="times-circle" size={18} color={Colors.light} style={{ alignSelf: "flex-end" }} />
+                        </Pressable>
+                        <Text style={styles.notificationText}>
+                            Here added vehicles shown to other agencies as well
+                        </Text>
+                    </View>
+                )}
+
                 {loading ? (
                     <ActivityIndicator size="large" color={Colors.darkBlue} style={{ marginTop: 20 }} />
                 ) : (
-                    filteredVehicles.map((vehicle, index) => (
-                        <EmptyVehicleCard vehicle={vehicle} index={index} handleDelete={handleDeleteEmptyVehicle} />
-                    ))
+                    filteredVehicles.length < 1 ? <Text style={{ textAlign: "center" }}>Currently vehicle is not available on route</Text> :
+                        filteredVehicles.map((vehicle, index) => (
+                            <EmptyVehicleCard vehicle={vehicle} index={index} handleDelete={handleDeleteEmptyVehicle} />
+                        ))
                 )}
             </ScrollView>
 
@@ -191,6 +260,10 @@ const EmptyVehicleCard = ({ vehicle, index, handleDelete }: EmptyVehicleCardProp
                     </View>
                 </View>
                 <View style={styles.cardTextContainer}>
+                    <Text style={styles.cardText}>Vehicle No: </Text>
+                    <Text style={{ color: "black" }}>{vehicle.vehicle.number.toUpperCase()}</Text>
+                </View>
+                <View style={styles.cardTextContainer}>
                     <Text style={styles.cardText}>Departure Date: </Text>
                     <Text style={{ color: "black" }}>{vehicle.departureDate ? formatDate(vehicle.departureDate) : "Time not added"}</Text>
                 </View>
@@ -221,6 +294,7 @@ const styles = StyleSheet.create({
     },
     searchContainer: {
         flexDirection: "row",
+        flex: 1,
         alignItems: "center",
         borderColor: Colors.secondary,
         borderWidth: 1,
@@ -234,6 +308,16 @@ const styles = StyleSheet.create({
         marginLeft: 10,
         color: Colors.secondary,
     },
+    vehicleFilterContainer: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        borderWidth: 1,
+        borderColor: Colors.secondary,
+    },
+    vehiclePicker: {
+        flex: 1,
+        marginHorizontal: 2,
+    },
     addButton: {
         backgroundColor: Colors.darkBlue,
         borderRadius: 8,
@@ -246,6 +330,18 @@ const styles = StyleSheet.create({
         color: "#fff",
         fontSize: 16,
         fontWeight: "bold",
+    },
+    notificationContainer: {
+        marginVertical: 20,
+        paddingHorizontal: 20,
+        backgroundColor: '#51BEEE',
+        borderRadius: 5,
+        padding: 10,
+    },
+    notificationText: {
+        color: '#ffffff',
+        fontSize: 16,
+        textAlign: 'center',
     },
     cardHeader: {
         flexDirection: "row",

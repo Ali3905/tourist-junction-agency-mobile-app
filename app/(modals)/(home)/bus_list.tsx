@@ -170,7 +170,7 @@ const BusListScreen: React.FC = () => {
                             <Text style={styles.cardText}>Contact Number: <Text style={{ color: "black" }}>{bus.contactNumber}</Text></Text>
                             {/* <Text style={styles.cardText}>{bus.isAC ? "AC /" : "NON AC /"} {bus.isForRent && " Rent /"} {bus.isForSell && " Sell"}</Text>
                             <Text style={styles.cardText}>{bus.isLuggageSpace ? "Carry Luggage /" : ""} {bus.isSeatPushBack && " Seat Push Back /"} {bus.curtain && " Curtain and Seat Cover"}</Text> */}
-                            <View style={{ flexDirection: 'row', marginBottom: 20, paddingTop: 14 }}>
+                            <View style={{ flexDirection: 'row', marginBottom: 20, paddingTop: 14, flexWrap: "wrap", gap: 5 }}>
                                 {/* Column for Courier Service and QR Code Button */}
                                 <View style={{ alignItems: 'center' }}>
                                     {bus?.isAC ? <Text style={styles.facilityBtn}>

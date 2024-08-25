@@ -116,12 +116,18 @@ const PackageVehicleListScreen: React.FC = () => {
     let filtered = packages;
 
     if (searchQuery) {
-      filtered = filtered.filter(pkg =>
-        pkg.customerName.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        pkg.departurePlace.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        pkg.destinationPlace.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        (pkg.vehicle && pkg.vehicle.number.toLowerCase().includes(searchQuery.toLowerCase()))
-      );
+      const lowerCaseQuery = searchQuery.toLowerCase();
+
+      filtered = filtered.filter(pkg => {
+        const normalizedVehicleNumber = pkg.vehicle ? pkg.vehicle.number.toLowerCase().replace(/\s+/g, '') : '';
+        
+        return (
+          pkg.customerName.toLowerCase().includes(lowerCaseQuery) ||
+          pkg.departurePlace.toLowerCase().includes(lowerCaseQuery) ||
+          pkg.destinationPlace.toLowerCase().includes(lowerCaseQuery) ||
+          normalizedVehicleNumber.includes(lowerCaseQuery)
+        );
+      });
     }
 
     if (selectedVehicleType) {
@@ -129,7 +135,7 @@ const PackageVehicleListScreen: React.FC = () => {
     }
 
     setFilteredPackages(filtered);
-  };
+};
 
   const handleDelete = async () => {
     if (selectedPackage) {
@@ -186,20 +192,7 @@ const PackageVehicleListScreen: React.FC = () => {
           onChangeText={setSearchQuery}
         />
       </View>
-{/* 
-      <View style={styles.filterContainer}>
-        <Picker
-          selectedValue={selectedVehicleType}
-          onValueChange={(itemValue) => setSelectedVehicleType(itemValue)}
-          style={styles.filterPicker}
-        >
-          <Picker.Item label="All Vehicle Types" value="" />
-          <Picker.Item label="CAR" value="CAR" />
-          <Picker.Item label="BUS" value="BUS" />
-          <Picker.Item label="TRUCK" value="TRUCK" />
-          <Picker.Item label="TAMPO" value="TAMPO" />
-        </Picker>
-      </View> */}
+      
 
       <TouchableOpacity onPress={() => router.push("add_package_vehicle_booking")} style={styles.addButton}>
         <Text style={styles.addButtonText}>Create Customer Invoice</Text>

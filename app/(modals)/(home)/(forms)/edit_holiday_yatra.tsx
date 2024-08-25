@@ -13,7 +13,7 @@ type Tour = {
     secondaryMobileNumber: string,
     officeAddress: string,
     location: string,
-    photo: ImagePicker.ImagePickerAsset | null
+    photos: ImagePicker.ImagePickerAsset[] | []
 }
 
 export default function EditHolidayYatraScreen() {
@@ -28,7 +28,7 @@ export default function EditHolidayYatraScreen() {
         secondaryMobileNumber: "",
         officeAddress: "",
         location: "",
-        photo: null
+        photos: []
     })
 
     const formFields = [
@@ -37,7 +37,7 @@ export default function EditHolidayYatraScreen() {
         { name: "secondaryMobileNumber", label: "Mobile Number 2", type: "text", keyboardType: "numeric" },
         { name: "officeAddress", label: "Office Address", type: "text" },
         { name: "location", label: "Location", type: "text" },
-        { name: "photo", label: "Upload Photo", type: "file" },
+        { name: "photos", label: "Upload Photo", type: "file" },
     ]
 
     const onChange = (name: string, text: string) => {
@@ -52,11 +52,11 @@ export default function EditHolidayYatraScreen() {
         let result = await ImagePicker.launchImageLibraryAsync({
             mediaTypes: ImagePicker.MediaTypeOptions.Images,
             allowsMultipleSelection: false,
-            quality: 1,
+            quality: .7,
         });
 
         if (!result.canceled) {
-            setTour({ ...tour, photo: result.assets[0] });
+            setTour({ ...tour, photos: result.assets });
         }
     };
 
@@ -69,15 +69,16 @@ export default function EditHolidayYatraScreen() {
             Object.keys(tour).forEach((ele) => {
                 const key = ele as keyof Tour
                 if (tour[key] === "" || tour[key] === null) return;
-                // console.log({ ele: tour[key] });
-
-                // If the field is an image, handle it differently
-                if (tour[ele]?.uri && ele === "photo") {
-                    formData.append(ele, {
-                        uri: tour[key].uri,
-                        name: tour[key].fileName || "photo.jpg",
-                        type: tour[key].mimeType || "image/jpeg",
-                    });
+                if (ele === "photos") {
+                    tour.photos.map((ph, index) => {
+                        if (ph && ph.uri) {
+                            formData.append(ele, {
+                                uri: tour[key][index].uri,
+                                name: tour[key][index].fileName || "photo.jpg",
+                                type: tour[key][index].mimeType || "image/jpeg",
+                            });
+                        }
+                    })
                 } else {
                     formData.append(ele, tour[key] as string);
                 }
@@ -105,7 +106,7 @@ export default function EditHolidayYatraScreen() {
             secondaryMobileNumber: "",
             officeAddress: "",
             location: "",
-            photo: null
+            photos: []
         })
     }
 
@@ -121,7 +122,7 @@ export default function EditHolidayYatraScreen() {
                     {
                         formFields.map((field) => {
                             return field.type === "text" ? <TextInputField name={field.name} value={tour[field.name]} label={field.label} onChange={onChange} type={field.type} key={field.name} keyboardType={field.keyboardType ? field.keyboardType : undefined} /> :
-                                field.type === "file" ? <FileInputField OnPress={handleImagePicker} image={tour.photo} isImageArray={false} label={field.label} key={field.name} /> : null
+                                field.type === "file" ? <FileInputField OnPress={handleImagePicker} image={tour.photos} isImageArray={true} label={field.label} key={field.name} /> : null
                         })
                     }
 

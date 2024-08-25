@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View, Image, Dimensions, SafeAreaView, TextInput, ActivityIndicator, TouchableOpacity, Alert } from 'react-native';
+import { StyleSheet, Text, View, Image, Dimensions, SafeAreaView, TextInput, ActivityIndicator, TouchableOpacity, Alert, Pressable } from 'react-native';
 import React, { useEffect, useState } from 'react';
 import { Colors } from "@/constants/Colors";
 import { GestureHandlerRootView, ScrollView } from 'react-native-gesture-handler';
@@ -8,6 +8,7 @@ import PhoneNumbersList from '@/components/PhoneNumberList';
 import { useGlobalContext } from '@/context/GlobalProvider';
 import ConfirmationModal from '@/components/Modal';
 import GoToPlans from '@/components/GoToPlans';
+import Carousel from '@/components/Carousel';
 
 const { width, height } = Dimensions.get('window');
 
@@ -18,6 +19,7 @@ const holiday_yatra = () => {
   const [isLoading, setIsLoading] = useState(false);
   const { apiCaller, setRefresh, refresh, userData } = useGlobalContext();
   const [searchQuery, setSearchQuery] = useState("");
+  const [notificationVisible, setNotificationVisible] = useState(true);
 
   const fetchTours = async () => {
     setIsLoading(true)
@@ -55,12 +57,20 @@ const holiday_yatra = () => {
     );
   };
 
-  
+
 
 
   useEffect(() => {
     fetchTours()
   }, [refresh])
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setNotificationVisible(false);
+    }, 10000);
+
+    return () => clearTimeout(timer);
+  }, []);
 
   if (!userData?.isSubsciptionValid) {
     return <GoToPlans />
@@ -89,6 +99,18 @@ const holiday_yatra = () => {
           <TouchableOpacity onPress={() => router.push("add_holiday_yatra")} style={styles.addButton}>
             <Text style={styles.addButtonText}>Create Holidays and Yatra Packages</Text>
           </TouchableOpacity>
+
+          {notificationVisible && (
+            <View style={styles.notificationContainer}>
+
+              <Pressable onPress={() => setNotificationVisible(false)}>
+                <FontAwesome5 name="times-circle" size={18} color={Colors.light} style={{ alignSelf: "flex-end" }} />
+              </Pressable>
+              <Text style={styles.notificationText}>
+                Here added cards will be shown on customer app
+              </Text>
+            </View>
+          )}
 
           {
             isLoading ? (
@@ -136,7 +158,8 @@ const TourCard = ({ tour, handleDelete }: any) => {
             <Text style={styles.editButtonText}>Delete</Text>
           </TouchableOpacity>
         </View>
-        <Image source={{ uri: tour.photo }} height={350} />
+        {/* <Image source={{ uri: tour.photo }} height={350} /> */}
+        <Carousel images={tour.photos} />
 
         <Text style={styles.cardText}>{tour?.agencyName}<Text style={{ color: "black" }}></Text></Text>
         <View style={{ padding: 1 }}>
@@ -174,6 +197,19 @@ const styles = StyleSheet.create({
     flex: 1,
     marginLeft: 10,
     color: Colors.secondary,
+  },
+
+  notificationContainer: {
+    marginVertical: 20,
+    paddingHorizontal: 20,
+    backgroundColor: '#51BEEE',
+    borderRadius: 5,
+    padding: 10,
+  },
+  notificationText: {
+    color: '#ffffff',
+    fontSize: 16,
+    textAlign: 'center',
   },
   card: {
     backgroundColor: "#fff",

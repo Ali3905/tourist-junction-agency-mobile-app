@@ -12,7 +12,8 @@ import {
   Alert,
   ActivityIndicator,
   Button,
-  Image
+  Image,
+  Pressable
 } from "react-native";
 import { BlurView } from 'expo-blur';
 import { Colors } from "@/constants/Colors";
@@ -82,6 +83,7 @@ const DailyRouteVehicles: React.FC = () => {
   const [isQRModalVisible, setIsQrModalVisible] = useState<string | null>(null);
   const [isDriverModalVisible, setIsDriverModalVisible] = useState<string | null>(null);
   const [isChartModalVisible, setIsChartModalVisible] = useState<string | null>(null);
+  const [notificationVisible, setNotificationVisible] = useState(true);
 
   const [discountAmount, setDiscountAmount] = useState('');
   const [modalVisible, setModalVisible] = useState(false);
@@ -136,6 +138,14 @@ const DailyRouteVehicles: React.FC = () => {
     fetchDrivers();
     fetchCleaners();
   }, [refresh]);
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+        setNotificationVisible(false);
+    }, 10000);
+
+    return () => clearTimeout(timer);
+}, []);
 
   const handleDelete = async () => {
     if (selectedRoute) {
@@ -211,6 +221,18 @@ const DailyRouteVehicles: React.FC = () => {
       <TouchableOpacity onPress={() => router.push("add_daily_route_vehicles")} style={styles.addButton}>
         <Text style={styles.addButtonText}>Add Route</Text>
       </TouchableOpacity>
+
+      {notificationVisible && (
+                    <View style={styles.notificationContainer}>
+
+                        <Pressable onPress={() => setNotificationVisible(false)}>
+                            <FontAwesome5 name="times-circle" size={18} color={Colors.light} style={{ alignSelf: "flex-end" }} />
+                        </Pressable>
+                        <Text style={styles.notificationText}>
+                        Here added cards will be shown on customer app
+                        </Text>
+                    </View>
+                )}
 
       {loading ? (
         <ActivityIndicator size="large" color={Colors.darkBlue} />
@@ -788,6 +810,18 @@ const styles = StyleSheet.create({
     fontSize: 8,
     fontWeight: '900'
   },
+  notificationContainer: {
+    marginVertical: 20,
+    paddingHorizontal: 20,
+    backgroundColor: '#51BEEE',
+    borderRadius: 5,
+    padding: 10,
+},
+notificationText: {
+    color: '#ffffff',
+    fontSize: 16,
+    textAlign: 'center',
+},
   facilityBtn: {
     fontWeight: 'bold',
     fontSize: 12,

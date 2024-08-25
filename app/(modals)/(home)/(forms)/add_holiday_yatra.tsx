@@ -12,7 +12,7 @@ type Tour = {
     secondaryMobileNumber: string,
     officeAddress: string,
     location: string,
-    photo: ImagePicker.ImagePickerAsset | null
+    photos: ImagePicker.ImagePickerAsset[] | []
 }
 
 const add_holiday_yatra = () => {
@@ -27,7 +27,7 @@ const add_holiday_yatra = () => {
         secondaryMobileNumber: "",
         officeAddress: "",
         location: "",
-        photo: null
+        photos: []
     })
 
     const formFields = [
@@ -36,7 +36,7 @@ const add_holiday_yatra = () => {
         { name: "secondaryMobileNumber", label: "Mobile Number 2", type: "text", keyboardType: "numeric" },
         { name: "officeAddress", label: "Office Address", type: "text" },
         { name: "location", label: "Location", type: "text" },
-        { name: "photo", label: "Upload Photo", type: "file" },
+        { name: "photos", label: "Upload Photo", type: "file" },
     ]
 
     const onChange = (name: string, text: string) => {
@@ -50,12 +50,12 @@ const add_holiday_yatra = () => {
 
         let result = await ImagePicker.launchImageLibraryAsync({
             mediaTypes: ImagePicker.MediaTypeOptions.Images,
-            allowsMultipleSelection: false,
-            quality: 1,
+            allowsMultipleSelection: true,
+            quality: .7,
         });
 
         if (!result.canceled) {
-            setTour({ ...tour, photo: result.assets[0] });
+            setTour({ ...tour, photos: result.assets });
         }
     };
 
@@ -63,16 +63,24 @@ const add_holiday_yatra = () => {
         try {
             setLoading(true)
             const formData = new FormData()
+            console.log({length : tour.photos.length});
+            
 
             Object.keys(tour).forEach((ele) => {
                 const key = ele as keyof Tour
                 if (tour[key] === "" || tour[key] === null) return;
-                if (ele === "photo") {
-                    formData.append(ele, {
-                        uri: tour[key].uri,
-                        name: tour[key].fileName || "photo.jpg",
-                        type: tour[key].mimeType || "image/jpeg",
-                    });
+
+                if (ele === "photos") {
+                    tour.photos.forEach((photo, index) => {
+                        if (photo && photo.uri) {
+                            formData.append('photos', {
+                                uri: photo.uri,
+                                type: 'image/jpeg',
+                                name: `photo${index}.jpg`
+                              } as any);
+                        }
+                    })
+
                 } else {
                     formData.append(ele, tour[key] as string);
                 }
@@ -100,7 +108,7 @@ const add_holiday_yatra = () => {
             secondaryMobileNumber: "",
             officeAddress: "",
             location: "",
-            photo: null
+            photos: []
         })
     }
 
@@ -111,8 +119,8 @@ const add_holiday_yatra = () => {
 
                     {
                         formFields.map((field) => {
-                            return field.type === "text" ? <TextInputField name={field.name} value={tour[field.name]} label={field.label} onChange={onChange} type={field.type} key={field.name} keyboardType={field.keyboardType? field.keyboardType: undefined} /> :
-                                field.type === "file" ? <FileInputField OnPress={handleImagePicker} image={tour.photo} isImageArray={false} label={field.label} key={field.name} /> : null
+                            return field.type === "text" ? <TextInputField name={field.name} value={tour[field.name]} label={field.label} onChange={onChange} type={field.type} key={field.name} keyboardType={field.keyboardType ? field.keyboardType : undefined} /> :
+                                field.type === "file" ? <FileInputField OnPress={handleImagePicker} image={tour.photos} isImageArray={true} label={field.label} key={field.name} /> : null
                         })
                     }
 
