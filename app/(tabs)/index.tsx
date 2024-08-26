@@ -152,6 +152,10 @@ export default function HomeScreen() {
             <Image source={require('@/assets/images/holiday_yatra.png')} style={styles.iconEmpty} />
             <Text style={styles.iconText} numberOfLines={2} ellipsizeMode="tail">Create Holiday's & Yatra</Text>
           </TouchableOpacity>
+          <TouchableOpacity onPress={() => router.push('search_empty_vehicle_list')} style={styles.gridItem}>
+            <Image source={require('@/assets/images/empty-vehicle-icon.png')} style={styles.iconEmpty} />
+            <Text style={styles.iconText} numberOfLines={2} ellipsizeMode="tail"> Search Empty Vehicle</Text>
+          </TouchableOpacity>
         </View>
 
         <View style={styles.dividerContainer}>

@@ -65,6 +65,7 @@ export default function RootLayout() {
         <Stack.Screen name="(modals)/(home)/after_photos" options={{ headerShadowVisible:false, headerTitle:"After Journey Photos", headerTitleAlign:"center" }} />
         <Stack.Screen name="(modals)/(home)/holiday_yatra" options={{ headerShadowVisible:false, headerTitle:"Holiday Yatra", headerTitleAlign:"center" }} />
         <Stack.Screen name="(modals)/(home)/empty_vehicle_list" options={{ headerShadowVisible:false, headerTitle:"Empty Vehicle List", headerTitleAlign:"center" }} />
+        <Stack.Screen name="(modals)/(home)/search_empty_vehicle_list" options={{ headerShadowVisible:false, headerTitle:"Search Empty Vehicle", headerTitleAlign:"center" }} />
 
         <Stack.Screen name="(modals)/(home)/(forms)/add_cleaner" options={{ headerShadowVisible:false, headerTitle:"Add Cleaner", headerTitleAlign:"center" }} />
         <Stack.Screen name="(modals)/(home)/(forms)/edit_cleaner" options={{ headerShadowVisible:false, headerTitle:"Edit Cleaner", headerTitleAlign:"center" }} />
