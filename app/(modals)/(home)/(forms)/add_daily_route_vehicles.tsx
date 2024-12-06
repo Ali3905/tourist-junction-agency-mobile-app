@@ -19,7 +19,7 @@ import { GestureHandlerRootView, TextInput } from "react-native-gesture-handler"
 import { router } from "expo-router";
 import RadioButtonGroup, { RadioButtonItem } from "expo-radio-button";
 import * as ImagePicker from "expo-image-picker";
-import ImageResizer from 'react-native-image-resizer';
+import tw from 'twrnc'
 
 
 const AddRouteScreen: React.FC = () => {
@@ -141,6 +141,8 @@ const AddRouteScreen: React.FC = () => {
         //     } as any);
         // });
         // return;
+
+
         selectedAmenities.forEach((amenity) => {
             formData.append("amenities", amenity as string)
         })
@@ -182,7 +184,7 @@ const AddRouteScreen: React.FC = () => {
         let result = await ImagePicker.launchImageLibraryAsync({
             mediaTypes: ImagePicker.MediaTypeOptions.Images,
             allowsMultipleSelection: type === "busPhotos" ? true : false,
-            quality: 1,
+            quality: .7,
         });
 
         if (!result.canceled && result.assets) {
@@ -226,19 +228,22 @@ const AddRouteScreen: React.FC = () => {
                     <View style={styles.modalContent}>
                         <View style={styles.inputGroup}>
                             <Text style={styles.label}>Vehicle Number</Text>
-                            <View style={styles.pickerContainer}>
-                                <Picker
-                                    selectedValue={vehicleNumber}
-                                    onValueChange={(itemValue) => setVehicleNumber(itemValue)}
-                                    style={styles.picker}
-                                >
-                                    <Picker.Item label="Select Vehicle Number" value="" />
-                                    {vehicleNumbers.map((number, index) => (
-                                        <Picker.Item key={index} label={number.number} value={number.number} />
-                                    ))}
-                                </Picker>
-                            </View>
+                            <View style={tw`border-secondary border border-[#C0C0C0] rounded-lg overflow-hidden`}>
+                                    <Picker
+                                        selectedValue={vehicleNumber}
+                                        onValueChange={(itemValue) => setVehicleNumber(itemValue)}
+                                        style={tw`text-sm text-black h-14 p-4 sm:p-6 md:p-8 bg-white`}  // Adjust padding for responsiveness
+                                        itemStyle={tw`text-black`} // Ensure items have correct text color and spacing
+                                    >
+                                        <Picker.Item label="Select Vehicle Number" value="" />
+                                        {vehicleNumbers.map((number, index) => (
+                                            <Picker.Item key={index} label={number.number} value={number.number} />
+                                        ))}
+                                    </Picker>
+                                </View>
                         </View>
+
+
                         <View style={styles.inputGroup}>
                             <Text style={styles.label}>Departure Place</Text>
                             <TextInput
@@ -319,6 +324,7 @@ const AddRouteScreen: React.FC = () => {
                             <TextInput
                                 style={styles.input}
                                 value={ticketFare?.toString() || ""}
+                                keyboardType="numeric"
                                 onChangeText={(text) => setTicketFare(Number(text))}
                             />
                         </View>
@@ -328,6 +334,7 @@ const AddRouteScreen: React.FC = () => {
                                 <TextInput
                                     style={{ flex: 1 }}
                                     value={discount.toString() || "0"}
+                                    keyboardType="numeric"
                                     onChangeText={(text) => setDiscount(Number(text))}
                                 />
                                 <Text>%</Text>
@@ -533,6 +540,7 @@ const styles = StyleSheet.create({
         flex: 1,
         padding: 2,
         backgroundColor: "#ffffff",
+        marginBottom:50
     },
     modalContainer: {
         flex: 1,
@@ -551,7 +559,7 @@ const styles = StyleSheet.create({
     label: {
         marginBottom: 5,
         fontSize: 13,
-        color: Colors.secondary,
+        color: '#0',
         fontWeight: "500"
     },
     featuresOuterContainer: {
@@ -598,7 +606,7 @@ const styles = StyleSheet.create({
         fontSize: 16,
     },
     input: {
-        borderColor: Colors.secondary,
+        borderColor: '#C0C0C0',
         borderWidth: 1,
         borderRadius: 10,
         paddingHorizontal: 10,
@@ -641,10 +649,9 @@ const styles = StyleSheet.create({
         overflow: 'hidden',
     },
     picker: {
-        height: 40,
+        height: 1,
         width: '100%',
-        marginTop: -6,
-        marginBottom: 6
+       
     },
     modalButtons: {
         flexDirection: "row",

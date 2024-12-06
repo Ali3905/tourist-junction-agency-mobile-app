@@ -223,6 +223,7 @@ interface Vehicle {
 
 interface Package {
   _id: string;
+  agencyName: string;
   vehicle: {
     _id: string;
     number: string;
@@ -386,8 +387,10 @@ interface User {
   vehicles: any[];
   dailyRoutes: string[];
   isSubsciptionValid: boolean;
+  trialValidTill: Date;
   subscription: string;
   createdAt: string;
   updatedAt: string;
+  role: "AGENCY" | "CUSTOMER" | "ADMIN";
   __v: number;
 }

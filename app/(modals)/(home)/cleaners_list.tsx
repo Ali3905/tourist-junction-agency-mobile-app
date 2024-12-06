@@ -18,6 +18,7 @@ import { FontAwesome5, MaterialIcons } from "@expo/vector-icons";
 import { router } from "expo-router";
 import { useGlobalContext } from "@/context/GlobalProvider";
 import GoToPlans from "@/components/GoToPlans";
+import tw from 'twrnc'
 
 interface BlurOverlayProps {
     visible: boolean;
@@ -87,10 +88,9 @@ const CleanerListScreen: React.FC = () => {
     };
 
     const filteredCleaners = searchQuery ? filterCleaners(searchQuery) : cleaners;
-    if (!userData?.isSubsciptionValid) {
-        return <GoToPlans />
-      }
-
+    if (!userData?.isSubsciptionValid && Date.now() >= new Date(userData?.trialValidTill).getTime()) {
+    return <GoToPlans />;
+  }
     return (
         <SafeAreaView style={styles.container}>
             <View style={styles.searchContainer}>
@@ -99,7 +99,7 @@ const CleanerListScreen: React.FC = () => {
                 </TouchableOpacity>
                 <TextInput
                     style={styles.searchInput}
-                    placeholder="Search..."
+                    placeholder="Search..."x
                     placeholderTextColor={Colors.secondary}
                     value={searchQuery}
                     onChangeText={setSearchQuery}
@@ -132,12 +132,12 @@ const CleanerListScreen: React.FC = () => {
                                     <MaterialIcons name="delete" size={24} color={Colors.darkBlue} />
                                 </TouchableOpacity>
                             </View>
-                            <Text style={styles.cardText}>Name: <Text style={{ color: "black" }}>{cleaner.name}</Text></Text>
-                            <Text style={styles.cardText}>Mobile: <Text style={{ color: "black" }}>{cleaner.mobileNumber}</Text></Text>
-                            <Text style={styles.cardText}>City: <Text style={{ color: "black" }}>{cleaner.city}</Text></Text>
-                            <Text style={styles.cardText}>State: <Text style={{ color: "black" }}>{cleaner.state}</Text></Text>
-                            <View style={styles.aadharContainer}>
-                                <Text style={styles.cardText}>Aadhar card</Text>
+                            <Text style={styles.cardText}>Name - <Text style={{ color: "black" }}>{cleaner.name}</Text></Text>
+                            <Text style={styles.cardText}>Mobile - <Text style={{ color: "black" }}>{cleaner.mobileNumber}</Text></Text>
+                            <Text style={styles.cardText}>City - <Text style={{ color: "black" }}>{cleaner.city}</Text></Text>
+                            <Text style={styles.cardText}>State - <Text style={{ color: "black" }}>{cleaner.state}</Text></Text>
+                            <View style={tw`flex-row items-center mt-4 justify-between`}>
+                                {/* <Text style={styles.cardText}>Aadhar card</Text> */}
                                 <TouchableOpacity style={styles.viewAadharButton} onPress={() => handleViewImage(cleaner.aadharCard)}>
                                     <Text style={styles.viewAadharButtonText}>View Aadhar</Text>
                                 </TouchableOpacity>
@@ -199,7 +199,7 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         padding: 20,
-        backgroundColor: "#ffffff",
+        backgroundColor: "#EAEAEA",
     },
     searchContainer: {
         flexDirection: "row",
@@ -210,6 +210,7 @@ const styles = StyleSheet.create({
         paddingHorizontal: 15,
         marginBottom: 20,
         paddingVertical: 5,
+        backgroundColor:'#fff'
     },
     searchInput: {
         flex: 1,
@@ -279,10 +280,10 @@ const styles = StyleSheet.create({
         fontWeight: "bold",
     },
     cardText: {
-        marginBottom: 10,
-        color: Colors.secondary,
+        marginBottom: 2,
+        color: '#000000',
         fontWeight: "500",
-        fontSize: 15,
+        fontSize: 12,
     },
     aadharContainer: {
         flexDirection: "row",

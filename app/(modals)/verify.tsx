@@ -10,6 +10,7 @@ import {
     Animated,
     Image,
     Vibration,
+    Alert,
 } from "react-native";
 import { router } from "expo-router";
 import { Colors } from "@/constants/Colors";
@@ -39,6 +40,9 @@ const EnterOTPScreen = () => {
                 setToken(response.data.authToken)
                 setIsLogged(true)
                 router.replace("/"); 
+                if(response.data.data.type === "ADMIN"){
+                    Alert.alert("Success", "Free Trial of 5 days have been activated on your account.")
+                }
             } else {
                 throw new Error("OTP verification failed");
             }

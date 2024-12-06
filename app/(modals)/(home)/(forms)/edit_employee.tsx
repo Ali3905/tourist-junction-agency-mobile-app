@@ -69,12 +69,12 @@ const AddEmployeeScreen: React.FC = () => {
             Alert.alert("Please fill all fields and provide both images.");
             return;
         }
-    
+
         if (mobile.length !== 10) {
             Alert.alert("Please enter a valid 10-digit phone number.");
             return;
         }
-    
+
         const formData = new FormData();
         formData.append('name', name);
         formData.append('mobileNumber', mobile);
@@ -82,7 +82,7 @@ const AddEmployeeScreen: React.FC = () => {
         formData.append('city', city);
         formData.append('state', state);
         formData.append('employeeType', employerType);
-    
+
         if (selfie && selfie.uri) {
             formData.append('photo', {
                 uri: selfie.uri,
@@ -90,7 +90,7 @@ const AddEmployeeScreen: React.FC = () => {
                 name: 'employee_selfie.jpg'
             } as any);
         }
-    
+
         if (aadharImage && aadharImage.uri) {
             formData.append('aadharCard', {
                 uri: aadharImage.uri,
@@ -98,19 +98,23 @@ const AddEmployeeScreen: React.FC = () => {
                 name: 'aadhar_card.jpg'
             } as any);
         }
-    
+
         setLoading(true);
         try {
             await apiCaller.patch(`/api/employee?employeeId=${editData._id}`, formData, { headers: { 'Content-Type': 'multipart/form-data' } });
             setLoading(false);
-            setRefresh(prev=>!prev)
+            setRefresh(prev => !prev)
             resetForm();
             Alert.alert("Success", "Employee updated successfully!");
             router.back()
-        } catch (error) {
+        } catch (error: any) {
             console.log(error);
             setLoading(false);
-            Alert.alert("Error", "Failed to update employee. Please try again.");
+            if (error.response && error.response.data && error.response.data.message) {
+                Alert.alert("Error", error.response.data.message);
+            } else {
+                Alert.alert("Error", "Failed to update employee. Please try again.");
+            }
         }
     };
 
@@ -119,7 +123,7 @@ const AddEmployeeScreen: React.FC = () => {
             mediaTypes: ImagePicker.MediaTypeOptions.Images,
             allowsEditing: false,
             aspect: [1, 1],
-            quality: 1,
+            quality: .7,
         });
 
         if (!result.canceled) {
@@ -183,7 +187,7 @@ const AddEmployeeScreen: React.FC = () => {
                                 onValueChange={(itemValue) => setState(itemValue)}
                                 style={styles.picker}
                             >
-                                <Picker.Item style={{ color: Colors.secondary }} label="Select State" value="" />
+                                <Picker.Item style={{ color: '#C0C0C0' }} label="Select State" value="" />
                                 {State.getStatesOfCountry("IN").map((s) => (
                                     <Picker.Item key={s.isoCode} label={s.name} value={s.isoCode} />
                                 ))}
@@ -199,7 +203,7 @@ const AddEmployeeScreen: React.FC = () => {
                                 style={styles.picker}
                                 enabled={!!state}
                             >
-                                <Picker.Item style={{ color: Colors.secondary }} label="Select City" value="" />
+                                <Picker.Item style={{ color: '#C0C0C0' }} label="Select City" value="" />
                                 {cityList.map((c) => (
                                     <Picker.Item key={c.name} label={c.name} value={c.name} />
                                 ))}
@@ -214,7 +218,7 @@ const AddEmployeeScreen: React.FC = () => {
                                 onValueChange={(itemValue) => setEmployerType(itemValue)}
                                 style={styles.picker}
                             >
-                                <Picker.Item style={{ color: Colors.secondary }} label="Select Employee Type" value="" />
+                                <Picker.Item style={{ color: '#C0C0C0' }} label="Select Employee Type" value="" />
                                 <Picker.Item label="MANAGER" value="MANAGER" />
                                 <Picker.Item label="CLEANER" value="CLEANER" />
                                 <Picker.Item label="OFFICE-BOY" value="OFFICE-BOY" />
@@ -256,6 +260,7 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         backgroundColor: "#ffffff",
+        marginBottom:30
     },
     scrollView: {
         flex: 1,
@@ -274,11 +279,11 @@ const styles = StyleSheet.create({
     label: {
         marginBottom: 5,
         fontSize: 13,
-        color: Colors.secondary,
+        color: '#000000',
         fontWeight: "500",
     },
     input: {
-        borderColor: Colors.secondary,
+        borderColor: '#C0C0C0',
         borderWidth: 1,
         borderRadius: 10,
         paddingHorizontal: 10,

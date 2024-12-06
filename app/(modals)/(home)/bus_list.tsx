@@ -83,13 +83,15 @@ const BusListScreen: React.FC = () => {
     const { apiCaller, setEditData, refresh } = useGlobalContext();
 
     const filterByType = (data: Vehicle[], type: string): Vehicle[] => {
-        return data.filter(vehicle => vehicle.type === type);
+        return data?.filter(vehicle => vehicle.type === type);
     };
 
     const fetchBuses = async () => {
         try {
             setLoading(true);
             const response = await apiCaller.get('/api/vehicle');
+            console.log(response.data.data.vehicles);
+            
             const filteredData = filterByType(response.data.data.vehicles, 'BUS')
             setBuses(filteredData);
         } catch (err) {
@@ -161,13 +163,13 @@ const BusListScreen: React.FC = () => {
                                     <MaterialIcons name="delete" size={24} color={Colors.darkBlue} />
                                 </TouchableOpacity>
                             </View>
-                            <Text style={styles.cardText}>Vehicle Number: <Text style={{ color: "black" }}>{bus.number.toUpperCase()}</Text></Text>
-                            <Text style={styles.cardText}>Seating Capacity: <Text style={{ color: "black" }}>{bus.seatingCapacity}</Text></Text>
-                            <Text style={styles.cardText}>Vehicle Model: <Text style={{ color: "black" }}>{bus.model}</Text></Text>
-                            <Text style={styles.cardText}>Body Type: <Text style={{ color: "black" }}>{bus.bodyType}</Text></Text>
-                            <Text style={styles.cardText}>Chassis Brand: <Text style={{ color: "black" }}>{bus.chassisBrand}</Text></Text>
-                            <Text style={styles.cardText}>Location: <Text style={{ color: "black" }}>{bus.location}</Text></Text>
-                            <Text style={styles.cardText}>Contact Number: <Text style={{ color: "black" }}>{bus.contactNumber}</Text></Text>
+                            <Text style={styles.cardText}>Vehicle Number - <Text style={{ color: "black" }}>{bus.number.toUpperCase()}</Text></Text>
+                            <Text style={styles.cardText}>Seating Capacity - <Text style={{ color: "black" }}>{bus.seatingCapacity}</Text></Text>
+                            <Text style={styles.cardText}>Vehicle Model - <Text style={{ color: "black" }}>{bus.model}</Text></Text>
+                            <Text style={styles.cardText}>Body Type - <Text style={{ color: "black" }}>{bus.bodyType}</Text></Text>
+                            <Text style={styles.cardText}>Chassis Brand - <Text style={{ color: "black" }}>{bus.chassisBrand}</Text></Text>
+                            <Text style={styles.cardText}>Location - <Text style={{ color: "black" }}>{bus.location}</Text></Text>
+                            <Text style={styles.cardText}>Contact Number - <Text style={{ color: "black" }}>{bus.contactNumber}</Text></Text>
                             {/* <Text style={styles.cardText}>{bus.isAC ? "AC /" : "NON AC /"} {bus.isForRent && " Rent /"} {bus.isForSell && " Sell"}</Text>
                             <Text style={styles.cardText}>{bus.isLuggageSpace ? "Carry Luggage /" : ""} {bus.isSeatPushBack && " Seat Push Back /"} {bus.curtain && " Curtain and Seat Cover"}</Text> */}
                             <View style={{ flexDirection: 'row', marginBottom: 20, paddingTop: 14, flexWrap: "wrap", gap: 5 }}>
@@ -323,7 +325,7 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         padding: 20,
-        backgroundColor: "#fff",
+        backgroundColor: "#EAEAEA",
     },
     searchContainer: {
         flexDirection: "row",
@@ -334,6 +336,7 @@ const styles = StyleSheet.create({
         paddingHorizontal: 15,
         marginBottom: 20,
         paddingVertical: 5,
+        backgroundColor:'#fff'
     },
     searchInput: {
         flex: 1,
@@ -402,10 +405,10 @@ const styles = StyleSheet.create({
         fontWeight: "bold",
     },
     cardText: {
-        marginBottom: 10,
-        color: Colors.secondary,
+        marginBottom: 2,
+        color: '#000000',
         fontWeight: "500",
-        fontSize: 15,
+        fontSize: 12,
     },
     viewPhotoButton: {
         backgroundColor: Colors.darkBlue,

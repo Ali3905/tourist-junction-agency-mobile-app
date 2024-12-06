@@ -110,10 +110,9 @@ const VehicleListScreen: React.FC = () => {
         setShowImageModal(true);
     };
 
-    if (!userData?.isSubsciptionValid) {
-        return <GoToPlans />
-      }
-
+    if (!userData?.isSubsciptionValid && Date.now() >= new Date(userData?.trialValidTill).getTime()) {
+    return <GoToPlans />;
+  }
     return (
         <SafeAreaView style={styles.container}>
             <View style={styles.searchContainer}>
@@ -145,7 +144,7 @@ const VehicleListScreen: React.FC = () => {
                                     <MaterialIcons name="delete" size={24} color={Colors.darkBlue} />
                                 </TouchableOpacity>
                             </View>
-                            <Text style={styles.cardText}>Vehicle Number: <Text style={{ color: "black" }}>{vehicle.number.toUpperCase()}</Text></Text>
+                            <Text style={styles.cardText}>Vehicle Number - <Text style={{ color: "black" }}>{vehicle.number.toUpperCase()}</Text></Text>
                             <View style={styles.documentContainer}>
                                 <TouchableOpacity style={styles.viewDocumentButton} onPress={() => handleViewImage(vehicle.RC)}>
                                     <Text style={styles.viewDocumentButtonText}>View RC</Text>
@@ -231,7 +230,7 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         padding: 20,
-        backgroundColor: "#ffffff",
+        backgroundColor: "#EAEAEA",
     },
     imageContainer: {
         flex: 1,
@@ -270,6 +269,7 @@ const styles = StyleSheet.create({
         paddingHorizontal: 15,
         marginBottom: 20,
         paddingVertical: 5,
+        backgroundColor:'#fff'
     },
     searchInput: {
         flex: 1,
@@ -322,7 +322,7 @@ const styles = StyleSheet.create({
     },
     cardText: {
         marginBottom: 10,
-        color: Colors.secondary,
+        color: '#000000',
         fontWeight: "500",
         fontSize: 15,
     },

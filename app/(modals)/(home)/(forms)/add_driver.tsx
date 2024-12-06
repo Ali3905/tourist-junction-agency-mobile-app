@@ -123,7 +123,7 @@ const AddDriverScreen: React.FC = () => {
                 name: 'driver_license.jpg'
             } as any);
         }
-            
+
         console.log(formData);
 
         setLoading(true);
@@ -139,7 +139,11 @@ const AddDriverScreen: React.FC = () => {
         } catch (error: any) {
             console.log(error.response?.data || error.message || error);
             setLoading(false);
-            Alert.alert("Error", "Could not create driver. Please check your data or try again later");
+            if (error.response && error.response.data && error.response.data.message) {
+                Alert.alert("Error", error.response.data.message);
+            } else {
+                Alert.alert("Error", "Could not create driver. Please check your data or try again later");
+            }
         }
     };
 
@@ -148,7 +152,7 @@ const AddDriverScreen: React.FC = () => {
             mediaTypes: ImagePicker.MediaTypeOptions.Images,
             allowsEditing: false,
             aspect: type === "driver" ? [1, 1] : [4, 3],
-            quality: 1,
+            quality: .7,
         });
 
         if (!result.canceled) {
@@ -312,6 +316,7 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         backgroundColor: "#ffffff",
+        marginBottom:40
     },
     scrollView: {
         flex: 1,
@@ -330,11 +335,11 @@ const styles = StyleSheet.create({
     label: {
         marginBottom: 5,
         fontSize: 13,
-        color: Colors.secondary,
+        color: '#000000',
         fontWeight: "500",
     },
     input: {
-        borderColor: Colors.secondary,
+        borderColor: '#C0C0C0',
         borderWidth: 1,
         borderRadius: 10,
         paddingHorizontal: 10,
@@ -342,14 +347,14 @@ const styles = StyleSheet.create({
     },
     dropdown: {
         height: 50,
-        borderColor: Colors.secondary,
+        borderColor: '#C0C0C0',
         borderWidth: 1,
         borderRadius: 10,
         paddingHorizontal: 8,
     },
     placeholderStyle: {
         fontSize: 16,
-        color: Colors.secondary,
+        color: '#C0C0C0',
     },
     selectedTextStyle: {
         fontSize: 16,

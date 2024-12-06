@@ -14,10 +14,9 @@ import GoToPlans from "@/components/GoToPlans";
 
 const VehicleInspectionScreen: React.FC = () => {
     const { userData } = useGlobalContext()
-    if (!userData?.isSubsciptionValid) {
-        return <GoToPlans />
-      }
-    return (
+    if (!userData?.isSubsciptionValid && Date.now() >= new Date(userData?.trialValidTill).getTime()) {
+    return <GoToPlans />;
+  }    return (
         <SafeAreaView style={styles.container}>
             <ScrollView style={styles.driversList}>
                 <TouchableOpacity onPress={() => router.push("package_vehicle_booking_inspection")} style={styles.carListButton}>

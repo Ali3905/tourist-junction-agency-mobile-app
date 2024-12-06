@@ -18,6 +18,7 @@ import { Picker } from "@react-native-picker/picker";
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { GestureHandlerRootView, TextInput } from "react-native-gesture-handler";
 import { router } from "expo-router";
+import tw from 'twrnc'
 
 const AddServiceHistoryScreen: React.FC = () => {
     const [garageName, setGarageName] = useState("");
@@ -107,7 +108,8 @@ const AddServiceHistoryScreen: React.FC = () => {
         let result = await ImagePicker.launchImageLibraryAsync({
             mediaTypes: ImagePicker.MediaTypeOptions.Images,
             allowsMultipleSelection: true,
-            quality: 1,
+            selectionLimit: 5,
+            quality: .7,
         });
 
         if (!result.canceled) {
@@ -131,11 +133,12 @@ const AddServiceHistoryScreen: React.FC = () => {
                     <View style={styles.modalContent}>
                         <View style={styles.inputGroup}>
                             <Text style={styles.label}>Vehicle Number</Text>
-                            <View style={styles.pickerContainer}>
+                            <View style={tw`border-secondary border border-[#C0C0C0] rounded-lg overflow-hidden`}>
                                 <Picker
                                     selectedValue={vehicleNumber}
                                     onValueChange={(itemValue) => setVehicleNumber(itemValue)}
-                                    style={styles.picker}
+                                    style={tw`text-sm text-black h-14 p-4 sm:p-6 md:p-8 bg-white`}  // Responsive padding, font size, height, and background color
+                                    itemStyle={tw`text-black`} // Ensures items have correct text color
                                 >
                                     <Picker.Item label="Select Vehicle Number" value="" />
                                     {vehicleNumbers.map((number, index) => (
@@ -143,6 +146,7 @@ const AddServiceHistoryScreen: React.FC = () => {
                                     ))}
                                 </Picker>
                             </View>
+
                         </View>
                         <View style={styles.inputGroup}>
                             <Text style={styles.label}>Garage Name</Text>
@@ -221,18 +225,19 @@ const AddServiceHistoryScreen: React.FC = () => {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        padding: 20,
+        padding: 10,
         backgroundColor: "#ffffff",
     },
     modalContainer: {
         flex: 1,
         paddingTop: Platform.OS === 'android' ? 20 : 0,
-        paddingHorizontal: 20,
+        paddingHorizontal: 10,
     },
     modalContent: {
         backgroundColor: "#fff",
         borderRadius: 10,
         elevation: 5,
+        padding:20
     },
     inputGroup: {
         marginBottom: 15,
@@ -240,11 +245,11 @@ const styles = StyleSheet.create({
     label: {
         marginBottom: 5,
         fontSize: 13,
-        color: Colors.secondary,
+        color: '#000000',
         fontWeight: "500"
     },
     input: {
-        borderColor: Colors.secondary,
+        borderColor: '#C0C0C0',
         borderWidth: 1,
         borderRadius: 10,
         paddingHorizontal: 10,

@@ -22,6 +22,7 @@ import Carousel from "@/components/Carousel";
 import ConfirmationModal from "@/components/Modal";
 import GoToPlans from "@/components/GoToPlans";
 import { Picker } from "@react-native-picker/picker";
+import tw from 'twrnc'
 
 const { width: viewportWidth } = Dimensions.get("window");
 
@@ -113,14 +114,38 @@ const SearchEmptyVehicleScreen: React.FC = () => {
    
     const filteredVehicles = searchQuery || fromFilter || toFilter || vehicleTypeFilter ? filterVehicles(searchQuery) : vehicles;
 
-    if (!userData?.isSubsciptionValid) {
-        return <GoToPlans />
-    }
+    if (!userData?.isSubsciptionValid && Date.now() >= new Date(userData?.trialValidTill).getTime()) {
+    return <GoToPlans />;
+  }
 
     return (
         <SafeAreaView style={styles.container}>
             <ScrollView>
-                <View style={styles.searchContainer}>
+            <View style={styles.container1}>
+                  <View style={styles.inputContainer}>
+                        <FontAwesome5 name="bus" size={24} color="black" style={styles.icon} />
+                        <TextInput
+                        placeholder="From"
+                        style={styles.input}
+                        value={fromFilter}
+                        onChangeText={setFromFilter}
+                        />
+                    </View>
+                    {/* <View style={styles.iconContainer}>
+                        <FontAwesome5 name="exchange" size={24} color="white" />
+                    </View> */}
+                    <View style={styles.inputContainer}>
+                        <FontAwesome5 name="bus" size={24} color="black" style={styles.icon} />
+                        <TextInput
+                        placeholder="To"
+                        style={styles.input}
+                        value={toFilter}
+                        onChangeText={setToFilter}
+                        />
+                    </View>
+            </View>
+
+                {/* <View style={styles.searchContainer}>
                     <TouchableOpacity onPress={handleSearch}>
                         <FontAwesome5 name="search" size={18} color={Colors.secondary} />
                     </TouchableOpacity>
@@ -131,8 +156,8 @@ const SearchEmptyVehicleScreen: React.FC = () => {
                         value={searchQuery}
                         onChangeText={setSearchQuery}
                     />
-                </View>
-                <View style={styles.vehicleFilterContainer}>
+                </View> */}
+                {/* <View style={styles.vehicleFilterContainer}>
                     <Picker
                         selectedValue={vehicleTypeFilter}
                         style={styles.vehiclePicker}
@@ -144,8 +169,8 @@ const SearchEmptyVehicleScreen: React.FC = () => {
                         <Picker.Item label="TRUCK" value="TRUCK" />
                         <Picker.Item label="TAMPO" value="TAMPO" />
                     </Picker>
-                </View>
-                <View style={{ flexDirection: "row", marginTop: 5, gap: 5 }}>
+                </View> */}
+                {/* <View style={{ flexDirection: "row", marginTop: 5, gap: 5 }}>
                     <View style={styles.searchContainer}>
                         <TouchableOpacity onPress={handleSearch}>
                             <FontAwesome5 name="search" size={18} color={Colors.secondary} />
@@ -169,7 +194,7 @@ const SearchEmptyVehicleScreen: React.FC = () => {
                             onChangeText={setToFilter}
                         />
                     </View>
-                </View>
+                </View> */}
 
                 {loading ? (
                     <ActivityIndicator size="large" color={Colors.darkBlue} style={{ marginTop: 20 }} />
@@ -193,37 +218,41 @@ const EmptyVehicleCard = ({ vehicle, index }: EmptyVehicleCardProps) => {
     return (
         <>
             <View key={index} style={styles.card}>
-                <Carousel images={vehicle.photos} />
-                <View style={{ flexDirection: 'row', justifyContent: 'space-between', margin: 10 }}>
-                    <View style={{ alignItems: "center" }}>
-                        <Text style={{ fontWeight: 'bold' }}>Departure</Text>
-                        <Text>{vehicle.departurePlace}</Text>
-                    </View>
-                    <View style={{ alignItems: "center" }}>
-                        <Text style={{ fontWeight: 'bold' }}>Destination</Text>
-                        <Text>{vehicle.destinationPlace}</Text>
-                    </View>
+                <Carousel height={300} images={vehicle.photos} />
+                <View style={tw`p-2`}>
+                        <View style={{ flexDirection: 'row', justifyContent: 'space-between', margin: 10 }}>
+                            <View style={{ alignItems: "center" }}>
+                                <Text style={{ fontWeight: 'bold' }}>Departure</Text>
+                                <Text>{vehicle.departurePlace}</Text>
+                            </View>
+                            <View style={{ alignItems: "center" }}>
+                                <Text style={{ fontWeight: 'bold' }}>Destination</Text>
+                                <Text>{vehicle.destinationPlace}</Text>
+                            </View>
+                        </View>
+                        <View style={styles.cardTextContainer}>
+                            <Text style={styles.cardText}>Vehicle No - </Text>
+                            <Text style={{ color: "black" }}>{vehicle.vehicle?.number.toUpperCase()}</Text>
+                        </View>
+                        <View style={styles.cardTextContainer}>
+                            <Text style={styles.cardText}>Departure Date - </Text>
+                            <Text style={{ color: "black" }}>{vehicle.departureDate ? formatDate(vehicle.departureDate) : "Time not added"}</Text>
+                        </View>
+                        <View style={styles.cardTextContainer}>
+                            <Text style={styles.cardText}>Departure Time - </Text>
+                            <Text style={{ color: "black" }}>{vehicle.departureTime ? new Date(vehicle.departureTime).toLocaleTimeString('en-US', { hour: 'numeric', minute: 'numeric', hour12: true }) : "Time not added"}</Text>
+                        </View>
+                        <View style={styles.cardTextContainer}>
+                            <Text style={styles.cardText}>Contacttt Number - </Text>
+                            <Text style={{ color: "black" }}>{vehicle.mobileNumber}</Text>
+                        </View>
+                        <View style={styles.cardTextContainer}>
+                            <Text style={styles.cardText}>More Info About Tripp - </Text>
+                            <Text style={{ color: "black" }}>{vehicle.moreInformation}</Text>
+                        </View>
+
                 </View>
-                <View style={styles.cardTextContainer}>
-                    <Text style={styles.cardText}>Vehicle No: </Text>
-                    <Text style={{ color: "black" }}>{vehicle.vehicle.number.toUpperCase()}</Text>
-                </View>
-                <View style={styles.cardTextContainer}>
-                    <Text style={styles.cardText}>Departure Date: </Text>
-                    <Text style={{ color: "black" }}>{vehicle.departureDate ? formatDate(vehicle.departureDate) : "Time not added"}</Text>
-                </View>
-                <View style={styles.cardTextContainer}>
-                    <Text style={styles.cardText}>Departure Time: </Text>
-                    <Text style={{ color: "black" }}>{vehicle.departureTime ? new Date(vehicle.departureTime).toLocaleTimeString('en-US', { hour: 'numeric', minute: 'numeric', hour12: true }) : "Time not added"}</Text>
-                </View>
-                <View style={styles.cardTextContainer}>
-                    <Text style={styles.cardText}>Contact Number: </Text>
-                    <Text style={{ color: "black" }}>{vehicle.mobileNumber}</Text>
-                </View>
-                <View style={styles.cardTextContainer}>
-                    <Text style={styles.cardText}>More Info About Trip: </Text>
-                    <Text style={{ color: "black" }}>{vehicle.moreInformation}</Text>
-                </View>
+
             </View>
         </>
     )
@@ -233,8 +262,8 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         paddingVertical: 20,
-        paddingHorizontal: 10,
-        backgroundColor: "#ffffff",
+        paddingHorizontal: 20,
+        backgroundColor: "#EAEAEA",
     },
     searchContainer: {
         flexDirection: "row",
@@ -305,25 +334,25 @@ const styles = StyleSheet.create({
     },
     card: {
         backgroundColor: "#fff",
-        paddingVertical: 20,
-        paddingHorizontal: 10,
+        paddingVertical: 0,
+        paddingHorizontal: 0,
         borderRadius: 5,
         elevation: 3,
         shadowColor: "#000",
         shadowOffset: { width: 2, height: 2 },
         shadowOpacity: 0.2,
-        shadowRadius: 5,
+        shadowRadius: 20,
         marginBottom: 20,
     },
     cardTextContainer: {
-        marginBottom: 10,
+        marginBottom: 4,
         flexDirection: "row",
     },
     cardText: {
 
-        color: Colors.secondary,
+        color: '#000000',
         fontWeight: "500",
-        fontSize: 15,
+        fontSize: 12,
     },
     carouselItem: {
         justifyContent: "center",
@@ -385,6 +414,39 @@ const styles = StyleSheet.create({
         flex: 1,
         backgroundColor: 'rgba(0, 0, 0, 0.5)',
     },
+    inputContainer: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        borderBottomWidth: 1,
+        borderBottomColor: '#ccc',
+        paddingVertical: 10,
+      },
+      icon: {
+        marginRight: 10,
+      },
+      input: {
+        flex: 1,
+        fontSize: 16,
+      },
+      iconContainer: {
+        position: 'absolute',
+        right: 10,
+        top: '50%',
+        marginTop: -12,
+        backgroundColor: '#555',
+        borderRadius: 20,
+        padding: 5,
+      },
+      container1: {
+        flexDirection: 'column',
+        backgroundColor: '#fff',
+        borderRadius: 10,
+        padding: 10,
+        marginTop: 10,
+        marginBottom:10,
+        borderWidth: 1,
+        borderColor: '#ccc',
+      },
 });
 
 export default SearchEmptyVehicleScreen;

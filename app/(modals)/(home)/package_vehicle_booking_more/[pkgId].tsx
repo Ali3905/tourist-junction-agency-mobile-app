@@ -128,18 +128,20 @@ const styles = StyleSheet.create({
   container: {
     padding: 20,
     backgroundColor: '#fff',
+    paddingBottom:60
   },
   section: {
     marginBottom: 10,
   },
   label: {
-    color: Colors.secondary,
+    color: '#000000',
     fontWeight: 'semibold',
     fontSize: 16,
   },
   value: {
     fontSize: 14,
     marginBottom: 4,
+    color: '#808080',
   },
   errorText: {
     color: 'red',

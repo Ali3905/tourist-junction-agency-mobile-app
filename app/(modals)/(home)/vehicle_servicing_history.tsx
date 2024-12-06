@@ -145,10 +145,9 @@ const ServiceHistoryScreen: React.FC = () => {
         fetchVehicles();
     }, []);
 
-    if (!userData?.isSubsciptionValid) {
-        return <GoToPlans />
-      }
-
+    if (!userData?.isSubsciptionValid && Date.now() >= new Date(userData?.trialValidTill).getTime()) {
+    return <GoToPlans />;
+  }
 
     return (
         <SafeAreaView style={styles.container}>
@@ -175,6 +174,7 @@ const ServiceHistoryScreen: React.FC = () => {
                 <ScrollView style={styles.recordsList}>
                     {filteredServiceHistory.map((record, index) => (
                         <View key={index} style={styles.card}>
+                            
                             <View style={styles.cardHeader}>
                                 <TouchableOpacity onPress={() => { setEditData(record); router.push("edit_vehicle_servicing_history") }} style={styles.editButton}>
                                     <Text style={styles.editButtonText}>Edit form</Text>
@@ -183,14 +183,14 @@ const ServiceHistoryScreen: React.FC = () => {
                                     <MaterialIcons name="delete" size={24} color={Colors.darkBlue} />
                                 </TouchableOpacity>
                             </View>
-                            <Text style={styles.cardText}>Vehicle Number: <Text style={{ color: "black" }}>{findVehicleByNumber(record.vehicle)?.number.toUpperCase()}</Text></Text>
+                            <Text style={styles.cardText}>Vehicle Number - <Text style={{ color: "black" }}>{findVehicleByNumber(record.vehicle)?.number.toUpperCase()}</Text></Text>
                             {/* <Text style={styles.cardText}>Vehicle Number:</Text> */}
                             {/* <Text style={{color: "black"}}>{findVehicleByNumber(record.vehicle)?.number}</Text> */}
 
-                            <Text style={styles.cardText}>Garage Number: <Text style={{ color: "black" }}>{record.garageNumber}</Text></Text>
-                            <Text style={styles.cardText}>Garage Name: <Text style={{ color: "black" }}>{record.garageName}</Text></Text>
-                            <Text style={styles.cardText}>Date: <Text style={{ color: "black" }}>{formatDate(record.date)}</Text></Text>
-                            <Text style={styles.cardText}>Work Details: <Text style={{ color: "black" }}>{record.workDescription}</Text></Text>
+                            <Text style={styles.cardText}>Garage Number - <Text style={{ color: "black" }}>{record.garageNumber}</Text></Text>
+                            <Text style={styles.cardText}>Garage Name - <Text style={{ color: "black" }}>{record.garageName}</Text></Text>
+                            <Text style={styles.cardText}>Date - <Text style={{ color: "black" }}>{formatDate(record.date)}</Text></Text>
+                            <Text style={styles.cardText}>Work Details - <Text style={{ color: "black" }}>{record.workDescription}</Text></Text>
                             <TouchableOpacity style={styles.viewBillButton} onPress={() => handleViewBill(record.bill)}>
                                 <Text style={styles.viewBillButtonText}>View Bill</Text>
                             </TouchableOpacity>
@@ -250,7 +250,7 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         padding: 20,
-        backgroundColor: "#ffffff",
+        backgroundColor: "#EAEAEA",
     },
     searchContainer: {
         flexDirection: "row",
@@ -261,6 +261,7 @@ const styles = StyleSheet.create({
         paddingHorizontal: 15,
         marginBottom: 20,
         paddingVertical: 5,
+        backgroundColor:'#fff'
     },
     searchInput: {
         flex: 1,
@@ -283,10 +284,10 @@ const styles = StyleSheet.create({
         position: "relative",
     },
     cardText: {
-        marginBottom: 10,
-        color: Colors.secondary,
+        marginBottom: 4,
+        color: '#000000',
         fontWeight: "500",
-        fontSize: 15,
+        fontSize: 12,
     },
     viewBillButton: {
         backgroundColor: Colors.darkBlue,
@@ -309,6 +310,7 @@ const styles = StyleSheet.create({
         justifyContent: "center",
         alignItems: "center",
         marginHorizontal: 5,
+        marginTop:100
     },
     modalContent: {
         backgroundColor: "#fff",

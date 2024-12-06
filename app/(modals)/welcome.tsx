@@ -12,7 +12,8 @@ import {
 import { router } from "expo-router";
 import { Colors } from "@/constants/Colors";
 
-const { width: screenWidth } = Dimensions.get('window');
+// Get screen dimensions
+const { width: screenWidth } = Dimensions.get("window");
 
 const WelcomeScreen = () => {
   return (
@@ -22,7 +23,7 @@ const WelcomeScreen = () => {
       <View style={styles.innerContainer}>
         <Image style={styles.image} source={require('@/assets/images/welcome.png')} />
         <View style={styles.button_container}>
-          <Image style={styles.tourist_text} source={require('@/assets/images/tourist_text.png')} />
+          <Image style={styles.tourist_text} source={require('@/assets/images/Trst_text.png')} />
           <TouchableOpacity onPress={() => router.push("/(modals)/login")} style={styles.button}>
             <Text style={styles.buttonText}>Login</Text>
           </TouchableOpacity>
@@ -40,7 +41,6 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "flex-end",
     alignItems: "center",
-    // marginTop: StatusBar.currentHeight,
   },
   innerContainer: {
     flex: 1,
@@ -71,9 +71,9 @@ const styles = StyleSheet.create({
     marginBottom: 25,
   },
   buttonText: {
-    fontSize: Math.min(21, screenWidth * 0.05),
-    textAlign: 'center',
-    paddingHorizontal: 10,
+    fontSize: Math.min(21, screenWidth * 0.05), // Dynamically adjust font size based on screen width
+    textAlign: "center",
+    paddingHorizontal: 10, // Ensure some horizontal padding
   },
   wave_image: {
     width: "110%",

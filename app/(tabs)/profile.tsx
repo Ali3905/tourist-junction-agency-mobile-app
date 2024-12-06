@@ -47,14 +47,14 @@ const ProfileScreen = () => {
                 <View style={styles.detailsContainer}>
                     <View style={styles.header}>
                         <Text style={styles.headerText}>Details</Text>
-                        <TouchableOpacity style={styles.editButton} onPress={() => router.push('edit_profile')}>
+                        {userData?.userName ? <TouchableOpacity style={styles.editButton} onPress={() => router.push('edit_profile')}>
                             <FontAwesome name="pencil" size={24} color="white" />
                             <Text style={styles.editText}>Edit</Text>
-                        </TouchableOpacity>
+                        </TouchableOpacity> : null}
                     </View>
                     <View style={styles.detailContent}>
-                        <Text style={styles.detailText}>{userData?.userName}</Text>
-                        <Text style={styles.detailText}>{userData?.mobileNumber}</Text>
+                        <Text style={styles.detailText}>{userData?.userName || userData?.name}</Text>
+                        <Text style={styles.detailText}>+{userData?.mobileNumber}</Text>
                         <Text style={styles.detailText}>{userData?.email}</Text>
                     </View>
                 </View>

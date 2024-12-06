@@ -48,6 +48,11 @@ const AddBusScreen: React.FC = () => {
       return;
     }
 
+    if (contactNo && (contactNo.length < 10 || contactNo.length > 12)) {
+      Alert.alert("Contact number must contain 10 to 12 digits");
+      return;
+    }
+
     const formData = new FormData();
     formData.append('number', vehicleNo);
     formData.append('seatingCapacity', seatingCapacity);
@@ -101,7 +106,8 @@ const AddBusScreen: React.FC = () => {
     let result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.Images,
       allowsMultipleSelection: true,
-      quality: 1,
+      selectionLimit: 5,
+      quality: .7,
     });
 
     if (!result.canceled) {
@@ -339,18 +345,20 @@ const AddBusScreen: React.FC = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 20,
+    padding: 10,
     backgroundColor: "#ffffff",
+    paddingBottom:40
   },
   modalContainer: {
     flex: 1,
     paddingTop: Platform.OS === 'android' ? 20 : 0,
-    paddingHorizontal: 20,
+    paddingHorizontal: 10,
   },
   modalContent: {
     backgroundColor: "#fff",
     borderRadius: 10,
     elevation: 5,
+    padding:15
   },
   inputGroup: {
     marginBottom: 15,
@@ -358,11 +366,11 @@ const styles = StyleSheet.create({
   label: {
     marginBottom: 5,
     fontSize: 13,
-    color: Colors.secondary,
+    color: '#000000',
     fontWeight: "500",
   },
   input: {
-    borderColor: Colors.secondary,
+    borderColor: '#C0C0C0',
     borderWidth: 1,
     borderRadius: 10,
     paddingHorizontal: 10,
@@ -439,6 +447,7 @@ const styles = StyleSheet.create({
   modalButton: {
     borderRadius: 5,
     paddingHorizontal: 20,
+    paddingBottom:20,
     paddingVertical: 10,
     marginHorizontal: 10,
   },

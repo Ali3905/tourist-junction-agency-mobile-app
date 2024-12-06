@@ -58,6 +58,11 @@ const AddCarScreen: React.FC = () => {
             return;
         }
 
+        if (contactNo && (contactNo.length < 10 || contactNo.length > 12)) {
+            Alert.alert("Contact number must contain 10 to 12 digits");
+            return;
+        }
+
         const formData = new FormData();
         formData.append('number', vehicleNo);
         formData.append('seatingCapacity', seatingCapacity);
@@ -98,7 +103,8 @@ const AddCarScreen: React.FC = () => {
         let result = await ImagePicker.launchImageLibraryAsync({
             mediaTypes: ImagePicker.MediaTypeOptions.Images,
             allowsMultipleSelection: true,
-            quality: 1,
+            selectionLimit: 5,
+            quality: .7,
         });
 
         if (!result.canceled) {
@@ -252,18 +258,20 @@ const AddCarScreen: React.FC = () => {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        padding: 20,
+        padding: 10,
         backgroundColor: "#ffffff",
+        marginBottom:15
     },
     modalContainer: {
         flex: 1,
         paddingTop: Platform.OS === 'android' ? 20 : 0,
-        paddingHorizontal: 20,
+        paddingHorizontal: 10,
     },
     modalContent: {
         backgroundColor: "#fff",
         borderRadius: 10,
         elevation: 5,
+        padding:15
     },
     inputGroup: {
         marginBottom: 15,

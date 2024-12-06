@@ -46,7 +46,7 @@ const EmptyVehicleCard = ({ vehicle, index, handleDelete }: EmptyVehicleCardProp
                         <MaterialIcons name="delete" size={24} color={Colors.darkBlue} />
                     </TouchableOpacity>
                 </View>
-                <Carousel images={vehicle.photos} />
+                <Carousel height={300} images={vehicle.photos} />
                 <View style={{ flexDirection: 'row', justifyContent: 'space-between', margin: 10 }}>
                     <View style={{ alignItems: "center" }}>
                         <Text style={{ fontWeight: 'bold' }}>Departure</Text>

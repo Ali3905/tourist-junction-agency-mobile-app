@@ -28,6 +28,30 @@ import PhoneNumbersList from "@/components/PhoneNumberList";
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import GoToPlans from "@/components/GoToPlans";
+import tw from 'twrnc';
+import * as Sharing from 'expo-sharing';
+import * as FileSystem from 'expo-file-system';
+import { Bookmark, ChevronUp, ChevronDown } from 'lucide-react-native';
+
+
+const shareImage = async (imageUri: string) => {
+  try {
+
+    const fileUri = FileSystem.documentDirectory + imageUri.split('/').pop();
+    await FileSystem.downloadAsync(imageUri, fileUri);
+    // return fileUri;
+
+
+
+    if (await Sharing.isAvailableAsync()) {
+      await Sharing.shareAsync(fileUri);
+    } else {
+      alert('Sharing is not available on this device');
+    }
+  } catch (error) {
+    console.error('Error sharing images:', error);
+  }
+};
 
 
 interface BlurOverlayProps {
@@ -87,6 +111,9 @@ const DailyRouteVehicles: React.FC = () => {
 
   const [discountAmount, setDiscountAmount] = useState('');
   const [modalVisible, setModalVisible] = useState(false);
+  
+  const [showFullCard, setShowFullCard] = useState(false);
+
 
 
   // const handleOpenModal = () => {
@@ -141,11 +168,11 @@ const DailyRouteVehicles: React.FC = () => {
 
   useEffect(() => {
     const timer = setTimeout(() => {
-        setNotificationVisible(false);
+      setNotificationVisible(false);
     }, 10000);
 
     return () => clearTimeout(timer);
-}, []);
+  }, []);
 
   const handleDelete = async () => {
     if (selectedRoute) {
@@ -200,47 +227,69 @@ const DailyRouteVehicles: React.FC = () => {
     );
   };
 
-  if (!userData?.isSubsciptionValid) {
-    return <GoToPlans />
+  if (!userData?.isSubsciptionValid && Date.now() >= new Date(userData?.trialValidTill).getTime()) {
+    return <GoToPlans />;
   }
 
 
-  return (
-    <SafeAreaView style={styles.container}>
-      <View style={styles.searchContainer}>
-        <FontAwesome5 name="search" size={18} color={Colors.secondary} />
-        <TextInput
-          style={styles.searchInput}
-          placeholder="Search vehicle no"
-          placeholderTextColor={Colors.secondary}
-          value={searchQuery}
-          onChangeText={setSearchQuery}
-        />
-      </View>
 
-      <TouchableOpacity onPress={() => router.push("add_daily_route_vehicles")} style={styles.addButton}>
-        <Text style={styles.addButtonText}>Add Route</Text>
+  return (
+    <SafeAreaView style={tw`flex-1 p-4 bg-gray-200`}>
+
+
+<ScrollView
+    contentContainerStyle={tw``}
+    keyboardShouldPersistTaps="handled" // Ensures keyboard dismisses on tap
+  >
+
+
+       <TouchableOpacity onPress={() => router.push("add_daily_route_vehicles")} style={styles.addButton}>
+          <Text style={styles.addButtonText}>Create Route</Text>
       </TouchableOpacity>
 
-      {notificationVisible && (
-                    <View style={styles.notificationContainer}>
+  {/* Search Container */}
+      <View style={tw`bg-white p-4 mx-2 rounded-xl mb-4 mt-[10px] relative z-10 shadow-lg`}>
+        <View style={tw`flex-row items-center bg-white rounded-lg px-3 py-1.5 mb-2 border border-[${Colors.secondary}]`}>
+          <FontAwesome5 name="search" size={18} color={Colors.secondary} />
+          <TextInput
+            style={tw`flex-1 text-[14px] text-black`}
+            placeholder="Search vehicle number"
+            placeholderTextColor={Colors.secondary}
+            value={searchQuery}
+            onChangeText={setSearchQuery}
+          />
+        </View>
 
-                        <Pressable onPress={() => setNotificationVisible(false)}>
-                            <FontAwesome5 name="times-circle" size={18} color={Colors.light} style={{ alignSelf: "flex-end" }} />
-                        </Pressable>
-                        <Text style={styles.notificationText}>
-                        Here added cards will be shown on customer app
-                        </Text>
-                    </View>
-                )}
+        {/* Search Button */}
+        <TouchableOpacity style={tw`text-center mt-2`}>
+          <Text style={tw`text-center bg-[#154CE4] rounded-3xl mx-4 py-[12px] text-[14px] text-white`}>
+            Search
+          </Text>
+        </TouchableOpacity>
+      </View>
+
+
+
+
+      {notificationVisible && (
+        <View style={styles.notificationContainer}>
+
+          <Pressable onPress={() => setNotificationVisible(false)}>
+            <FontAwesome5 name="times-circle" size={18} color={Colors.light} style={{ alignSelf: "flex-end" }} />
+          </Pressable>
+          <Text style={styles.notificationText}>
+            Here added cards will be shown on customer app
+          </Text>
+        </View>
+      )}
 
       {loading ? (
         <ActivityIndicator size="large" color={Colors.darkBlue} />
       ) : (
         <ScrollView style={styles.routesList}>
           {filterDailyRoutes(searchQuery).map((route) => (
-            <View key={route._id} style={styles.card}>
-              <View style={styles.cardHeader}>
+           <View>
+              <View style={tw`flex-row justify-end gap-2 mb-2 items-center space-x-1.5`}>
                 <TouchableOpacity style={styles.editButton} onPress={() => {
                   setSelectedRoute(route);
                   setShowAddDriverModal(true);
@@ -251,433 +300,222 @@ const DailyRouteVehicles: React.FC = () => {
                   <Text style={styles.editButtonText}>Edit Route</Text>
                 </TouchableOpacity>
 
-                <TouchableOpacity
-                  style={{
-                    backgroundColor: '#87CEEB',
-                    paddingVertical: 5,
-                    paddingHorizontal: 10,
-                    borderRadius: 5,
-                  }}
-                  onPress={() => setModalVisible(true)}
-                >
-                  <Text style={{ color: 'white', fontWeight: 'bold', fontSize: 12 }}>Create Discount</Text>
-                </TouchableOpacity>
-
                 <TouchableOpacity onPress={() => { setShowDeleteModal(true); setSelectedRoute(route); }}>
                   <MaterialIcons name="delete" size={24} color={Colors.darkBlue} />
                 </TouchableOpacity>
               </View>
 
-              <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-                <View style={{ position: 'relative' }}>
-                  <Carousel images={route?.vehicle?.photos} />
-                  <View style={styles.circle}>
-                    <Text style={styles.circleText}>{route?.vehicle.isAC ? "AC" : "Non-AC"}</Text>
-                    <Text style={styles.circleText}>{route?.vehicle.isSleeper ? "Sleeper" : "Seater"}</Text>
-                    <Text style={styles.circleText}>{route?.vehicle?.number.toUpperCase()}</Text>
+               <View key={route._id} style={tw`bg-white rounded-xl  mb-12  shadow-sm`}>
+            
+
+              <View style={tw`flex-1  justify-center items-center`}>
+                <View style={tw`relative`}>
+                  <Carousel height={300} images={route?.vehicle?.photos} />
+                  <View style={tw`absolute  bottom-3 right-3 bg-[#2AA4D5]  items-center rounded-full p-4`}>
+                    <Text style={tw`text-white text-[10px]`}>{route?.vehicle?.number.toUpperCase()}</Text>
+                    <Text style={tw`text-white text-[10px]`}>{route?.vehicle.isAC ? "AC" : "Non-AC"}</Text>
+                    <Text style={tw`text-white text-[10px]`}>{route?.vehicle.isSleeper ? "Sleeper" : "Seater"}</Text>
                   </View>
                 </View>
               </View>
-              <View >
-                <Text
-                  style={{
-                    fontSize: 20,
-                    fontWeight: '900',
-                    color: '#87CEEB',
-                    fontFamily: 'sans-serif',
-                    textAlign: 'center'
-                  }}
-                >
-                  {route?.agencyName}
-                </Text>
-              </View>
 
 
-              <View style={{ width: "100%", paddingHorizontal: 40 }}>
-                {/* Departure and Arrival Labels */}
-                <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
-                  {/* Departure Label */}
-                  <View style={{ alignItems: "flex-start" }}>
-                    <Text style={{ fontWeight: "bold", fontSize: 15 }}>Departure</Text>
-                  </View>
-
-                  {/* Arrival Label */}
-                  <View style={{ alignItems: "flex-start" }}>
-                    <Text style={{ fontWeight: "bold", fontSize: 15, paddingRight: 13 }}>Arrival</Text>
-                  </View>
-                </View>
-
-                {/* Departure and Arrival Places with Times */}
-                <View style={{ flexDirection: "row", justifyContent: "space-between", marginVertical: 1 }}>
-                  {/* Departure Place and Time */}
-                  <View style={{ alignItems: "center" }}>
-                    <Text style={{ fontWeight: "bold", fontSize: 18, color: "#87CEEB" }}>
-                      {route?.departurePlace}
-                    </Text>
-                    <Text>{route.departureTime ? new Date(route.departureTime).toLocaleTimeString('en-US', { hour: 'numeric', minute: 'numeric', hour12: true }) : "Time not added"}</Text>
-                  </View>
-
-                  {/* Arrow Icon */}
-                  <MaterialIcons name="keyboard-double-arrow-right" size={24} color="#00008B" />
-
-                  {/* Arrival Place and Time */}
-                  <View style={{ alignItems: "center" }}>
-                    <Text style={{ fontWeight: "bold", fontSize: 18, color: "#87CEEB" }}>
-                      {route?.destinationPlace}
-                    </Text>
-                    <Text style={{ marginBottom: 14 }} >{route.arrivalTime ? new Date(route.arrivalTime).toLocaleTimeString('en-US', { hour: 'numeric', minute: 'numeric', hour12: true }) : "Time not added"}</Text>
-                  </View>
-                </View>
-              </View>
-              {/* 
-              <Text style={styles.cardText}>
-                Vehicle Number: <Text style={{ color: "black" }}>{route.vehicle.number.toUpperCase()}</Text>
-              </Text> */}
-
-
-              <Text style={styles.cardText}>
-                Pick Up Point: {route?.pickupPoint}
-              </Text>
-              <Text style={styles.cardText}>
-                Dropping Point: {route?.dropoffPoint}
-              </Text>
-              <Text style={styles.cardText}>
-                Ticket Price: {route?.ticketFare}
+              <Text style={tw`text-xl flex justify-center text-center font-extrabold text-[#042F40] font-sans`}>
+                {route?.agencyName}
               </Text>
 
-              <View>
-                <Text style={{ flex: 1, fontWeight: 'bold', fontSize: 12, }}>Office Address: {route?.officeAddress} </Text>
-              </View>
-              <View>
-                <Text style={{ flex: 1, fontWeight: 'bold', fontSize: 12, marginBottom: 4 }}>Phone Pe No: {route?.phonepeNumber} </Text>
-              </View>
-              <View>
-                <Text style={{ flex: 1, fontWeight: 'bold', fontSize: 12, marginBottom: 4 }}>Discount: {route?.discount}% </Text>
-              </View>
-              <Text style={{ flex: 1, fontWeight: 'bold', color: '#87CEEB' }}>Amenities:</Text>
-              <View style={{
-                paddingTop: 1,
-                paddingBottom: 14,
-                flexDirection: 'row',
 
-              }}>
 
-                {route?.amenities?.includes("wifi") && <Image
-                  source={require('@/assets/images/wifi-icon.png')}
-                  style={{ width: 30, height: 30, marginHorizontal: 5 }}
-                />}
-                {route?.amenities?.includes("blanket") && <Image
-                  source={require('@/assets/images/blanket.png')}
-                  style={{ width: 30, height: 30, marginHorizontal: 5 }}
-                />}
-                {route?.amenities?.includes("bottle") && <Image
-                  source={require('@/assets/images/bottle.png')}
-                  style={{ width: 30, height: 30, marginHorizontal: 5 }}
-                />}
-                {route?.amenities?.includes("charger") && <Image
-                  source={require('@/assets/images/charger.png')}
-                  style={{ width: 30, height: 30, marginHorizontal: 5 }}
-                />}
-                {route?.amenities?.includes("meal") && <Image
-                  source={require('@/assets/images/meal.png')}
-                  style={{ width: 30, height: 30, marginHorizontal: 5 }}
-                />}
-                {route?.amenities?.includes("pillow") && <Image
-                  source={require('@/assets/images/pillow.png')}
-                  style={{ width: 30, height: 30, marginHorizontal: 5 }}
-                />}
-                {route?.amenities?.includes("tv") && <Image
-                  source={require('@/assets/images/tv.png')}
-                  style={{ width: 30, height: 30, marginHorizontal: 5 }}
-                />}
+
+              <View style={tw`flex-row px-2 justify-between my-1`}>
+                <View style={tw``}>
+                  <Text style={tw`font-bold text-lg text-[#042F40]`}>
+                    {route?.departurePlace}
+                  </Text>
+                  <Text style={tw` text-[10px] text-[#042F40]`}>{route.departureTime ? new Date(route.departureTime).toLocaleTimeString('en-US', { hour: 'numeric', minute: 'numeric', hour12: true }) : "Time not added"}</Text>
+                </View>
+
+                {/* <MaterialIcons name="keyboard-double-arrow-right" size={24} color="#00008B" /> */}
+                <View style={tw`flex flex-row items-center`}>
+                  <Image source={require('@/assets/left-arrow.png')} style={tw``} />
+                  <Image source={require('@/assets/vehicle-icon.png')} style={tw``} />
+                  <Image source={require('@/assets/right-arrow.png')} style={tw``} />
+                </View>
+
+                <View style={tw``}>
+                  <Text style={tw`font-bold text-lg text-[#042F40]`}>
+                    {route?.destinationPlace}
+                  </Text>
+                  <Text style={tw` text-[10px] text-[#042F40]`}>
+                    {route.arrivalTime ? new Date(route.arrivalTime).toLocaleTimeString('en-US', { hour: 'numeric', minute: 'numeric', hour12: true }) : "Time not added"}
+                  </Text>
+                </View>
               </View>
 
-              <View style={{ padding: 1 }}>
-                <PhoneNumbersList phoneNumbers={route?.mobileNumbers} />
-              </View>
-              {/* <View
-                    style={{
-                      flexDirection: 'row',
-                      justifyContent: 'space-between',
-                      alignItems: 'center',
-                      padding: 1,
-                    }}
-                  >
-                    <Text style={{ flex: 1, fontWeight: 'bold', color: '#87CEEB' }}>Courier Services</Text>
-                    <Text style={{ flex: 1, fontWeight: 'bold', color: '#87CEEB' }}>Train Ticket</Text>
-                    <Text style={{ flex: 1, fontWeight: 'bold', color: '#87CEEB' }}>Two Wheeler Courier</Text>
-                  </View> */}
-              <View
-                style={{
-                  flex: 1,
-                  justifyContent: 'center',
-                  alignItems: 'center',
-                }}
-              >
+              <View style={tw`flex flex-row flex-wrap border rounded-md border-gray-200 p-3 mx-2 justify-between`}>
 
-                <View style={{ padding: 1 }}>
-                  <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginBottom: 20, paddingTop: 14 }}>
-                    {/* Column for Courier Service and QR Code Button */}
-                    <View style={{ alignItems: 'center' }}>
-                      {route?.doesProvideCorierService ? <Text style={styles.facilityBtn}>
-                        Courier Service
-                      </Text> : <Text style={[styles.facilityBtn, { backgroundColor: "transparent" }]}>
+                <View style={tw`flex flex-col`}>
+                  <Text style={tw`text-[11px] text-[#7D7D7D]`}>Pick Up Point:</Text>
+                  <Text style={tw`text-[12px] font-bold text-[#042F40]`}>{route?.pickupPoint}</Text>
+                </View>
 
-                      </Text>}
-                      <CustomButton
-                        title="View QR Code"
-                        onPress={() => setIsQrModalVisible(route._id)}
-                      />
-                    </View>
+                <View style={tw`flex flex-col`}>
+                  <Text style={tw`text-[11px] text-[#7D7D7D]`}>Dropping Point:</Text>
+                  <Text style={tw`text-[12px] font-bold text-[#042F40]`}>{route?.dropoffPoint}</Text>
+                </View>
 
-                    {/* Column for Train Ticket and Driver Button */}
-                    <View style={{ alignItems: 'center' }}>
-                      {route?.doesBookTrainTickets ? <Text style={styles.facilityBtn}>
-                        Train Ticket
-                      </Text> : <Text style={[styles.facilityBtn, { backgroundColor: "transparent" }]}>
+                <View style={tw`flex flex-col`}>
+                  <Text style={tw`text-[11px] text-[#7D7D7D]`}>Ticket Price:</Text>
+                  <Text style={tw`text-[12px] font-bold text-[#042F40]`}>{route?.ticketFare}</Text>
+                </View>
 
-                      </Text>}
-                      <CustomButton
-                        title="View Driver"
-                        onPress={() => setIsDriverModalVisible(route._id)}
-                      />
-                    </View>
-
-                    {/* Column for Two Wheeler Courier and Chart Button */}
-                    <View style={{ alignItems: 'center' }}>
-                      {route?.doesCarryTwoWheelers ? <Text style={styles.facilityBtn}>
-                        Two Wheeler Courier
-                      </Text> : <Text  style={[styles.facilityBtn, { backgroundColor: "transparent" }]}>
-
-                      </Text>}
-                      <CustomButton
-                        title="View Chart"
-                        onPress={() => setIsChartModalVisible(route._id)}
-                      />
-                    </View>
+                <View style={tw`flex flex-col w-full mt-2`}>
+                  <Text style={tw`text-[11px] text-[#7D7D7D]`}>Amenities:</Text>
+                  <View style={tw`pt-1 flex-row flex-wrap`}>
+                    {route?.amenities?.includes("wifi") && (
+                      <Image source={require('@/assets/images/wifi-icon.png')} style={tw`w-7 h-7 mx-1`} />
+                    )}
+                    {route?.amenities?.includes("blanket") && (
+                      <Image source={require('@/assets/images/blanket.png')} style={tw`w-7 h-7 mx-1`} />
+                    )}
+                    {route?.amenities?.includes("bottle") && (
+                      <Image source={require('@/assets/images/bottle.png')} style={tw`w-7 h-7 mx-1`} />
+                    )}
+                    {route?.amenities?.includes("charger") && (
+                      <Image source={require('@/assets/images/charger.png')} style={tw`w-7 h-7 mx-1`} />
+                    )}
+                    {route?.amenities?.includes("meal") && (
+                      <Image source={require('@/assets/images/meal.png')} style={tw`w-7 h-7 mx-1`} />
+                    )}
+                    {route?.amenities?.includes("pillow") && (
+                      <Image source={require('@/assets/images/pillow.png')} style={tw`w-7 h-7 mx-1`} />
+                    )}
+                    {route?.amenities?.includes("tv") && (
+                      <Image source={require('@/assets/images/tv.png')} style={tw`w-7 h-7 mx-1`} />
+                    )}
                   </View>
                 </View>
-                {/* Modal for displaying QR code */}
-                <Modal
-                  transparent={true}
-                  visible={isQRModalVisible === route._id}
-                  animationType="slide"
-                  onRequestClose={() => setIsQrModalVisible(null)}
-                >
-                  <View
-                    style={{
-                      flex: 1,
-                      justifyContent: 'center',
-                      alignItems: 'center',
-                      backgroundColor: 'rgba(0, 0, 0, 0.5)',
-                    }}
-                  >
-                    <View
-                      style={{
-                        backgroundColor: 'white',
-                        padding: 20,
-                        borderRadius: 10,
-                        width: '80%',
-                        alignItems: 'center',
-                      }}
-                    >
-                      <Text style={{ fontSize: 16, marginBottom: 10 }}>
-                      </Text>
-                      <Image
-                        source={{ uri: route.QR }} // Replace with your QR code image URL
-                        style={{ width: 200, height: 200, marginBottom: 4 }}
-                      />
-                      <CustomButton
-                        title="Close"
-                        onPress={() => setIsQrModalVisible(null)}
-                      />
-                    </View>
-                  </View>
-                </Modal>
 
-                {/* Modal for Discount Entry */}
-                <Modal
-                  transparent={true}
-                  visible={modalVisible}
-                  animationType="slide"
-                  onRequestClose={() => setModalVisible(false)}
-                >
-                  <View
-                    style={{
-                      flex: 1,
-                      justifyContent: 'center',
-                      alignItems: 'center',
-                      backgroundColor: 'rgba(0, 0, 0, 0.5)',
-                    }}
-                  >
-                    <View
-                      style={{
-                        backgroundColor: 'white',
-                        padding: 20,
-                        borderRadius: 10,
-                        width: '80%',
-                      }}
-                    >
-                      <Text
-                        style={{
-                          fontSize: 18,
-                          fontWeight: 'bold',
-                          marginBottom: 10,
-                          textAlign: 'center',
-                        }}
-                      >
-                        Enter Discount Amount
-                      </Text>
-                      <View
-                        style={{
-                          flexDirection: 'row',
-                          alignItems: 'center',
-                          borderWidth: 1,
-                          borderColor: '#ccc',
-                          borderRadius: 5,
-                          marginBottom: 20,
-                          paddingRight: 10, // padding for the icon
-                        }}
-                      >
-                        <TextInput
-                          style={{
-                            flex: 1,
-                            padding: 10,
-                            fontSize: 16,
-                            textAlign: 'center', // center the cursor
-                          }}
-                          placeholder="Enter amount"
-                          keyboardType="numeric"
-                          value={discountAmount}
-                          onChangeText={setDiscountAmount}
-                        />
-                        <MaterialCommunityIcons
-                          name="percent"
-                          size={24}
-                          color="#000" // You can change the color as needed
-                        />
-                      </View>
-                      <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
-                        <TouchableOpacity
-                          style={{
-                            backgroundColor: '#4CAF50',
-                            paddingVertical: 10,
-                            paddingHorizontal: 20,
-                            borderRadius: 5,
-                          }}
-                          onPress={handleCreateDiscount}
-                        >
-                          <Text style={{ color: 'white', fontWeight: 'bold', fontSize: 16 }}>Submit</Text>
-                        </TouchableOpacity>
-                        <TouchableOpacity
-                          style={{
-                            backgroundColor: '#4CAF50',
-                            paddingVertical: 10,
-                            paddingHorizontal: 20,
-                            borderRadius: 5,
-                          }}
-                          onPress={() => setModalVisible(false)}
-                        >
-                          <Text style={{ color: 'white', fontWeight: 'bold', fontSize: 16 }}>Cancel</Text>
-                        </TouchableOpacity>
-                      </View>
-                    </View>
-                  </View>
-                </Modal>
-
-                {/* Modal for displaying driver information */}
-                <Modal
-                  transparent={true}
-                  visible={isDriverModalVisible === route._id}
-                  animationType="slide"
-                  onRequestClose={() => setIsDriverModalVisible(null)}
-                >
-                  <View
-                    style={{
-                      flex: 1,
-                      justifyContent: 'center',
-                      alignItems: 'center',
-                      backgroundColor: 'rgba(0, 0, 0, 0.5)',
-                    }}
-                  >
-                    <View
-                      style={{
-                        backgroundColor: 'white',
-                        padding: 20,
-                        borderRadius: 10,
-                        width: '80%',
-                        alignItems: 'center',
-                      }}
-                    >
-                      <Text style={{ fontSize: 16, marginVertical: 5 }}>
-                        Cleaner Name:{' '}
-                        <Text style={{ color: 'black' }}>
-                          {route.cleaner ? route.cleaner.name : ''}
-                        </Text>
-                      </Text>
-                      <Text style={{ fontSize: 16, marginVertical: 5 }}>
-                        Primary Driver:{' '}
-                        <Text style={{ color: 'black' }}>
-                          {route.primaryDriver ? route.primaryDriver.name : ''}
-                        </Text>
-                      </Text>
-                      <Text style={{ fontSize: 16, marginVertical: 5 }}>
-                        Secondary Driver:{' '}
-                        <Text style={{ color: 'black' }}>
-                          {route.secondaryDriver ? route.secondaryDriver.name : ''}
-                        </Text>
-                      </Text>
-                      <CustomButton
-                        title="Close"
-                        onPress={() => setIsDriverModalVisible(null)}
-                      />
-                    </View>
-                  </View>
-                </Modal>
-
-                {/* Modal for displaying chart */}
-                <Modal
-                  transparent={true}
-                  visible={isChartModalVisible === route._id}
-                  animationType="slide"
-                  onRequestClose={() => setIsChartModalVisible(null)}
-                >
-                  <View
-                    style={{
-                      flex: 1,
-                      justifyContent: 'center',
-                      alignItems: 'center',
-                      backgroundColor: 'rgba(0, 0, 0, 0.5)',
-                    }}
-                  >
-                    <View
-                      style={{
-                        backgroundColor: 'white',
-                        padding: 20,
-                        borderRadius: 10,
-                        width: '80%',
-                        alignItems: 'center',
-                      }}
-                    >
-                      <Text style={{ fontSize: 16, marginBottom: 10 }}>
-                        Here is your chart:
-                      </Text>
-                      <Image
-                        source={{ uri: route.seatingArrangement }} // Replace with your chart image URL
-                        style={{ width: 200, height: 200, marginBottom: 4 }}
-                      />
-                      <CustomButton
-                        title="Close"
-                        onPress={() => setIsChartModalVisible(null)}
-                      />
-                    </View>
-                  </View>
-                </Modal>
               </View>
 
 
+              <View>
+                              {/* "View More" Button (Visible at the top) */}
+                    {/* {!showFullCard && (
+                          <TouchableOpacity
+                              style={tw`flex-row items-center justify-end`}
+                              onPress={() => setShowFullCard(true)} // Expands the card
+                          >
+                              <Text style={tw`text-blue-400 font-bold text-sm mr-1 items-center`}>
+                                  View More
+                              </Text>
+                              <ChevronDown size={20} color="#87CEEB" />
+                          </TouchableOpacity>
+                      )} */}
 
+{!showFullCard && (
+  <TouchableOpacity
+    style={tw`flex-row items-center justify-end`}
+    onPress={() => setShowFullCard(true)} // Expands the card
+  >
+    <Text style={tw`text-blue-400 font-bold text-sm mr-1 items-center`}>
+      View More
+    </Text>
+    <ChevronDown size={20} color="#87CEEB" />
+  </TouchableOpacity>
+)}
+
+{showFullCard && (
+  <View style={tw`px-1 py-4`}>
+    <Text style={tw`text-[15px] font-bold mb-2`}>Facilities</Text>
+    <View style={tw`flex gap-1 flex-row`}>
+      {/* Columns for services */}
+      <View style={tw`items-center`}>
+        {route?.doesProvideCorierService ? (
+          <Text style={tw`bg-[#C8C8F44D] font-bold text-[#101010] text-[12px] px-2 py-1 rounded`}>
+            Courier Service
+          </Text>
+        ) : (
+          <Text style={tw`bg-transparent px-2 py-1`} />
+        )}
+      </View>
+
+      <View style={tw`items-center`}>
+        {route?.doesBookTrainTickets ? (
+          <Text style={tw`bg-[#C8C8F44D] font-bold text-[#101010] text-[12px] px-2 py-1 rounded`}>
+            Train Ticket
+          </Text>
+        ) : (
+          <Text style={tw`bg-transparent px-2 py-1`} />
+        )}
+      </View>
+
+      <View style={tw`items-center`}>
+        {route?.doesCarryTwoWheelers ? (
+          <Text style={tw`bg-[#C8C8F44D] font-bold text-[#101010] text-[12px] px-2 py-1 rounded`}>
+            Two Wheeler Courier
+          </Text>
+        ) : (
+          <Text style={tw`bg-transparent px-2 py-1`} />
+        )}
+      </View>
+    </View>
+
+    <View style={tw`p-1`}>
+      <Text style={tw`font-bold text-[15px] mb-2 text-[#27272A]`}>Contact</Text>
+      <PhoneNumbersList phoneNumbers={route?.mobileNumbers} />
+    </View>
+
+    <View>
+      <View style={tw`mt-2`}>
+        <Text style={tw`font-medium text-[#7D7D7D] text-[12px]`}>Office Address</Text>
+        <Text style={tw`font-bold text-[12px] text-[#042F40]`}>{route?.officeAddress}</Text>
+      </View>
+      <View style={tw`mt-2`}>
+        <Text style={tw`font-bold text-[#7D7D7D] text-[12px]`}>Phone Pe No</Text>
+        <Text style={tw`font-bold text-[12px] text-[#042F40]`} >{route?.phonepeNumber}</Text>
+      </View>
+      <View style={tw`mt-2 mb-2`}>
+        <Text style={tw`font-bold text-[#7D7D7D] text-[12px]`}>Discount</Text>
+        <Text style={tw`font-bold text-[12px] text-[#042F40]`}>{route?.discount}%</Text>
+      </View>
+    </View>
+
+    <View style={tw`flex flex-row`}>
+      <CustomButton title="Scan To Pay"
+        onPress={() => setIsQrModalVisible(route._id)}
+        imageSource={require('@/assets/QR.png')}
+      />
+      <CustomButton title="View Driver" onPress={() => setIsDriverModalVisible(route._id)} />
+      <CustomButton title="view Bus Chart" onPress={() => setIsChartModalVisible(route._id)}
+        imageSource={require('@/assets/bus-chart.png')}
+      />
+    </View>
+
+    {/* View Less Button */}
+    <TouchableOpacity
+      style={tw`flex-row items-center justify-end mt-4`}
+      onPress={() => setShowFullCard(false)} // Collapse the card
+    >
+      <Text style={tw`text-blue-400 font-bold text-sm mr-1`}>
+        View Less
+      </Text>
+      <ChevronUp size={20} color="#87CEEB" />
+    </TouchableOpacity>
+
+    {/* Modals (QR Code, Driver Info, Discount Entry, etc.) */}
+    {/* Modal implementations... */}
+  </View>
+)}
+
+
+                
+              </View>
+
+
+               </View>
             </View>
+
           ))}
         </ScrollView>
       )}
@@ -781,6 +619,8 @@ const DailyRouteVehicles: React.FC = () => {
           </TouchableWithoutFeedback>
         </View>
       </Modal>
+
+      </ScrollView>
     </SafeAreaView>
   );
 };
@@ -816,12 +656,12 @@ const styles = StyleSheet.create({
     backgroundColor: '#51BEEE',
     borderRadius: 5,
     padding: 10,
-},
-notificationText: {
+  },
+  notificationText: {
     color: '#ffffff',
     fontSize: 16,
     textAlign: 'center',
-},
+  },
   facilityBtn: {
     fontWeight: 'bold',
     fontSize: 12,
@@ -851,7 +691,7 @@ notificationText: {
     borderRadius: 8,
     padding: 8,
     alignItems: "center",
-    marginBottom: 10,
+    marginBottom: 1,
     width: 120
   },
   addButtonText: {
@@ -860,7 +700,7 @@ notificationText: {
     fontWeight: "bold",
   },
   routesList: {
-    flex: 1,
+    // flex: 1,
   },
   card: {
     backgroundColor: "#fff",
@@ -973,3 +813,10 @@ notificationText: {
 });
 
 export default DailyRouteVehicles;
+
+
+
+
+
+
+

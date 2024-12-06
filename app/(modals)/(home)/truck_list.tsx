@@ -142,25 +142,25 @@ const TruckListScreen: React.FC = () => {
                                 </TouchableOpacity>
                             </View>
                             <Text style={styles.cardText}>
-                                Vehicle Number: <Text style={{ color: "black" }}>{truck.number.toUpperCase()}</Text>
+                                Vehicle Number - <Text style={{ color: "black" }}>{truck.number.toUpperCase()}</Text>
                             </Text>
                             <Text style={styles.cardText}>
-                                Number of Tyres: <Text style={{ color: "black" }}>{truck.noOfTyres}</Text>
+                                Number of Tyres - <Text style={{ color: "black" }}>{truck.noOfTyres}</Text>
                             </Text>
                             <Text style={styles.cardText}>
-                                Vehicle Weight: <Text style={{ color: "black" }}>{truck.vehicleWeightInKGS}</Text>
+                                Vehicle Weight - <Text style={{ color: "black" }}>{truck.vehicleWeightInKGS}</Text>
                             </Text>
                             <Text style={styles.cardText}>
-                                Model: <Text style={{ color: "black" }}>{truck.model}</Text>
+                                Model - <Text style={{ color: "black" }}>{truck.model}</Text>
                             </Text>
                             <Text style={styles.cardText}>
-                                Body Type: <Text style={{ color: "black" }}>{truck.bodyType}</Text>
+                                Body Type - <Text style={{ color: "black" }}>{truck.bodyType}</Text>
                             </Text>
                             <Text style={styles.cardText}>
-                                Location: <Text style={{ color: "black" }}>{truck.location}</Text>
+                                Location - <Text style={{ color: "black" }}>{truck.location}</Text>
                             </Text>
                             <Text style={styles.cardText}>
-                                Chassis Number: <Text style={{ color: "black" }}>{truck.chassisBrand}</Text>
+                                Chassis Number - <Text style={{ color: "black" }}>{truck.chassisBrand}</Text>
                             </Text>
                             <Text style={styles.cardText}>{truck.isForRent&&" Rent /"} {truck.isForSell&&" Sell"}</Text>
 
@@ -222,7 +222,7 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         padding: 20,
-        backgroundColor: "#ffffff",
+        backgroundColor: "#EAEAEA",
     },
     searchContainer: {
         flexDirection: "row",
@@ -233,6 +233,7 @@ const styles = StyleSheet.create({
         paddingHorizontal: 15,
         marginBottom: 20,
         paddingVertical: 5,
+        backgroundColor:'#ffffff'
     },
     searchInput: {
         flex: 1,
@@ -284,10 +285,10 @@ const styles = StyleSheet.create({
         fontWeight: "bold",
     },
     cardText: {
-        marginBottom: 10,
-        color: Colors.secondary,
+        marginBottom: 2,
+        color: '#000000',
         fontWeight: "500",
-        fontSize: 15,
+        fontSize: 12,
     },
     viewPhotoButton: {
         backgroundColor: Colors.darkBlue,

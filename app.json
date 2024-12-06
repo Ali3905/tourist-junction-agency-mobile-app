@@ -1,42 +1,47 @@
 {
   "expo": {
     "name": "Tourist Junction",
-    "slug": "driver-project",
-    "version": "2.0.0",
+    "slug": "Tourist_Junction",
+    "version": "5.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
     "scheme": "myapp",
     "userInterfaceStyle": "automatic",
     "splash": {
-      "image": "./assets/images/splash.png",
+      "image": "./assets/images/icon.png",
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.touristjunction.agency"
+      "bundleIdentifier": "com.touristjunction.transport"
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./assets/images/adaptive-icon.png",
+        "foregroundImage": "./assets/images/tourist_wallpaper.png",
         "backgroundColor": "#ffffff"
       },
-      "package": "com.touristjunction.agency"
+      "package": "com.touristjunction.transport"
     },
     "web": {
       "bundler": "metro",
       "output": "static",
-      "favicon": "./assets/images/favicon.png"
+      "favicon": "./assets/images/icon.png"
     },
     "plugins": [
-      "expo-router"
+      "expo-router",
+      "expo-font",
+      "expo-secure-store"
     ],
     "experiments": {
       "typedRoutes": true
     },
     "extra": {
+      "router": {
+        "origin": false
+      },
       "eas": {
-        "projectId": "99170966-4a04-4ad1-ac54-7b538e4bb910"
+        "projectId": "c493a6f3-ac8a-4820-8906-f3f3dfe6043b"
       }
     }
   }

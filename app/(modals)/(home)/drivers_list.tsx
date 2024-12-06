@@ -19,6 +19,7 @@ import { FontAwesome5, MaterialIcons } from "@expo/vector-icons";
 import { router } from "expo-router";
 import { useGlobalContext } from "@/context/GlobalProvider";
 import GoToPlans from "@/components/GoToPlans";
+import tw from 'twrnc'
 
 interface BlurOverlayProps {
     visible: boolean;
@@ -102,10 +103,9 @@ const DriverListScreen: React.FC = () => {
 
     const filteredDrivers = searchQuery ? filterDrivers(searchQuery) : drivers;
 
-    if (!userData?.isSubsciptionValid) {
-        return <GoToPlans />
-      }
-
+    if (!userData?.isSubsciptionValid && Date.now() >= new Date(userData?.trialValidTill).getTime()) {
+    return <GoToPlans />;
+  }
     return (
         <SafeAreaView style={styles.container}>
             <View style={styles.searchContainer}>
@@ -148,13 +148,13 @@ const DriverListScreen: React.FC = () => {
                                 </TouchableOpacity>
                             </View>
                             <Text style={styles.cardText}>
-                                Name: <Text style={{ color: "black" }}>{driver.name}</Text>
+                                Name - <Text style={{ color: "black" }}>{driver.name}</Text>
                             </Text>
                             {/* <Text style={styles.cardText}>
                                 Mobile: <Text style={{ color: "black" }}>{driver.mobileNumber}</Text>
                             </Text> */}
-                            <View style={[{ marginBottom: 2, marginTop: 5, flexDirection: "row" }]}>
-                                <Text style={{color: Colors.darkBlue}}>Mobile: </Text>
+                            <View style={[{ marginBottom: 1, marginTop: 1, flexDirection: "row" }]}>
+                                <Text style={tw`font-medium`}>Mobile - </Text>
                                 <TouchableOpacity onPress={() => handlePress(driver.mobileNumber)}>
                                     <MaterialIcons name="phone-in-talk" size={24} color={Colors.darkBlue} />
                                 </TouchableOpacity>
@@ -162,23 +162,23 @@ const DriverListScreen: React.FC = () => {
                                     <MaterialIcons name="phone-in-talk" size={24} color={Colors.secondary} />
                                 </TouchableOpacity> */}
                             </View>
-                            <Text style={styles.cardText}>
-                                City: <Text style={{ color: "black" }}>{driver.city}</Text>
+                            <Text style={tw`mb-1 text-[12px] font-medium`}>
+                                City - <Text style={{ color: "black" }}>{driver.city}</Text>
                             </Text>
                             <Text style={styles.cardText}>
-                                State: <Text style={{ color: "black" }}>{driver.state}</Text>
+                                State - <Text style={{ color: "black" }}>{driver.state}</Text>
                             </Text>
                             <Text style={styles.cardText}>
-                                Vehicle Type: <Text style={{ color: "black" }}>{driver.vehicleType}</Text>
+                                Vehicle Type - <Text style={{ color: "black" }}>{driver.vehicleType}</Text>
                             </Text>
-                            <View style={styles.aadharContainer}>
-                                <Text style={styles.cardText}>Aadhar card</Text>
+                            <View style={tw`flex-row items-center justify-between`}>
+                                {/* <Text style={styles.cardText}>Aadhar card</Text> */}
                                 <TouchableOpacity style={styles.viewAadharButton} onPress={() => handleViewImage(driver.aadharCard)}>
                                     <Text style={styles.viewAadharButtonText}>View Aadhar</Text>
                                 </TouchableOpacity>
                             </View>
-                            <View style={styles.aadharContainer}>
-                                <Text style={styles.cardText}>Driver License</Text>
+                            <View style={tw`flex-row items-center mt-2 justify-between`}>
+                                {/* <Text style={styles.cardText}>Driver License</Text> */}
                                 <TouchableOpacity style={styles.viewAadharButton} onPress={() => handleViewImage(driver.license)}>
                                     <Text style={styles.viewAadharButtonText}>View License</Text>
                                 </TouchableOpacity>
@@ -238,7 +238,7 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         padding: 20,
-        backgroundColor: "#ffffff",
+        backgroundColor: "#EAEAEA",
     },
     searchContainer: {
         flexDirection: "row",
@@ -249,6 +249,7 @@ const styles = StyleSheet.create({
         paddingHorizontal: 15,
         marginBottom: 20,
         paddingVertical: 5,
+        backgroundColor:'#fff'
     },
     searchInput: {
         flex: 1,
@@ -310,10 +311,10 @@ const styles = StyleSheet.create({
         fontWeight: "bold",
     },
     cardText: {
-        marginBottom: 10,
-        color: Colors.secondary,
+        marginBottom: 2,
+        color: '#000000',
         fontWeight: "500",
-        fontSize: 15,
+        fontSize: 12,
     },
     aadharContainer: {
         flexDirection: "row",

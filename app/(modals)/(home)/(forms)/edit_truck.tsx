@@ -34,22 +34,30 @@ const AddTruckScreen: React.FC = () => {
   const { apiCaller, editData, setRefresh } = useGlobalContext();
 
   useEffect(() => {
-      if (editData) {
-          setVehicleNo(editData.number);
-          setVehicleModel(editData.model);
-          setLocation(editData.location);
-          setContactNo(editData.contactNumber);
-          setBodyType(editData.bodyType);
-          setChassisBrand(editData.chassisBrand);
-          setSelectedForRent(editData.isForRent);
-          setSelectedForSell(editData.isForSell);
-          setTruckImages(editData.photos);
-          setNoOfTyres(editData.noOfTyres ? editData.noOfTyres.toString() : "");
-          setVehicleWeightInKGS(editData.vehicleWeightInKGS ? editData.vehicleWeightInKGS.toString() : "");
-      }
+    if (editData) {
+      setVehicleNo(editData.number);
+      setVehicleModel(editData.model);
+      setLocation(editData.location);
+      setContactNo(editData.contactNumber);
+      setBodyType(editData.bodyType);
+      setChassisBrand(editData.chassisBrand);
+      setSelectedForRent(editData.isForRent);
+      setSelectedForSell(editData.isForSell);
+      setTruckImages(editData.photos);
+      setNoOfTyres(editData.noOfTyres ? editData.noOfTyres.toString() : "");
+      setVehicleWeightInKGS(editData.vehicleWeightInKGS ? editData.vehicleWeightInKGS.toString() : "");
+    }
   }, [editData])
 
   const handleAddTruck = async () => {
+    if (!vehicleNo || !vehicleModel || !location || !contactNo || !noOfTyres || !vehicleWeightInKGS || truckImages.length === 0) {
+      Alert.alert("Please fill all fields and upload truck images.");
+      return;
+  }
+    if (contactNo && (contactNo.length < 10 || contactNo.length > 12)) {
+      Alert.alert("Contact number must contain 10 to 12 digits");
+      return;
+    }
 
     const formData = new FormData();
     formData.append('number', vehicleNo);
@@ -66,18 +74,18 @@ const AddTruckScreen: React.FC = () => {
     formData.append('type', "TRUCK");
 
     truckImages.forEach((image, index) => {
-        formData.append('photos', {
-            uri: image.uri,
-            type: 'image/jpeg',
-            name: `photo${index}.jpg`
-        } as any);
+      formData.append('photos', {
+        uri: image.uri,
+        type: 'image/jpeg',
+        name: `photo${index}.jpg`
+      } as any);
     });
 
     setLoading(true);
     try {
       await apiCaller.patch(`/api/vehicle?vehicleId=${editData._id}`, formData, { headers: { 'Content-Type': 'multipart/form-data' } });
       setLoading(false);
-      setRefresh(prev=>!prev)
+      setRefresh(prev => !prev)
       resetForm();
       Alert.alert("Success", "Truck updated successfully!");
       router.back()
@@ -92,7 +100,8 @@ const AddTruckScreen: React.FC = () => {
     let result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.Images,
       allowsMultipleSelection: true,
-      quality: 1,
+      selectionLimit: 5,
+      quality: .7,
     });
 
     if (!result.canceled) {
@@ -242,18 +251,19 @@ const AddTruckScreen: React.FC = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 20,
+    padding: 10,
     backgroundColor: "#ffffff",
   },
   modalContainer: {
     flex: 1,
     paddingTop: Platform.OS === 'android' ? 20 : 0,
-    paddingHorizontal: 20,
+    paddingHorizontal: 10,
   },
   modalContent: {
     backgroundColor: "#fff",
     borderRadius: 10,
     elevation: 5,
+    padding:15
   },
   inputGroup: {
     marginBottom: 15,

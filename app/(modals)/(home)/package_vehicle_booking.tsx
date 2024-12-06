@@ -176,8 +176,8 @@ const PackageVehicleListScreen: React.FC = () => {
     }
   };
 
-  if (!userData?.isSubsciptionValid) {
-    return <GoToPlans />
+  if (!userData?.isSubsciptionValid && Date.now() >= new Date(userData?.trialValidTill).getTime()) {
+    return <GoToPlans />;
   }
 
   return (
@@ -366,7 +366,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 20,
-    backgroundColor: "#ffffff",
+    backgroundColor: "#EAEAEA",
   },
   searchContainer: {
     flexDirection: "row",
@@ -377,6 +377,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 15,
     marginBottom: 20,
     paddingVertical: 5,
+    backgroundColor:'#fff'
   },
   searchInput: {
     flex: 1,

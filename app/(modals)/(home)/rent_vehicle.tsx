@@ -254,8 +254,8 @@ const RentVehicleScreen: React.FC = () => {
                                             style={{ width: 30, height: 30, marginHorizontal: 5 }}
                                         />}
                                     </View>}
-                                <Text style={{ flex: 1, fontWeight: 'bold', color: '#87CEEB' }}>Sell Description:</Text>
-                                <Text>{vehicle?.sellDescription || "No Description"}</Text>
+                                {/* <Text style={{ flex: 1, fontWeight: 'bold', color: '#87CEEB' }}>Sell Description:</Text> */}
+                                {/* <Text>{vehicle?.sellDescription || "No Description"}</Text> */}
                             </>}
                         </View>
                     ))
@@ -289,7 +289,7 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         padding: 20,
-        backgroundColor: "#ffffff",
+        backgroundColor: "#EAEAEA",
     },
     searchContainer: {
         flexDirection: "row",

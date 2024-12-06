@@ -143,11 +143,11 @@ const CarListScreen: React.FC = () => {
                                     <MaterialIcons name="delete" size={24} color={Colors.darkBlue} />
                                 </TouchableOpacity>
                             </View>
-                            <Text style={styles.cardText}>Vehicle Number: <Text style={{ color: "black" }}>{car.number.toUpperCase()}</Text></Text>
-                            <Text style={styles.cardText}>Seating Capacity: <Text style={{ color: "black" }}>{car.seatingCapacity}</Text></Text>
-                            <Text style={styles.cardText}>Vehicle Model: <Text style={{ color: "black" }}>{car.model}</Text></Text>
-                            <Text style={styles.cardText}>Location: <Text style={{ color: "black" }}>{car.location}</Text></Text>
-                            <Text style={styles.cardText}>Contact Number: <Text style={{ color: "black" }}>{car.contactNumber}</Text></Text>
+                            <Text style={styles.cardText}>Vehicle Number - <Text style={{ color: "black" }}>{car.number.toUpperCase()}</Text></Text>
+                            <Text style={styles.cardText}>Seating Capacity - <Text style={{ color: "black" }}>{car.seatingCapacity}</Text></Text>
+                            <Text style={styles.cardText}>Vehicle Model - <Text style={{ color: "black" }}>{car.model}</Text></Text>
+                            <Text style={styles.cardText}>Location - <Text style={{ color: "black" }}>{car.location}</Text></Text>
+                            <Text style={styles.cardText}>Contact Number - <Text style={{ color: "black" }}>{car.contactNumber}</Text></Text>
                             <Text style={styles.cardText}>{car.isAC?"AC /":"NON AC /"} {car.isForRent&&" Rent /"} {car.isForSell&&" Sell"}</Text>
                             <TouchableOpacity style={styles.viewPhotoButton} onPress={() => handleViewPhoto(car.photos)}>
                                 <Text style={styles.viewPhotoButtonText}>View Photos</Text>
@@ -207,7 +207,7 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         padding: 20,
-        backgroundColor: "#ffffff",
+        backgroundColor: "#EAEAEA",
     },
     searchContainer: {
         flexDirection: "row",
@@ -218,6 +218,7 @@ const styles = StyleSheet.create({
         paddingHorizontal: 15,
         marginBottom: 20,
         paddingVertical: 5,
+        backgroundColor:'#fff'
     },
     searchInput: {
         flex: 1,
@@ -277,10 +278,10 @@ const styles = StyleSheet.create({
         fontWeight: "bold",
     },
     cardText: {
-        marginBottom: 10,
-        color: Colors.secondary,
+        marginBottom: 2,
+        color: '#000000',
         fontWeight: "500",
-        fontSize: 15,
+        fontSize: 12,
     },
     viewPhotoButton: {
         backgroundColor: Colors.darkBlue,

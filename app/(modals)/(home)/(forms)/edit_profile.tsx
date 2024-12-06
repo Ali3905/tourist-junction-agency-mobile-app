@@ -81,7 +81,7 @@ const EditProfileScreen: React.FC = () => {
             mediaTypes: ImagePicker.MediaTypeOptions.Images,
             allowsEditing: false,
             aspect: [1, 1],
-            quality: 1,
+            quality: .7,
         });
 
         if (!result.canceled) {

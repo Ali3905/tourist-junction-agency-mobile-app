@@ -18,6 +18,7 @@ import { FontAwesome5, MaterialIcons } from "@expo/vector-icons";
 import { router } from "expo-router";
 import { useGlobalContext } from "@/context/GlobalProvider";
 import GoToPlans from "@/components/GoToPlans";
+import tw from 'twrnc'
 
 interface BlurOverlayProps {
     visible: boolean;
@@ -110,10 +111,9 @@ const EmployeeListScreen: React.FC = () => {
         setModalVisible(!isModalVisible);
     };
 
-    if (!userData?.isSubsciptionValid) {
-        return <GoToPlans />
-      }
-
+    if (!userData?.isSubsciptionValid && Date.now() >= new Date(userData?.trialValidTill).getTime()) {
+    return <GoToPlans />;
+  }
 
     return (
         <SafeAreaView style={styles.container}>
@@ -123,7 +123,7 @@ const EmployeeListScreen: React.FC = () => {
                 </TouchableOpacity>
                 <TextInput
                     style={styles.searchInput}
-                    placeholder="Search..."
+                    placeholder="Search City"
                     placeholderTextColor={Colors.secondary}
                     value={searchQuery}
                     onChangeText={setSearchQuery}
@@ -156,18 +156,21 @@ const EmployeeListScreen: React.FC = () => {
                                     <MaterialIcons name="delete" size={24} color={Colors.darkBlue} />
                                 </TouchableOpacity>
                             </View>
-                            <Text style={styles.cardText}>
-                                Name: <Text style={{ color: "black" }}>{employee.name}</Text>
+                            <Text style={tw`mb-1 text-black font-medium text-[12px]`}>
+                                Name - <Text style={{ color: "black" }}>{employee.name}</Text>
                             </Text>
-                            <Text style={styles.cardText}>
-                                Type: <Text style={{ color: "black" }}>{employee.employeeType}</Text>
+                            <Text style={tw`mb-1 text-black font-medium text-[12px]`}>
+                                Type - <Text style={{ color: "black" }}>{employee.employeeType}</Text>
                             </Text>
-                            <Text style={styles.cardText}>
-                                Phone: <Text style={{ color: "black" }}>{employee.mobileNumber}</Text>
+                            <Text style={tw`mb-1 text-black font-medium text-[12px]`}>
+                                Phone - <Text style={{ color: "black" }}>{employee.mobileNumber}</Text>
+                            </Text>
+                            <Text style={tw`mb-1 text-black font-medium text-[12px]`}>
+                                City - <Text style={{ color: "black" }}>{employee.city}</Text>
                             </Text>
                             <View style={styles.cardActions}>
-                                <Text style={styles.cardText}>Aadhar Card</Text>
-                                <TouchableOpacity style={styles.viewButton} onPress={() => handleViewImage(employee.aadharCard)}>
+                                <Text style={tw`mb-1 text-black font-medium text-[12px]`}>Aadhar Card</Text>
+                                <TouchableOpacity style={tw`bg-[#2AA4D5] mt-4 px-2.5 py-1.25 rounded`} onPress={() => handleViewImage(employee.aadharCard)}>
                                     <Text style={styles.viewButtonText}>View Aadhaar</Text>
                                 </TouchableOpacity>
                             </View>
@@ -226,7 +229,7 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         padding: 20,
-        backgroundColor: "#fff",
+        backgroundColor: "#EAEAEA",
     },
     enlargedImage: {
         width: 300,
@@ -243,6 +246,7 @@ const styles = StyleSheet.create({
         paddingHorizontal: 15,
         marginBottom: 20,
         paddingVertical: 5,
+        backgroundColor:'#fff'
     },
     searchInput: {
         flex: 1,
@@ -317,7 +321,7 @@ const styles = StyleSheet.create({
     },
     cardText: {
         marginBottom: 10,
-        color: Colors.secondary,
+        color: '#000000',
         fontWeight: "500",
         fontSize: 15,
     },

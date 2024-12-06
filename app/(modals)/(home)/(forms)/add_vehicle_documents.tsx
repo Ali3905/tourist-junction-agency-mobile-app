@@ -17,6 +17,7 @@ import { Colors } from "@/constants/Colors";
 import { useGlobalContext } from "@/context/GlobalProvider"; // Import the global context
 import { Picker } from "@react-native-picker/picker";
 import { router } from "expo-router";
+import tw from 'twrnc'
 
 const AddVehicleDocumentsScreen: React.FC = () => {
     const [vehicleNumber, setVehicleNumber] = useState("");
@@ -134,11 +135,12 @@ const AddVehicleDocumentsScreen: React.FC = () => {
                 <View style={styles.modalContent}>
                     <View style={styles.inputGroup}>
                         <Text style={styles.label}>Vehicle Number</Text>
-                        <View style={styles.pickerContainer}>
+                        <View style={tw`border-secondary border border-[#C0C0C0] rounded-lg overflow-hidden`}>
                             <Picker
                                 selectedValue={vehicleNumber}
                                 onValueChange={(itemValue) => setVehicleNumber(itemValue)}
-                                style={styles.picker}
+                                style={tw`text-sm text-black h-14 p-4 sm:p-6 md:p-8 bg-white`}  // Apply padding, font size, height, background color
+                                itemStyle={tw`text-black`} // Apply text color for Picker items
                             >
                                 <Picker.Item label="Select Vehicle Number" value="" />
                                 {vehicleNumbers.map((number, index) => (
@@ -146,6 +148,7 @@ const AddVehicleDocumentsScreen: React.FC = () => {
                                 ))}
                             </Picker>
                         </View>
+
                     </View>
 
                     <View style={styles.inputGroup}>
@@ -228,18 +231,19 @@ const AddVehicleDocumentsScreen: React.FC = () => {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        padding: 20,
+        padding: 10,
         backgroundColor: "#ffffff",
     },
     modalContainer: {
         flex: 1,
         paddingTop: Platform.OS === 'android' ? 20 : 0,
-        paddingHorizontal: 20,
+        paddingHorizontal: 10,
     },
     modalContent: {
         backgroundColor: "#fff",
         borderRadius: 10,
         elevation: 5,
+        padding:20
     },
     inputGroup: {
         marginBottom: 15,
@@ -247,7 +251,7 @@ const styles = StyleSheet.create({
     label: {
         marginBottom: 5,
         fontSize: 13,
-        color: Colors.secondary,
+        color: '#000000',
         fontWeight: "500",
     },
     input: {

@@ -97,10 +97,14 @@ const AddEmployeeScreen: React.FC = () => {
             resetForm();
             Alert.alert("Success", "Employee added successfully!");
             router.back();
-        } catch (error) {
+        } catch (error : any) {
             console.log(error);
             setLoading(false);
+            if (error.response && error.response.data && error.response.data.message) {
+                Alert.alert("Error", error.response.data.message);
+            } else {
             Alert.alert("Error", "Failed to add employee. Please try again.");
+            }
         }
     };
 
@@ -173,7 +177,7 @@ const AddEmployeeScreen: React.FC = () => {
                                 onValueChange={(itemValue) => setState(itemValue)}
                                 style={styles.picker}
                             >
-                                <Picker.Item style={{ color: Colors.secondary }} label="Select State" value="" />
+                                <Picker.Item style={{ color: '#C0C0C0' }} label="Select State" value="" />
                                 {State.getStatesOfCountry("IN").map((s) => (
                                     <Picker.Item key={s.isoCode} label={s.name} value={s.isoCode} />
                                 ))}
@@ -189,7 +193,7 @@ const AddEmployeeScreen: React.FC = () => {
                                 style={styles.picker}
                                 enabled={!!state}
                             >
-                                <Picker.Item style={{ color: Colors.secondary }} label="Select City" value="" />
+                                <Picker.Item style={{ color: '#C0C0C0' }} label="Select City" value="" />
                                 {cityList.map((c) => (
                                     <Picker.Item key={c.name} label={c.name} value={c.name} />
                                 ))}
@@ -204,7 +208,7 @@ const AddEmployeeScreen: React.FC = () => {
                                 onValueChange={(itemValue) => setEmployerType(itemValue)}
                                 style={styles.picker}
                             >
-                                <Picker.Item style={{ color: Colors.secondary }} label="Select Employee Type" value="" />
+                                <Picker.Item style={{ color: '#C0C0C0' }} label="Select Employee Type" value="" />
                                 <Picker.Item label="MANAGER" value="MANAGER" />
                                 {/* <Picker.Item label="CLEANER" value="CLEANER" /> */}
                                 <Picker.Item label="OFFICE-BOY" value="OFFICE-BOY" />
@@ -246,6 +250,7 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         backgroundColor: "#ffffff",
+        marginBottom:50
     },
     scrollView: {
         flex: 1,
@@ -264,18 +269,18 @@ const styles = StyleSheet.create({
     label: {
         marginBottom: 5,
         fontSize: 13,
-        color: Colors.secondary,
+        color: '#000000',
         fontWeight: "500",
     },
     input: {
-        borderColor: Colors.secondary,
+        borderColor: '#C0C0C0',
         borderWidth: 1,
         borderRadius: 10,
         paddingHorizontal: 10,
         height: 40,
     },
     pickerContainer: {
-        borderColor: Colors.secondary,
+        borderColor: '#C0C0C0',
         borderWidth: 1,
         borderRadius: 10,
     },

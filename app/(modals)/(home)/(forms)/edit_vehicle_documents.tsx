@@ -16,6 +16,7 @@ import { Colors } from "@/constants/Colors";
 import { useGlobalContext } from "@/context/GlobalProvider";
 import { router } from "expo-router";
 import { Picker } from '@react-native-picker/picker';
+import tw from 'twrnc'
 
 const EditVehicleDocumentsScreen: React.FC = () => {
     const [vehicleId, setVehicleId] = useState("");
@@ -120,7 +121,7 @@ const EditVehicleDocumentsScreen: React.FC = () => {
         let result = await ImagePicker.launchImageLibraryAsync({
             mediaTypes: ImagePicker.MediaTypeOptions.Images,
             allowsMultipleSelection: false,
-            quality: 1,
+            quality: .7,
         });
 
         if (!result.canceled) {
@@ -144,11 +145,11 @@ const EditVehicleDocumentsScreen: React.FC = () => {
                 <View style={styles.modalContent}>
                     <View style={styles.inputGroup}>
                         <Text style={styles.label}>Vehicle Number</Text>
-                        <View style={styles.pickerContainer}>
+                        <View style={tw`border-secondary border border-[#C0C0C0] rounded-lg overflow-hidden`}>
                             <Picker
                                 selectedValue={vehicleId}
                                 onValueChange={(itemValue) => setVehicleId(itemValue)}
-                                style={styles.picker}
+                                style={tw`text-sm text-black h-14 p-4 sm:p-6 md:p-8 bg-white`}  // Apply responsive padding, font size, height, background color
                             >
                                 <Picker.Item label="Select Vehicle" value="" />
                                 {vehicleNumbers.map((vehicle, index) => (
@@ -156,6 +157,7 @@ const EditVehicleDocumentsScreen: React.FC = () => {
                                 ))}
                             </Picker>
                         </View>
+
                     </View>
 
                     <View style={styles.inputGroup}>
@@ -239,18 +241,20 @@ const EditVehicleDocumentsScreen: React.FC = () => {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        padding: 20,
+        padding: 10,
         backgroundColor: "#ffffff",
+        paddingBottom:60
     },
     modalContainer: {
         flex: 1,
         paddingTop: Platform.OS === 'android' ? 20 : 0,
-        paddingHorizontal: 20,
+        paddingHorizontal: 10,
     },
     modalContent: {
         backgroundColor: "#fff",
         borderRadius: 10,
         elevation: 5,
+        padding:15
     },
     inputGroup: {
         marginBottom: 15,
@@ -258,11 +262,11 @@ const styles = StyleSheet.create({
     label: {
         marginBottom: 5,
         fontSize: 13,
-        color: Colors.secondary,
+        color: '#000000',
         fontWeight: "500",
     },
     pickerContainer: {
-        borderColor: Colors.secondary,
+        borderColor: '#C0C0C0',
         borderWidth: 1,
         borderRadius: 10,
         overflow: 'hidden',

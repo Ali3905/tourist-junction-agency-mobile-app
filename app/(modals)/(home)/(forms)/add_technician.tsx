@@ -124,7 +124,7 @@ const AddTechnicianScreen: React.FC = () => {
                                 onValueChange={(itemValue) => setState(itemValue)}
                                 style={styles.picker}
                             >
-                                <Picker.Item style={{ color: Colors.secondary }} label="Select State" value="" />
+                                <Picker.Item style={{ color: '#C0C0C0' }} label="Select State" value="" />
                                 {State.getStatesOfCountry("IN").map((s) => (
                                     <Picker.Item key={s.isoCode} label={s.name} value={s.isoCode} />
                                 ))}
@@ -140,7 +140,7 @@ const AddTechnicianScreen: React.FC = () => {
                                 style={styles.picker}
                                 enabled={!!state}
                             >
-                                <Picker.Item style={{ color: Colors.secondary }} label="Select City" value="" />
+                                <Picker.Item style={{ color: '#C0C0C0' }} label="Select City" value="" />
                                 {cityList.map((c) => (
                                     <Picker.Item key={c.name} label={c.name} value={c.name} />
                                 ))}
@@ -155,7 +155,7 @@ const AddTechnicianScreen: React.FC = () => {
                                 onValueChange={(itemValue) => setTechnicianType(itemValue)}
                                 style={styles.picker}
                             >
-                                <Picker.Item style={{ color: Colors.secondary }} label="Select Technician Type" value="" />
+                                <Picker.Item style={{ color: '#C0C0C0' }} label="Select Technician Type" value="" />
                                 <Picker.Item label="MECHANIC" value="MECHANIC" />
                                 <Picker.Item label="ELECTRICIAN" value="ELECTRICIAN" />
                                 <Picker.Item label="SPARE PART SHOP" value="SPAREPARTSHOP" />
@@ -174,7 +174,7 @@ const AddTechnicianScreen: React.FC = () => {
                                 onValueChange={(itemValue) => setVehicleType(itemValue)}
                                 style={styles.picker}
                             >
-                                <Picker.Item style={{ color: Colors.secondary }} label="Select Vehicle Type" value="" />
+                                <Picker.Item style={{ color: '#C0C0C0' }} label="Select Vehicle Type" value="" />
                                 <Picker.Item label="CAR" value="CAR" />
                                 <Picker.Item label="TRUCK" value="TRUCK" />
                                 <Picker.Item label="BUS" value="BUS" />
@@ -224,18 +224,18 @@ const styles = StyleSheet.create({
     label: {
         marginBottom: 5,
         fontSize: 13,
-        color: Colors.secondary,
+        color: '#000000',
         fontWeight: "500",
     },
     input: {
-        borderColor: Colors.secondary,
+        borderColor: '#C0C0C0',
         borderWidth: 1,
         borderRadius: 10,
         paddingHorizontal: 10,
         height: 40,
     },
     pickerContainer: {
-        borderColor: Colors.secondary,
+        borderColor: '#C0C0C0',
         borderWidth: 1,
         borderRadius: 10,
         overflow: "hidden",

@@ -2,17 +2,13 @@ import React, { useEffect, useState } from "react";
 import {
     View,
     Text,
-    StyleSheet,
     TextInput,
     SafeAreaView,
     ScrollView,
-    Image,
-    Dimensions,
     ActivityIndicator,
     TouchableOpacity,
-    Modal,
-    Alert,
     Pressable,
+    Image
 } from "react-native";
 import { FontAwesome5, MaterialIcons } from "@expo/vector-icons";
 import { Colors } from "@/constants/Colors";
@@ -22,32 +18,29 @@ import Carousel from "@/components/Carousel";
 import ConfirmationModal from "@/components/Modal";
 import GoToPlans from "@/components/GoToPlans";
 import { Picker } from "@react-native-picker/picker";
-
-const { width: viewportWidth } = Dimensions.get("window");
+import tw from 'twrnc';
 
 interface Vehicle {
     _id: string;
-    // number: string;
-    // seatingCapacity: number;
     departureDate: string;
     departurePlace: string;
     departureTime: string;
     destinationPlace: string;
     mobileNumber: string;
-    moreInformation: string,
+    moreInformation: string;
     photos: string[];
-    // isAC: boolean;
-    // isForRent: boolean;
-    // isForSell: boolean;
-    // type: string;
+    vehicle: {
+        number: string;
+        isAC: boolean;
+        isSleeper: boolean;
+    };
 }
 
 interface EmptyVehicleCardProps {
-    vehicle: Vehicle,
-    index: number,
-    handleDelete: (id: string) => Promise<void>
+    vehicle: Vehicle;
+    index: number;
+    handleDelete: (id: string) => Promise<void>;
 }
-
 
 function formatDate(dateString: string): string {
     const date = new Date(dateString);
@@ -57,26 +50,24 @@ function formatDate(dateString: string): string {
     return `${month}/${day}/${year}`;
 }
 
-
 const EmptyVehicleScreen: React.FC = () => {
     const [vehicles, setVehicles] = useState<Vehicle[]>([]);
+    const [filteredVehicles, setFilteredVehicles] = useState<Vehicle[]>([]);
     const [loading, setLoading] = useState(true);
     const { apiCaller, refresh, userData } = useGlobalContext();
 
-    const [vehicleTypeFilter, setVehicleTypeFilter] = useState("")
-    const [fromFilter, setFromFilter] = useState("")
-    const [toFilter, setToFilter] = useState("")
+    const [vehicleTypeFilter, setVehicleTypeFilter] = useState("");
+    const [fromFilter, setFromFilter] = useState("");
+    const [toFilter, setToFilter] = useState("");
     const [notificationVisible, setNotificationVisible] = useState(true);
-
-    const [searchQuery, setSearchQuery] = useState("");
 
     const fetchVehicles = async () => {
         try {
             setLoading(true);
             const response = await apiCaller.get('/api/emptyVehicle');
-            // console.log('API response:', response);
-            const filteredData = response.data.data
-            setVehicles(filteredData);
+            const data = response.data.data;
+            setVehicles(data);
+            setFilteredVehicles(data); // Show all vehicles by default
         } catch (err) {
             console.log(err);
         } finally {
@@ -92,355 +83,182 @@ const EmptyVehicleScreen: React.FC = () => {
         const timer = setTimeout(() => {
             setNotificationVisible(false);
         }, 10000);
-
         return () => clearTimeout(timer);
     }, []);
 
-    const filterVehicles = (query: string) => {
-        return vehicles.filter((vehicle) =>
-            Object.values(vehicle).some((value) =>
-                String(value).toLowerCase().includes(query.toLowerCase()) &&
-                    vehicleTypeFilter ? vehicle.vehicle.type === vehicleTypeFilter : true &&
-                        fromFilter ? vehicle.departurePlace.toLowerCase().includes(fromFilter.toLowerCase()) : true &&
-                            toFilter ? vehicle.destinationPlace.toLowerCase().includes(toFilter.toLowerCase()) : true
-            )
-        );
-    };
-
     const handleSearch = () => {
-        setSearchQuery(searchQuery);
+        const results = vehicles.filter((vehicle) => {
+            const matchesType = vehicleTypeFilter ? vehicle.vehicleType === vehicleTypeFilter : true;
+            const matchesFrom = fromFilter ? vehicle.departurePlace.toLowerCase().includes(fromFilter.toLowerCase()) : true;
+            const matchesTo = toFilter ? vehicle.destinationPlace.toLowerCase().includes(toFilter.toLowerCase()) : true;
+            return matchesType && matchesFrom && matchesTo;
+        });
+        setFilteredVehicles(results);
     };
 
     const handleDeleteEmptyVehicle = async (id: string) => {
         if (!id) {
-            Alert.alert("Could not get the id to delete empty vehicle")
-            return
+            Alert.alert("Could not get the id to delete empty vehicle");
+            return;
         }
         try {
             setLoading(true);
             await apiCaller.delete(`/api/emptyVehicle?emptyVehicleId=${id}`);
-            // console.log('API response:', response);
-            fetchVehicles()
+            fetchVehicles();
         } catch (err) {
             console.log(err);
         } finally {
             setLoading(false);
         }
-    }
-    const filteredVehicles = searchQuery || fromFilter || toFilter || vehicleTypeFilter ? filterVehicles(searchQuery) : vehicles;
+    };
 
-    if (!userData?.isSubsciptionValid) {
-        return <GoToPlans />
-    }
+   if (!userData?.isSubsciptionValid && Date.now() >= new Date(userData?.trialValidTill).getTime()) {
+    return <GoToPlans />;
+  }
 
     return (
-        <SafeAreaView style={styles.container}>
+        <SafeAreaView style={tw`flex-1  px-2 bg-[#EAEAEA]`}>
             <ScrollView>
-                <View style={styles.searchContainer}>
-                    <TouchableOpacity onPress={handleSearch}>
-                        <FontAwesome5 name="search" size={18} color={Colors.secondary} />
-                    </TouchableOpacity>
-                    <TextInput
-                        style={styles.searchInput}
-                        placeholder="Search.."
-                        placeholderTextColor={Colors.secondary}
-                        value={searchQuery}
-                        onChangeText={setSearchQuery}
-                    />
-                </View>
-                <View style={styles.vehicleFilterContainer}>
+               <TouchableOpacity onPress={() => router.push("add_empty_vehicle")} style={tw`bg-[#2AA4D5] rounded-lg p-2 items-center mb-2 mt-2 w-[250px]`}>
+                    <Text style={tw`text-white text-[15px] font-bold`}>Create Empty Vehicle Routes</Text>
+                </TouchableOpacity>
+
+                <View style={tw`flex-row justify-between border border-gray-300 bg-white rounded-xl h-12 mb-2`}>
                     <Picker
                         selectedValue={vehicleTypeFilter}
-                        style={styles.vehiclePicker}
-                        onValueChange={item => setVehicleTypeFilter(item)}
+                        style={tw`flex-1 mx-1`}
+                        onValueChange={(item) => setVehicleTypeFilter(item)}
                     >
-                        <Picker.Item label="All Vehicle Types" value="" />
+                        <Picker.Item label="Select Vehicle Types" value="" />
                         <Picker.Item label="CAR" value="CAR" />
                         <Picker.Item label="BUS" value="BUS" />
                         <Picker.Item label="TRUCK" value="TRUCK" />
                         <Picker.Item label="TAMPO" value="TAMPO" />
                     </Picker>
                 </View>
-                <View style={{ flexDirection: "row", marginTop: 5, gap: 5 }}>
-                    <View style={styles.searchContainer}>
-                        <TouchableOpacity onPress={handleSearch}>
-                            <FontAwesome5 name="search" size={18} color={Colors.secondary} />
-                        </TouchableOpacity>
+
+                <View style={tw`flex-col bg-white rounded-lg p-4  mb-3 border border-gray-300`}>
+                    <View style={tw`flex-row items-center border-b border-gray-300 py-2`}>
+                        <FontAwesome5 name="bus" size={24} color="black" style={tw`mr-3`} />
                         <TextInput
-                            style={styles.searchInput}
-                            placeholder="Search Departure City"
-                            placeholderTextColor={Colors.secondary}
+                            placeholder="From"
+                            style={tw`flex-1 text-lg`}
                             value={fromFilter}
                             onChangeText={setFromFilter}
                         />
-                    </View><View style={styles.searchContainer}>
-                        <TouchableOpacity onPress={handleSearch}>
-                            <FontAwesome5 name="search" size={18} color={Colors.secondary} />
-                        </TouchableOpacity>
+                    </View>
+                    <View style={tw`flex-row items-center border-b border-gray-300 py-2 mt-3`}>
+                        <FontAwesome5 name="bus" size={24} color="black" style={tw`mr-3`} />
                         <TextInput
-                            style={styles.searchInput}
-                            placeholder="Search Destination City"
-                            placeholderTextColor={Colors.secondary}
+                            placeholder="To"
+                            style={tw`flex-1 text-lg`}
                             value={toFilter}
                             onChangeText={setToFilter}
                         />
                     </View>
+                    <TouchableOpacity onPress={handleSearch} style={tw`bg-[#154CE4] rounded-full p-2 items-center mt-2 mx-8`}>
+                        <Text style={tw`text-white text-[15px] font-bold`}>Search</Text>
+                    </TouchableOpacity>
                 </View>
-                <TouchableOpacity onPress={() => router.push("add_empty_vehicle")} style={styles.addButton}>
-                    <Text style={styles.addButtonText}>Create  Empty Vehicle Routes</Text>
-                </TouchableOpacity>
 
                 {notificationVisible && (
-                    <View style={styles.notificationContainer}>
-
+                    <View style={tw`my-5 px-5 bg-[#51BEEE] rounded p-2`}>
                         <Pressable onPress={() => setNotificationVisible(false)}>
-                            <FontAwesome5 name="times-circle" size={18} color={Colors.light} style={{ alignSelf: "flex-end" }} />
+                            <FontAwesome5 name="times-circle" size={18} color="#ffffff" style={tw`self-end`} />
                         </Pressable>
-                        <Text style={styles.notificationText}>
-                            Here added vehicles shown to other agencies as well
-                        </Text>
+                        <Text style={tw`text-white text-lg text-center`}>Here added vehicles shown to other agencies as well</Text>
                     </View>
                 )}
 
                 {loading ? (
-                    <ActivityIndicator size="large" color={Colors.darkBlue} style={{ marginTop: 20 }} />
+                    <ActivityIndicator size="large" color={Colors.darkBlue} style={tw`mt-5`} />
                 ) : (
-                    filteredVehicles.length < 1 ? <Text style={{ textAlign: "center" }}>Currently vehicle is not available on route</Text> :
+                    filteredVehicles.length < 1 ? (
+                        <Text style={tw`text-center mt-10 font-bold bg-white p-4 rounded-xl`}>Currently, vehicle is not available on route !</Text>
+                    ) : (
                         filteredVehicles.map((vehicle, index) => (
-                            <EmptyVehicleCard vehicle={vehicle} index={index} handleDelete={handleDeleteEmptyVehicle} />
+                            <EmptyVehicleCard vehicle={vehicle} index={index} handleDelete={handleDeleteEmptyVehicle} key={index} />
                         ))
+                    )
                 )}
             </ScrollView>
-
         </SafeAreaView>
     );
 };
 
 const EmptyVehicleCard = ({ vehicle, index, handleDelete }: EmptyVehicleCardProps) => {
-
-    const [isDeleteModalVisible, setIsDeleteModalVisible] = useState<boolean>(false)
-    const [selectedVehicle, setSelectedVehicle] = useState<Vehicle | null>(null)
+    const [isDeleteModalVisible, setIsDeleteModalVisible] = useState<boolean>(false);
     const { setEditData } = useGlobalContext();
 
-    const closeModal = () => {
-        setIsDeleteModalVisible(false)
-    }
+    const closeModal = () => setIsDeleteModalVisible(false);
 
     const handler = () => {
         if (selectedVehicle) {
-            handleDelete(selectedVehicle._id)
-            setIsDeleteModalVisible(false)
+            handleDelete(selectedVehicle._id);
+            closeModal();
         }
-    }
-
-
+    };
 
     return (
         <>
-            <View key={index} style={styles.card}>
-                <View style={styles.cardHeader}>
-
-                    <TouchableOpacity onPress={() => { setEditData(vehicle); router.push("edit_empty_vehicle") }} style={styles.editButton}>
-                        <Text style={styles.editButtonText}>Edit Route</Text>
+            <View style={tw`bg-white py-5 px-3 rounded-lg shadow-lg mb-5`}>
+                <View style={tw`flex-row justify-end items-center mb-2 space-x-2`}>
+                    <TouchableOpacity onPress={() => { setEditData(vehicle); router.push("edit_empty_vehicle"); }} style={tw`bg-[#2AA4D5] rounded p-1`}>
+                        <Text style={tw`text-white text-sm `}>Edit Route</Text>
                     </TouchableOpacity>
-
                     <TouchableOpacity onPress={() => { setIsDeleteModalVisible(true); setSelectedVehicle(vehicle); }}>
                         <MaterialIcons name="delete" size={24} color={Colors.darkBlue} />
                     </TouchableOpacity>
                 </View>
-                <Carousel images={vehicle.photos} />
-                <View style={{ flexDirection: 'row', justifyContent: 'space-between', margin: 10 }}>
-                    <View style={{ alignItems: "center" }}>
-                        <Text style={{ fontWeight: 'bold' }}>Departure</Text>
-                        <Text>{vehicle.departurePlace}</Text>
+
+                <View style={tw`relative`}>
+                    <Carousel height={300} images={vehicle.photos} />
+                    <View style={tw`absolute bottom-3 right-3 bg-[#154CE4] items-center rounded-full p-4`}>
+                        <Text style={tw`text-white font-bold text-[10px]`}>{vehicle.vehicle.number.toUpperCase()}</Text>
+                        <Text style={tw`text-white font-bold text-[10px]`}>{vehicle.vehicle.isAC ? "AC" : "Non-AC"}</Text>
+                        <Text style={tw`text-white font-bold text-[10px]`}>{vehicle.vehicle.isSleeper ? "Sleeper" : "Seater"}</Text>
                     </View>
-                    <View style={{ alignItems: "center" }}>
-                        <Text style={{ fontWeight: 'bold' }}>Destination</Text>
+                </View>
+
+                <View style={tw`flex-row justify-between my-3 mx-2`}>
+                    <View style={tw`items-center`}>
+                        <Text style={tw`font-bold text-[#042F40]`}>Departure</Text>
+                        <Text>{vehicle.departurePlace}</Text>
+                        <Text style={tw`text-black`}>
+                            {vehicle.departureTime ? new Date(vehicle.departureTime).toLocaleTimeString('en-US', { hour: 'numeric', minute: 'numeric', hour12: true }) : "Time not added"}
+                        </Text>
+                    </View>
+                    <View style={tw`flex flex-row items-center`}>
+                         <Image source={require('@/assets/left-arrow.png')} style={tw``} />
+                         <Image source={require('@/assets/vehicle-icon.png')} style={tw``} />
+                         <Image source={require('@/assets/right-arrow.png')} style={tw``} />
+                  </View>
+                    <View style={tw`items-center`}>
+                        <Text style={tw`font-bold text-[#042F40]`}>Destination</Text>
                         <Text>{vehicle.destinationPlace}</Text>
                     </View>
                 </View>
-                <View style={styles.cardTextContainer}>
-                    <Text style={styles.cardText}>Vehicle No: </Text>
-                    <Text style={{ color: "black" }}>{vehicle.vehicle.number.toUpperCase()}</Text>
+
+                <View style={tw`flex flex-row mb-2`}>
+                    <Text style={tw`text-gray-500 font-medium`}>Departure Date - </Text>
+                    <Text style={tw`text-black`}>{vehicle.departureDate ? formatDate(vehicle.departureDate) : "Time not added"}</Text>
                 </View>
-                <View style={styles.cardTextContainer}>
-                    <Text style={styles.cardText}>Departure Date: </Text>
-                    <Text style={{ color: "black" }}>{vehicle.departureDate ? formatDate(vehicle.departureDate) : "Time not added"}</Text>
+                <View style={tw`flex flex-row items-center mb-2`}>
+                    <Text style={tw`text-gray-500 font-medium`}>Contact Number - </Text>
+                    <Text style={tw`text-black`}>{vehicle.mobileNumber}</Text>
                 </View>
-                <View style={styles.cardTextContainer}>
-                    <Text style={styles.cardText}>Departure Time: </Text>
-                    <Text style={{ color: "black" }}>{vehicle.departureTime ? new Date(vehicle.departureTime).toLocaleTimeString('en-US', { hour: 'numeric', minute: 'numeric', hour12: true }) : "Time not added"}</Text>
-                </View>
-                <View style={styles.cardTextContainer}>
-                    <Text style={styles.cardText}>Contact Number: </Text>
-                    <Text style={{ color: "black" }}>{vehicle.mobileNumber}</Text>
-                </View>
-                <View style={styles.cardTextContainer}>
-                    <Text style={styles.cardText}>More Info About Trip: </Text>
-                    <Text style={{ color: "black" }}>{vehicle.moreInformation}</Text>
-                </View>
+
+                <View style={tw`border flex flex-row justify-between rounded-md p-3 border-gray-200`}>
+                    <View style={tw`flex flex-col mb-2`}>
+                        <Text style={tw`text-gray-500 font-medium`}>More Info About Trip: </Text>
+                        <Text style={tw`text-black`}>{vehicle.moreInformation}</Text>
+                    </View>                
+                </View> 
             </View>
-            <ConfirmationModal actionBtnText="Delete" closeModal={closeModal} isVisible={isDeleteModalVisible} message="Are you sure you want to delete empty vehicle" handler={handler} />
+
+            <ConfirmationModal actionBtnText="Delete" closeModal={closeModal} isVisible={isDeleteModalVisible} message="Are you sure you want to delete this empty vehicle?" handler={handler} />
         </>
-    )
-}
-
-const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        paddingVertical: 20,
-        paddingHorizontal: 10,
-        backgroundColor: "#ffffff",
-    },
-    searchContainer: {
-        flexDirection: "row",
-        flex: 1,
-        alignItems: "center",
-        borderColor: Colors.secondary,
-        borderWidth: 1,
-        borderRadius: 5,
-        paddingHorizontal: 15,
-        marginBottom: 20,
-        paddingVertical: 5,
-    },
-    searchInput: {
-        flex: 1,
-        marginLeft: 10,
-        color: Colors.secondary,
-    },
-    vehicleFilterContainer: {
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-        borderWidth: 1,
-        borderColor: Colors.secondary,
-    },
-    vehiclePicker: {
-        flex: 1,
-        marginHorizontal: 2,
-    },
-    addButton: {
-        backgroundColor: Colors.darkBlue,
-        borderRadius: 8,
-        padding: 8,
-        alignItems: "center",
-        marginBottom: 10,
-        width: 250
-    },
-    addButtonText: {
-        color: "#fff",
-        fontSize: 16,
-        fontWeight: "bold",
-    },
-    notificationContainer: {
-        marginVertical: 20,
-        paddingHorizontal: 20,
-        backgroundColor: '#51BEEE',
-        borderRadius: 5,
-        padding: 10,
-    },
-    notificationText: {
-        color: '#ffffff',
-        fontSize: 16,
-        textAlign: 'center',
-    },
-    cardHeader: {
-        flexDirection: "row",
-        justifyContent: "flex-end",
-        marginBottom: 10,
-        alignItems: "center",
-        gap: 5,
-    },
-    editButton: {
-        backgroundColor: Colors.darkBlue,
-        borderRadius: 5,
-        padding: 5,
-    },
-    editButtonText: {
-        color: "#fff",
-        fontSize: 12,
-    },
-    card: {
-        backgroundColor: "#fff",
-        paddingVertical: 20,
-        paddingHorizontal: 10,
-        borderRadius: 5,
-        elevation: 3,
-        shadowColor: "#000",
-        shadowOffset: { width: 2, height: 2 },
-        shadowOpacity: 0.2,
-        shadowRadius: 5,
-        marginBottom: 20,
-    },
-    cardTextContainer: {
-        marginBottom: 10,
-        flexDirection: "row",
-    },
-    cardText: {
-
-        color: Colors.secondary,
-        fontWeight: "500",
-        fontSize: 15,
-    },
-    carouselItem: {
-        justifyContent: "center",
-        alignItems: "center",
-        borderRadius: 10,
-        overflow: "hidden",
-    },
-    carouselImage: {
-        width: viewportWidth * 0.8,
-        height: 200,
-    },
-    pagerView: {
-        width: viewportWidth * 0.8,
-        height: 200,
-    },
-    paginationContainer: {
-        flexDirection: "row",
-        justifyContent: "center",
-        paddingVertical: 8,
-    },
-    dotStyle: {
-        width: 10,
-        height: 10,
-        borderRadius: 5,
-        backgroundColor: Colors.darkBlue,
-        marginHorizontal: 4,
-    },
-    modalContainer: {
-        flex: 1,
-        justifyContent: "center",
-        alignItems: "center",
-    },
-    modalContent: {
-        backgroundColor: "#fff",
-        padding: 20,
-        borderRadius: 10,
-        alignItems: "center",
-        elevation: 5,
-        width: viewportWidth * 0.9,
-    },
-    modalImage: {
-        width: viewportWidth * 0.8,
-        height: viewportWidth * 0.8,
-        resizeMode: 'contain',
-        marginBottom: 20,
-    },
-    closeButton: {
-        backgroundColor: Colors.darkBlue,
-        paddingHorizontal: 20,
-        paddingVertical: 10,
-        borderRadius: 5,
-    },
-    closeButtonText: {
-        color: "#fff",
-        fontWeight: "bold",
-        fontSize: 16,
-    },
-    overlay: {
-        flex: 1,
-        backgroundColor: 'rgba(0, 0, 0, 0.5)',
-    },
-});
+    );
+};
 
 export default EmptyVehicleScreen;

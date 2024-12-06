@@ -120,10 +120,14 @@ const AddDriverScreen: React.FC = () => {
             resetForm();
             Alert.alert("Success", "Driver updated successfully!");
             router.back()
-        } catch (error) {
+        } catch (error: any) {
             console.log(error);
             setLoading(false);
+            if (error.response && error.response.data && error.response.data.message) {
+                Alert.alert("Error", error.response.data.message);
+            } else {
             Alert.alert("Error", "Failed to add driver. Please try again.");
+            }
         }
     };
 
@@ -132,7 +136,7 @@ const AddDriverScreen: React.FC = () => {
             mediaTypes: ImagePicker.MediaTypeOptions.Images,
             allowsEditing: false,
             aspect: type === "driver" ? [1, 1] : [4, 3],
-            quality: 1,
+            quality: .7,
         });
 
         if (!result.canceled) {
@@ -277,6 +281,7 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         backgroundColor: "#ffffff",
+        marginBottom:40
     },
     scrollView: {
         flex: 1,
@@ -295,11 +300,11 @@ const styles = StyleSheet.create({
     label: {
         marginBottom: 5,
         fontSize: 13,
-        color: Colors.secondary,
+        color: '#000000',
         fontWeight: "500",
     },
     input: {
-        borderColor: Colors.secondary,
+        borderColor: '#C0C0C0',
         borderWidth: 1,
         borderRadius: 10,
         paddingHorizontal: 10,

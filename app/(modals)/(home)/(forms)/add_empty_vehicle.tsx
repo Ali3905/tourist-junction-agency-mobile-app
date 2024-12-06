@@ -156,6 +156,7 @@ const add_empty_vehicle = () => {
         let result = await ImagePicker.launchImageLibraryAsync({
             mediaTypes: ImagePicker.MediaTypeOptions.Images,
             allowsMultipleSelection: true,
+            selectionLimit: 2,
             quality: .7,
         });
 

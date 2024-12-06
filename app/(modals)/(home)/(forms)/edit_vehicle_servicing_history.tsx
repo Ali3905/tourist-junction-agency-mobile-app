@@ -18,6 +18,7 @@ import DateTimePicker from '@react-native-community/datetimepicker';
 import { GestureHandlerRootView, TextInput } from "react-native-gesture-handler";
 import { router } from "expo-router";
 import { Picker } from '@react-native-picker/picker';
+import tw from 'twrnc'
 
 const AddServiceHistoryScreen: React.FC = () => {
     const [garageName, setGarageName] = useState("");
@@ -116,7 +117,8 @@ const AddServiceHistoryScreen: React.FC = () => {
             mediaTypes: ImagePicker.MediaTypeOptions.Images,
             allowsEditing: false,
             aspect: [4, 3],
-            quality: 1,
+            selectionLimit: 5,
+            quality: .7,
             allowsMultipleSelection: true,
         });
 
@@ -136,18 +138,22 @@ const AddServiceHistoryScreen: React.FC = () => {
                     <View style={styles.modalContent}>
                         <View style={styles.inputGroup}>
                             <Text style={styles.label}>Vehicle Number</Text>
-                            <View style={styles.pickerContainer}>
-                                <Picker
-                                    selectedValue={vehicleId}
-                                    onValueChange={(itemValue) => setVehicleId(itemValue)}
-                                    style={styles.picker}
-                                >
-                                    <Picker.Item label={findVehicleByNumber(vehicleId)?.number} value={vehicleId} />
-                                    {vehicleNumbers.map((vehicle, index) => (
-                                        <Picker.Item key={index} label={vehicle.number} value={vehicle.id} />
-                                    ))}
-                                </Picker>
-                            </View>
+                            <View style={tw`border-secondary border border-[#C0C0C0] rounded-lg overflow-hidden`}>
+                                    <Picker
+                                        selectedValue={vehicleId}
+                                        onValueChange={(itemValue) => setVehicleId(itemValue)}
+                                        style={tw`text-sm text-black h-14 p-4 sm:p-6 md:p-8 bg-white`}  // Styling for responsive padding, font size, height, background color
+                                    >
+                                        <Picker.Item 
+                                            label={findVehicleByNumber(vehicleId)?.number} 
+                                            value={vehicleId} 
+                                        />
+                                        {vehicleNumbers.map((vehicle, index) => (
+                                            <Picker.Item key={index} label={vehicle.number} value={vehicle.id} />
+                                        ))}
+                                    </Picker>
+                                </View>
+
                         </View>
                         <View style={styles.inputGroup}>
                             <Text style={styles.label}>Garage Name</Text>
@@ -229,18 +235,20 @@ const AddServiceHistoryScreen: React.FC = () => {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        padding: 20,
+        padding: 10,
         backgroundColor: "#ffffff",
+        marginBottom:20
     },
     modalContainer: {
         flex: 1,
         paddingTop: Platform.OS === 'android' ? 20 : 0,
-        paddingHorizontal: 20,
+        paddingHorizontal: 10,
     },
     modalContent: {
         backgroundColor: "#fff",
         borderRadius: 10,
         elevation: 5,
+        padding:20
     },
     inputGroup: {
         marginBottom: 15,
@@ -248,11 +256,11 @@ const styles = StyleSheet.create({
     label: {
         marginBottom: 5,
         fontSize: 13,
-        color: Colors.secondary,
+        color: '#000000',
         fontWeight: "500"
     },
     input: {
-        borderColor: Colors.secondary,
+        borderColor: '#C0C0C0',
         borderWidth: 1,
         borderRadius: 10,
         paddingHorizontal: 10,

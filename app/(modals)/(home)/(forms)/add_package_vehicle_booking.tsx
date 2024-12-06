@@ -16,6 +16,7 @@ import { useGlobalContext } from "@/context/GlobalProvider";
 import { Picker } from "@react-native-picker/picker";
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { router } from "expo-router";
+import tw from 'twrnc'
 
 const PackageBookingForm: React.FC = () => {
     const [vehicleNumber, setVehicleNumber] = useState("");
@@ -101,7 +102,7 @@ const PackageBookingForm: React.FC = () => {
 
     const handleBooking = async () => {
 
-        if (!vehicleNumber || !otherVehicleNumber || !customerName || !mobileNumber || !alternateNumber || !kmStarting || !perKmRate || !advancedAmount || !remainingAmount || !departurePlace || !destinationPlace || !departureTime || !returnTime || !departureDate || !returnDate || !toll || !otherStateTax || !instructions || !entryParking || !pickUpPoint) {
+        if (!vehicleNumber || !otherVehicleNumber || !customerName || !mobileNumber || !kmStarting || !perKmRate || !advancedAmount || !remainingAmount || !departurePlace || !destinationPlace || !departureTime || !returnTime || !departureDate || !returnDate || !toll || !otherStateTax || !instructions || !entryParking || !pickUpPoint) {
             Alert.alert("Please fill all fields.");
             return;
         }
@@ -175,11 +176,13 @@ const PackageBookingForm: React.FC = () => {
                 <View style={styles.modalContent}>
                     <View style={styles.inputGroup}>
                         <Text style={styles.label}>Vehicle Number</Text>
-                        <View style={styles.pickerContainer}>
+
+                        <View style={tw`border-secondary border border-[#C0C0C0] rounded-lg overflow-hidden`}>
                             <Picker
                                 selectedValue={vehicleNumber}
                                 onValueChange={(itemValue) => setVehicleNumber(itemValue)}
-                                style={styles.picker}
+                                style={tw`text-sm text-black h-14 p-4 sm:p-6 md:p-8 bg-white`}  // Responsive padding and height
+                                itemStyle={tw`text-black`} // Ensures items have correct text color
                             >
                                 <Picker.Item label="Select Vehicle Number" value="" />
                                 {vehicleNumbers.map((number, index) => (
@@ -188,20 +191,23 @@ const PackageBookingForm: React.FC = () => {
                             </Picker>
                         </View>
                     </View>
+
                     <View style={styles.inputGroup}>
                         <Text style={styles.label}>Other Vehicle Number</Text>
-                        <View style={styles.pickerContainer}>
-                            <Picker
-                                selectedValue={otherVehicleNumber}
-                                onValueChange={(itemValue) => setOtherVehicleNumber(itemValue)}
-                                style={styles.picker}
-                            >
-                                <Picker.Item label="Select Vehicle Number" value="" />
-                                {vehicleNumbers.map((number, index) => (
-                                    <Picker.Item key={index} label={number.number} value={number.id} />
-                                ))}
-                            </Picker>
-                        </View>
+                        <View style={tw`border-secondary border border-[#C0C0C0] rounded-lg overflow-hidden`}>
+                                <Picker
+                                    selectedValue={otherVehicleNumber}
+                                    onValueChange={(itemValue) => setOtherVehicleNumber(itemValue)}
+                                    style={tw`text-sm text-black h-14 p-4 sm:p-6 md:p-8 bg-white`}  // Responsive padding, height, and background color
+                                    itemStyle={tw`text-black`} // Ensures items have correct text color
+                                >
+                                    <Picker.Item label="Select Vehicle Number" value="" />
+                                    {vehicleNumbers.map((number, index) => (
+                                        <Picker.Item key={index} label={number.number} value={number.id} />
+                                    ))}
+                                </Picker>
+                            </View>
+
                     </View>
                     <View style={styles.inputGroup}>
                         <Text style={styles.label}>Customer Name</Text>
@@ -230,7 +236,7 @@ const PackageBookingForm: React.FC = () => {
                         />
                     </View>
                     <View style={styles.inputGroup}>
-                        <Text style={styles.label}>From..To</Text>
+                        <Text style={styles.label}>KM starting From..To..</Text>
                         <TextInput
                             style={styles.input}
                             value={kmStarting}
@@ -246,7 +252,7 @@ const PackageBookingForm: React.FC = () => {
                         />
                     </View>
                     <View style={styles.inputGroup}>
-                        <Text style={styles.label}>Advanced Amount</Text>
+                        <Text style={styles.label}>Advance Amount</Text>
                         <TextInput
                             style={styles.input}
                             value={advancedAmount}
@@ -411,13 +417,14 @@ const PackageBookingForm: React.FC = () => {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        padding: 20,
+        padding: 10,
         backgroundColor: "#ffffff",
+        marginBottom:20
     },
     modalContainer: {
         flex: 1,
         paddingTop: Platform.OS === 'android' ? 20 : 0,
-        paddingHorizontal: 20,
+        paddingHorizontal: 10,
     },
     modalContent: {
         backgroundColor: "#fff",
@@ -431,11 +438,11 @@ const styles = StyleSheet.create({
     label: {
         marginBottom: 5,
         fontSize: 13,
-        color: Colors.secondary,
+        color: '#000000',
         fontWeight: "500",
     },
     input: {
-        borderColor: Colors.secondary,
+        borderColor: '#C0C0C0',
         borderWidth: 1,
         borderRadius: 10,
         paddingHorizontal: 10,

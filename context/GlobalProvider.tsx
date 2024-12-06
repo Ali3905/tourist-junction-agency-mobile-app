@@ -27,8 +27,14 @@ interface GlobalContextProps {
   setPhotos: React.Dispatch<React.SetStateAction<Array<string>>>
   mobileNumber: string
   setMobileNumber: React.Dispatch<React.SetStateAction<string>>
+  route: Route,
+  setRoute: React.Dispatch<React.SetStateAction<any>>
 }
 
+type Route = {
+  fromCity: string,
+  toCity: string,
+}
 const GlobalContext = createContext<GlobalContextProps | undefined>(undefined);
 
 export const useGlobalContext = (): GlobalContextProps => {
@@ -55,6 +61,10 @@ const GlobalProvider: React.FC<GlobalProviderProps> = ({ children }) => {
   const [refresh, setRefresh] = useState(false)
   const [photos, setPhotos] = useState<Array<string>>([])
   const [mobileNumber, setMobileNumber] = useState('')
+  const [route, setRoute] = useState<Route>({
+    fromCity: "",
+    toCity: "",
+  })
 
   useEffect(() => {
     SecureStore.getItemAsync("access_token")
@@ -121,7 +131,9 @@ const GlobalProvider: React.FC<GlobalProviderProps> = ({ children }) => {
         photos,
         setPhotos,
         mobileNumber,
-        setMobileNumber
+        setMobileNumber,
+        route,
+        setRoute
       }}
     >
       {children}

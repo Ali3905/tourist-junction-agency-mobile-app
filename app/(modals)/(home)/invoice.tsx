@@ -83,6 +83,7 @@ const InvoiceScreen: React.FC = () => {
       </div>
       <table>
         <tr><th>Customer Name</th><td>${invoiceData.customerName}</td></tr>
+        <tr><th>Travel Owner</th><td>${invoiceData?.agencyName}</td></tr>
         <tr><th>Mobile Number</th><td>${invoiceData.mobileNumber}</td></tr>
         <tr><th>Alternate Number</th><td>${invoiceData.alternateNumber}</td></tr>
         <tr><th>Vehicle Number</th><td>${invoiceData.vehicle ? invoiceData.vehicle.number : ""}</td></tr>
@@ -201,6 +202,10 @@ const InvoiceScreen: React.FC = () => {
         <Text style={styles.value}>{invoiceData.customerName}</Text>
       </View>
       <View style={styles.row}>
+        <Text style={styles.label}>Travel Owner:</Text>
+        <Text style={styles.value}>{invoiceData.agencyName}</Text>
+      </View>
+      <View style={styles.row}>
         <Text style={styles.label}>Mobile Number:</Text>
         <Text style={styles.value}>{invoiceData.mobileNumber}</Text>
       </View>
@@ -296,6 +301,7 @@ const styles = StyleSheet.create({
     flex: 1,
     padding: 20,
     backgroundColor: "#ffffff",
+    marginBottom:40
   },
   title: {
     fontSize: 24,
@@ -311,11 +317,11 @@ const styles = StyleSheet.create({
   label: {
     fontWeight: "bold",
     fontSize: 16,
-    color: Colors.darkBlue,
+    color: '#000',
   },
   value: {
     fontSize: 16,
-    color: Colors.secondary,
+    color: '#C0C0C0',
   },
   centered: {
     flex: 1,

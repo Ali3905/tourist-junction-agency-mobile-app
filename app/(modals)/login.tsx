@@ -27,7 +27,7 @@ const LoginScreen = () => {
     const [password, setPassword] = useState('');
     const [rememberMe, setRememberMe] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
-    const {setToken, setIsLogged} = useGlobalContext()
+    const {setToken, setIsLogged, setUserData} = useGlobalContext()
 
     const handleNext = async () => {
         setIsLoading(true);
@@ -35,14 +35,16 @@ const LoginScreen = () => {
             'password': password,
             [isManager ? 'mobileNumber' : 'userName']: usernameOrMobile
         };
+        
         try {
-            const response = await axios.post(`${process.env.EXPO_PUBLIC_URL}api/user/login`, data);
+            const response = await axios.post(`${process.env.EXPO_PUBLIC_URL}api/user/login/AGENCY`, data);
             await SecureStore.setItemAsync("access_token", response.data.authToken);
             setToken(response.data.authToken)
+            setUserData({...response.data.data, role: "AGENCY"})
             setIsLogged(true)
-            router.push("/");
+            router.replace("/")
         } catch (error) {
-            console.log(error);
+            console.log(error?.response?.data?.message || error);
             Alert.alert("Login Failed", "Please check your credentials and try again.");
         } finally {
             setIsLoading(false);
@@ -164,7 +166,7 @@ const styles = StyleSheet.create({
     },
     forgotPasswordText: {
         color: Colors.primary,
-        fontSize:40
+        fontSize:15
     },
     button: {
         borderRadius: 30,

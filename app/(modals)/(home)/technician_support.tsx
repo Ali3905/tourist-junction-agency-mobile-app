@@ -23,6 +23,7 @@ import { Picker } from '@react-native-picker/picker';
 import { State, City } from 'country-state-city';
 import { Rating, AirbnbRating } from 'react-native-ratings';
 import GoToPlans from "@/components/GoToPlans";
+import tw from 'twrnc'
 
 interface BlurOverlayProps {
     visible: boolean;
@@ -168,11 +169,11 @@ const TechnicianSupport: React.FC = () => {
                 </TouchableOpacity>
             </View>
 
-            <Text style={styles.cardText}>Technician Name: <Text style={{ color: "black" }}> {item.name}</Text></Text>
-            <Text style={styles.cardText}>Technician Type: <Text style={{ color: "black" }}> {item.technicianType}</Text></Text>
-            <Text style={styles.cardText}>City: <Text style={{ color: "black" }}>{item.city}</Text></Text>
-            <Text style={styles.cardText}>State: <Text style={{ color: "black" }}>{item.state}</Text></Text>
-            <Text style={styles.cardText}>Vehicle Type: <Text style={{ color: "black" }}> {item.vehicleType}</Text></Text>
+            <Text style={styles.cardText}>Technician Name - <Text style={{ color: "black" }}> {item.name}</Text></Text>
+            <Text style={styles.cardText}>Technician Type - <Text style={{ color: "black" }}> {item.technicianType}</Text></Text>
+            <Text style={styles.cardText}>City - <Text style={{ color: "black" }}>{item.city}</Text></Text>
+            <Text style={styles.cardText}>State - <Text style={{ color: "black" }}>{item.state}</Text></Text>
+            <Text style={styles.cardText}>Vehicle Type - <Text style={{ color: "black" }}> {item.vehicleType}</Text></Text>
 
             <Modal
                 visible={modalVisible}
@@ -242,28 +243,30 @@ const TechnicianSupport: React.FC = () => {
         );
     };
 
-    if (!userData?.isSubsciptionValid) {
-        return <GoToPlans />
-      }
-
+    if (!userData?.isSubsciptionValid && Date.now() >= new Date(userData?.trialValidTill).getTime()) {
+    return <GoToPlans />;
+  }
     return (
         <SafeAreaView style={styles.container}>
-            <View style={styles.searchContainer}>
-                <FontAwesome5 name="search" size={18} color={Colors.secondary} />
-                <TextInput
-                    style={styles.searchInput}
-                    placeholder="Search technician, city"
-                    placeholderTextColor={Colors.secondary}
-                    value={cityFilter}
-                    onChangeText={setCityFilter}
-                />
-            </View>
+<View style={tw`bg-white p-6 mx-2 rounded-xl mb-10 mt-[10px] relative z-10 shadow-lg`}>
+    {/* Search Container */}
+    <View style={tw`flex-row items-center  border-gray-100  `}>
+        <FontAwesome5 name="search" size={18} color={Colors.secondary} />
+        <TextInput
+            style={tw`ml-2 flex-1 text-sm p-2 bg-white border rounded-md text-black`} 
+            placeholder="Search technician, city"
+            placeholderTextColor={Colors.secondary}
+            value={cityFilter}
+            onChangeText={setCityFilter}
+        />
+    </View>
 
-            <View style={styles.filterContainer}>
-                <View style={styles.vehicleFilterContainer}>
+    {/* Filter Container */}
+    <View style={tw``}>
+                <View style={tw`flex-row justify-between`}>
                     <Picker
                         selectedValue={vehicleFilter}
-                        style={styles.vehiclePicker}
+                        style={tw`mx-1 flex-1 `}
                         onValueChange={handleVehicleFilterChange}
                     >
                         <Picker.Item label="All Vehicle Types" value="all" />
@@ -275,7 +278,7 @@ const TechnicianSupport: React.FC = () => {
                     <Picker
                         selectedValue={technicianTypeFilter}
                         onValueChange={(itemValue) => setTechnicianTypeFilter(itemValue)}
-                        style={styles.vehiclePicker}
+                        style={tw`mx-1 flex-1`}
                     >
                         <Picker.Item label="Select Technician Type" value="" />
                         <Picker.Item label="MECHANIC" value="MECHANIC" />
@@ -288,31 +291,15 @@ const TechnicianSupport: React.FC = () => {
                     </Picker>
                 </View>
 
-                {/* <View style={styles.locationFilterContainer}>
-                    <Picker
-                        selectedValue={stateFilter}
-                        style={styles.locationPicker}
-                        onValueChange={handleStateFilterChange}
-                    >
-                        <Picker.Item label="All States" value="all" />
-                        {states.map((state) => (
-                            <Picker.Item key={state.isoCode} label={state.name} value={state.isoCode} />
-                        ))}
-                    </Picker>
-
-                    <Picker
-                        selectedValue={cityFilter}
-                        style={styles.locationPicker}
-                        onValueChange={handleCityFilterChange}
-                        enabled={!!stateFilter}
-                    >
-                        <Picker.Item label="All Cities" value="all" />
-                        {cities.map((city) => (
-                            <Picker.Item key={city.name} label={city.name} value={city.name} />
-                        ))}
-                    </Picker>
-                </View> */}
+                
             </View>
+
+
+</View>
+
+
+
+
 
             <TouchableOpacity onPress={() => router.push("add_technician")} style={styles.addButton}>
                 <Text style={styles.addButtonText}>Add Technician</Text>
@@ -354,7 +341,7 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         padding: 20,
-        backgroundColor: "#fff",
+        backgroundColor: "#EAEAEA",
     },
     ratingContainer: {
         marginBottom: 20,
@@ -368,6 +355,7 @@ const styles = StyleSheet.create({
         paddingHorizontal: 15,
         marginBottom: 10,
         paddingVertical: 5,
+        backgroundColor:'#fff'
     },
     modalContainer: {
         flex: 1,
@@ -455,8 +443,8 @@ const styles = StyleSheet.create({
         alignItems: "center",
     },
     cardText: {
-        marginBottom: 8,
-        color: Colors.secondary,
+        marginBottom: 2,
+        color: '#000000',
         fontWeight: "500",
         fontSize: 13,
     },
